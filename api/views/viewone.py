@@ -1,6 +1,6 @@
-from api.flaskconfig import app, socketio
+from __main__ import socketio
 
 
-@socketio.on('my event')
-def msg(m):
-    app.logger.info('abc', m)
+@socketio.event()
+def connect():
+    print("HELLO")

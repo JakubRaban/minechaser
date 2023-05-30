@@ -1,6 +1,6 @@
-from api.flaskconfig import app, socketio
+from __main__ import socketio
 
 
-@socketio.on('connect')
-def c():
-    app.logger.info('def')
+@socketio.event()
+def connect():
+    print('def')

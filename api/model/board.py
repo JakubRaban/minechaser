@@ -8,7 +8,7 @@ from api.helpers import sum_positions
 from api.model.cell import Cell
 from api.model.events import *
 from api.model.player import PlayerColor
-from api.types import Position, Dimensions
+from api.types_ import Position, Dimensions
 
 
 @dataclass

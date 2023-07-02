@@ -3,7 +3,7 @@ from typing import List
 
 from api.helpers import sum_positions
 from api.model.events import GameEvent
-from api.types import Position
+from api.types_ import Position
 
 
 class PlayerColor(Enum):
@@ -53,6 +53,9 @@ class Players:
 
     def __getitem__(self, color: PlayerColor) -> Player:
         return self.players[color]
+
+    def colors(self):
+        return self.players.keys()
 
     def values(self):
         return self.players.values()

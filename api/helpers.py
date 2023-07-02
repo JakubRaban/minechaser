@@ -1,6 +1,6 @@
 import operator
 
-from api.types import Position
+from api.types_ import Position
 
 
 def sum_positions(pos1: Position, pos2: Position) -> Position:

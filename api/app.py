@@ -8,6 +8,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 import views.viewone
 import views.viewtwo
+import views.lobby
 
 
 @app.route('/', defaults={'path': ''})

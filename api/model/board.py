@@ -4,11 +4,11 @@ from itertools import product, chain
 from random import sample
 from typing import Dict, List
 
-from api.helpers import sum_positions
-from api.model.cell import Cell
-from api.model.events import *
-from api.model.player import PlayerColor
-from api.types_ import Position, Dimensions
+from helpers import sum_positions
+from model.cell import Cell
+from model.events import *
+from model.player import PlayerColor
+from types_ import Position, Dimensions
 
 
 @dataclass

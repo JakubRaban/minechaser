@@ -1,6 +1,6 @@
 from typing import Optional
 
-from api.model.player import Player
+from model.player import Player
 
 
 class Cell:

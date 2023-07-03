@@ -1,9 +1,8 @@
-from __main__ import socketio
+from socketsetup import sio
+from services.games import queue
 
-from api.services.games import queue
 
-
-@socketio.event
-def join_queue(data):
+@sio.event
+def join_queue(sid, data):
     print(data)
-    queue.add_player('abc')
+    # queue.add_player('abc')

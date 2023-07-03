@@ -9,7 +9,7 @@ export const LandingPage: React.FC = () => {
     useEffect(() => {
         socket.connect();
         socket.on('connect', () => {
-            socket.emit('my event', { data: 'Connected' });
+            socket.emit('join_queue', { data: 'Connected' });
         });
         return () => {
             socket.disconnect();

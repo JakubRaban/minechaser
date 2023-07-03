@@ -1,11 +1,11 @@
 import random
 from typing import List, Dict
 
-from api.model.board import standard_defs
-from api.model.game import Game
-from api.model.player import Direction
-from api.queue.queue_ import Queue
-from api.responses.lobby import create_public_game
+from qu.queue_ import Queue
+from model.board import standard_defs
+from model.game import Game
+from model.player import Direction
+from responses.lobby import create_public_game
 
 
 class GameProxy:

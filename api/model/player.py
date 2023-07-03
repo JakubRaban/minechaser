@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import List
 
-from api.helpers import sum_positions
-from api.model.events import GameEvent
-from api.types_ import Position
+from helpers import sum_positions
+from model.events import GameEvent
+from types_ import Position
 
 
 class PlayerColor(Enum):

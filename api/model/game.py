@@ -1,8 +1,8 @@
 from typing import List
 
-from api.model.events import GameEvent
-from api.model.player import Players, PlayerColor, Direction, Player
-from api.model.board import Board, BoardDef
+from model.events import GameEvent
+from model.player import Players, PlayerColor, Direction, Player
+from model.board import Board, BoardDef
 
 
 class ActionResult:

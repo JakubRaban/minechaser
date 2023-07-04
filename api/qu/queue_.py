@@ -5,7 +5,7 @@ from apscheduler.jobstores.base import JobLookupError
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
-waiting_time = 5
+waiting_time = 15
 
 
 class QueueEntry:
@@ -23,6 +23,7 @@ class Queue:
         self.scheduler.start()
 
     def add_player(self, socket_id):
+        print(f"Queue: Player {socket_id} joined the queue")
         self.queue.append(QueueEntry(socket_id))
         self.cancel_auto_pick()
         if 1 < len(self) < 4:
@@ -42,6 +43,7 @@ class Queue:
             pass
 
     def deque_players(self):
+        print("Queue: Dequeing players")
         players = [entry.socket_id for entry in self.queue[:4]]
         self.queue = self.queue[4:]
         self.players_picked(players)

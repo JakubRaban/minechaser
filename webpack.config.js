@@ -38,7 +38,7 @@ module.exports = {
             title: 'Real Minesweeper',
             template: 'public/index.html',
             inject: 'body',
-        })
+        }),
     ],
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
@@ -49,7 +49,4 @@ module.exports = {
         filename: 'bundle.[contenthash:6].js',
         clean: true,
     },
-    optimization: {
-        minimize: true
-    }
 }

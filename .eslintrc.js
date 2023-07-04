@@ -31,6 +31,7 @@ module.exports = {
         '@typescript-eslint',
         'react',
     ],
+    'ignorePatterns': ['webpack.config.js'],
     'rules': {
         'indent': [
             'error',
@@ -46,7 +47,7 @@ module.exports = {
         ],
         'semi': [
             'error',
-            'always',
+            'never',
         ],
         'object-curly-spacing': [
             'error',
@@ -56,6 +57,13 @@ module.exports = {
             'error',
             'always-multiline',
         ],
+        'eol-last': ['error', 'always'],
+        'react/jsx-tag-spacing': [
+            'error',
+            {
+                'beforeSelfClosing': 'always',
+            },
+        ],
         '@typescript-eslint/no-non-null-assertion': 'off',
     },
-};
+}

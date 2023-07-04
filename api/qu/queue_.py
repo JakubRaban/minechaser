@@ -36,6 +36,12 @@ class Queue:
         elif len(self) == 4:
             self.deque_players()
 
+    def remove_player(self, socket_id):
+        print(f"Queue: Player {socket_id} left the queue")
+        self.queue = [entry for entry in self.queue if entry.socket_id != socket_id]
+        if len(self) <= 1:
+            self.cancel_auto_pick()
+
     def cancel_auto_pick(self):
         try:
             self.scheduler.remove_job(self.auto_pick_event.id)

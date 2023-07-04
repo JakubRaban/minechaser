@@ -10,6 +10,7 @@ export const Queue: FC = () => {
         socket.emit('join_queue')
         socket.on('game_joined', ({ game_id: gameId }) => setGameId(gameId))
         return () => {
+            socket.emit('leave_queue')
             socket.off('game_joined')
         }
     }, [])

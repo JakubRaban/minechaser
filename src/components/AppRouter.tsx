@@ -11,7 +11,15 @@ export const AppRouter: FC = () => {
     
     useEffect(() => {
         socket.connect()
+        socket.on('connect', () => {
+            socket.emit('authenticate', { token: localStorage.getItem('rmAuth') })
+        })
+        socket.on('authenticated', ({ token }) => {
+            localStorage.setItem('rmAuth', token)
+        })
         return () => {
+            socket.off('connect')
+            socket.off('authenticated')
             socket.disconnect()
         }
     }, [])

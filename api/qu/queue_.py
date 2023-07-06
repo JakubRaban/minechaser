@@ -9,8 +9,8 @@ waiting_time = 15
 
 
 class QueueEntry:
-    def __init__(self, socket_id: str):
-        self.socket_id = socket_id
+    def __init__(self, player_id: str):
+        self.player_id = player_id
         self.time_added = datetime.now()
 
 
@@ -22,9 +22,9 @@ class Queue:
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
 
-    def add_player(self, socket_id):
-        print(f"Queue: Player {socket_id} joined the queue")
-        self.queue.append(QueueEntry(socket_id))
+    def add_player(self, player_id: str):
+        print(f"Queue: Player {player_id} joined the queue")
+        self.queue.append(QueueEntry(player_id))
         self.cancel_auto_pick()
         if 1 < len(self) < 4:
             if self.highest_waiting_time > timedelta(seconds=waiting_time):
@@ -36,9 +36,9 @@ class Queue:
         elif len(self) == 4:
             self.deque_players()
 
-    def remove_player(self, socket_id):
-        print(f"Queue: Player {socket_id} left the queue")
-        self.queue = [entry for entry in self.queue if entry.socket_id != socket_id]
+    def remove_player(self, player_id: str):
+        print(f"Queue: Player {player_id} left the queue")
+        self.queue = [entry for entry in self.queue if entry.player_id != player_id]
         if len(self) <= 1:
             self.cancel_auto_pick()
 
@@ -50,7 +50,7 @@ class Queue:
 
     def deque_players(self):
         print("Queue: Dequeing players")
-        players = [entry.socket_id for entry in self.queue[:4]]
+        players = [entry.player_id for entry in self.queue[:4]]
         self.queue = self.queue[4:]
         self.players_picked(players)
 

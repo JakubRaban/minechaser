@@ -9,24 +9,24 @@ from responses.lobby import create_public_game
 
 
 class GameProxy:
-    def __init__(self, socket_ids: List[str]):
-        players_count = len(socket_ids)
+    def __init__(self, player_ids: List[str]):
+        players_count = len(player_ids)
         self.game = Game(standard_defs['expert' if players_count == 4 else 'intermediate'], players_count)
-        self.socket_id_to_player = dict(zip(socket_ids, self.game.players.colors()))
+        self.player_id_mapping = dict(zip(player_ids, self.game.players.colors()))
 
-    def move(self, socket_id: str, direction: Direction):
-        player = self.socket_id_to_player[socket_id]
+    def move(self, player_id: str, direction: Direction):
+        player = self.player_id_mapping[player_id]
         return self.game.move(player.color, direction)
 
-    def flag(self, socket_id: str, direction: Direction):
-        player = self.socket_id_to_player[socket_id]
+    def flag(self, player_id: str, direction: Direction):
+        player = self.player_id_mapping[player_id]
         return self.game.flag(player.color, direction)
 
 
-def create_game(socket_ids: List[str]):
+def create_game(player_ids: List[str]):
     game_id = _generate_game_id()
-    games[game_id] = GameProxy(socket_ids)
-    create_public_game(game_id, socket_ids)
+    games[game_id] = GameProxy(player_ids)
+    create_public_game(game_id, player_ids)
 
 
 def _generate_game_id():

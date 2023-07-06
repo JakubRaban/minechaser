@@ -68,7 +68,6 @@ class Board:
         else:
             return []
 
-    # if position is outside the board, return a position on the board, assuming the board has connected ends
     def normalize_position(self, position: Position) -> Position:
         return position[0] % self.dims[0], position[1] % self.dims[1]
 

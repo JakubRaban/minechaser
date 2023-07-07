@@ -35,3 +35,8 @@ class MineCellFlagged(GameEvent):
         super().__init__(**kwargs)
         self.points_change = 1
 
+
+@dataclass(kw_only=True)
+class NoMinesLeft(GameEvent):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)

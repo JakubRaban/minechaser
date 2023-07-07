@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List
 
 from model.events import GameEvent
@@ -5,10 +6,10 @@ from model.player import Players, PlayerColor, Direction, Player
 from model.board import Board, BoardDef
 
 
+@dataclass
 class ActionResult:
-    def __init__(self, player: Player, events: List[GameEvent]):
-        self.player = player
-        self.cells = [event.cell for event in events]
+    player: Player
+    events: List[GameEvent]
 
 
 class Game:

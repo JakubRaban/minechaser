@@ -16,7 +16,7 @@ class QueueEntry:
 
 class Queue:
     def __init__(self, players_picked: Callable[[List[str]], None]):
-        self.auto_pick_event = None
+        self.pick_players_job = None
         self.queue: List[QueueEntry] = []
         self.players_picked = players_picked
         self.scheduler = BackgroundScheduler()
@@ -30,7 +30,7 @@ class Queue:
             if self.highest_waiting_time > timedelta(seconds=waiting_time):
                 self.deque_players()
             else:
-                self.auto_pick_event = self.scheduler.add_job(
+                self.pick_players_job = self.scheduler.add_job(
                     self.deque_players, "date", run_date=self.queue[0].time_added + timedelta(seconds=waiting_time)
                 )
         elif len(self) == 4:
@@ -44,7 +44,7 @@ class Queue:
 
     def cancel_auto_pick(self):
         try:
-            self.scheduler.remove_job(self.auto_pick_event.id)
+            self.scheduler.remove_job(self.pick_players_job.id)
         except (JobLookupError, AttributeError):
             pass
 

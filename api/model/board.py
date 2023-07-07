@@ -23,6 +23,7 @@ class Board:
         self.board_def = board_def
         self.dims = self.board_def.dims
         self.cells: Dict[Position, Cell] = {}
+        self.mines_left = self.board_def.mines
         for cell_position in product(range(self.dims[0]), range(self.dims[1])):
             self.cells[cell_position] = Cell()
 
@@ -62,7 +63,10 @@ class Board:
         if cell.pristine:
             if cell.has_mine:
                 cell.flagging_player = flagging_player
-                return [MineCellFlagged(cell=cell)]
+                self.mines_left -= 1
+                events = [MineCellFlagged(cell=cell)]
+                events.extend([NoMinesLeft(cell=cell)] if self.mines_left == 0 else [])
+                return events
             else:
                 return [MineFreeCellFlagged(cell=cell)]
         else:

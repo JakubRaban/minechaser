@@ -96,8 +96,8 @@ class Board:
         return {coords: self.cells[coords] for coords in adjacent_coords if coords in self.cells}
 
     def __getstate__(self):
-        state = self.__dict__.copy()
-        del state['board_def']
+        state = {k: v for k, v in self.__dict__.items() if k not in ['board_def', 'cells']}
+        state['cells'] = {coords: cell for coords, cell in self.cells.items() if not cell.pristine}
         return state
 
 

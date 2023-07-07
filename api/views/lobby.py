@@ -1,16 +1,11 @@
-from socketsetup import sio, with_user_id
 from services.games import queue
 
 
-@sio.event
-@with_user_id
-def join_queue(sid):
-    print(f"Player {sid} joined the queue")
-    queue.add_player(sid)
+def join_queue(player_id):
+    print(f"Player {player_id} joined the queue")
+    queue.add_player(player_id)
 
 
-@sio.event
-@with_user_id
-def leave_queue(sid):
-    print(f"Player {sid} left the queue")
-    queue.remove_player(sid)
+def leave_queue(player_id):
+    print(f"Player {player_id} left the queue")
+    queue.remove_player(player_id)

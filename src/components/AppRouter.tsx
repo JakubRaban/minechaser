@@ -6,16 +6,18 @@ import { Game } from './game/Game/Game'
 import { HowToPlay } from './HowToPlay/HowToPlay'
 import { useSocket } from '../hooks/useSocket'
 
+const storage = process.env.NODE_ENV === 'development' ? sessionStorage : localStorage
+
 export const AppRouter: FC = () => {
     const { socket } = useSocket()
     
     useEffect(() => {
         socket.connect()
         socket.on('connect', () => {
-            socket.emit('authenticate', { token: localStorage.getItem('rmAuth') })
+            socket.emit('authenticate', { token: storage.getItem('rmAuth') })
         })
         socket.on('authenticated', ({ token }) => {
-            localStorage.setItem('rmAuth', token)
+            storage.setItem('rmAuth', token)
         })
         return () => {
             socket.off('connect')

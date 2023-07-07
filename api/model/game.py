@@ -86,6 +86,4 @@ class GameProxy:
         self.on_game_finished()
 
     def __getstate__(self):
-        state = self.__dict__.copy()
-        del state['scheduler'], state['finish_game_job'], state['on_game_finished']
-        return state
+        return {k: v for k, v in self.__dict__.items() if k not in ['scheduler', 'finish_game_job', 'on_game_finished']}

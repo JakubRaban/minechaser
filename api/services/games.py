@@ -2,7 +2,7 @@ import random
 from typing import List, Dict
 
 from model.game import GameProxy
-from qu.queue_ import Queue
+from queue_ import Queue
 from responses.game import end_game
 from responses.lobby import create_public_game
 

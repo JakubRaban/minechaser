@@ -20,6 +20,7 @@ class GameProxy:
         self.game = Game(standard_defs['expert' if players_count == 4 else 'intermediate'], players_count)
         self.player_id_mapping = dict(zip(player_ids, self.game.players.colors()))
         self.scheduler = BackgroundScheduler()
+        self.scheduler.start()
         self.is_finished = False
         self.finish_game_job = None
         self.on_game_finished = on_game_finished

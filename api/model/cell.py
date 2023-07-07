@@ -14,3 +14,9 @@ class Cell:
     @property
     def pristine(self):
         return not self.is_uncovered and self.flagging_player is None
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        if not self.pristine:
+            del state['has_mine'], state['mines_around']
+        return state

@@ -95,6 +95,11 @@ class Board:
         ]
         return {coords: self.cells[coords] for coords in adjacent_coords if coords in self.cells}
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['board_def']
+        return state
+
 
 standard_defs = {
     'beginner': BoardDef((10, 10), 10, 2),

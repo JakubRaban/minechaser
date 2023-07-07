@@ -1,4 +1,4 @@
-from socketsetup import sio, with_user_id, socket_id_to_user_id
+from socketsetup import sio, with_user_id
 from services.games import queue
 
 

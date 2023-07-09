@@ -1,26 +1,16 @@
-import { FC, useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { FC } from 'react'
 import { useSocket } from '../../../hooks/useSocket'
+import { GameStateResponse } from './GameWrapper/GameWrapper'
+import { useGameState } from '../../../hooks/useGameState'
 
-interface GameState {
-    game: 'whatever'
-}
-
-export const Game: FC = () => {
+export const Game: FC<GameStateResponse> = ({ gameState, playerColor }) => {
     const { socket } = useSocket()
-    const { gameId } = useParams()
-    const [game, setGame] = useState<GameState>()
-
-    useEffect(() => {
-        socket.emit('get_game_state', { gameId }, (game: GameState) => {
-            debugger
-            setGame(game)
-        })
-    }, [gameId])
+    const [props, resolveAction, finishGame, setGameState] = useGameState(gameState)
     
-    if (game) {
-        return <div>Game loaded</div>
-    } else {
-        return <div>Loading game {gameId}...</div>
-    }
+    return (
+        <>
+            <div>Mines left {props.minesLeft}</div>
+            <div>Dims {props.dims}</div>
+        </>
+    )
 }

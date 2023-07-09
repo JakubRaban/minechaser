@@ -25,7 +25,7 @@ class Board:
         self.cells: Dict[Position, Cell] = {}
         self.mines_left = self.board_def.mines
         for cell_position in product(range(self.dims[0]), range(self.dims[1])):
-            self.cells[cell_position] = Cell()
+            self.cells[cell_position] = Cell(cell_position)
 
         def place_mines():
             cells_with_possible_mine = [cell for pos, cell in self.cells.items() if pos not in self.mine_free_area]

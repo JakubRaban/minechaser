@@ -1,10 +1,12 @@
 from typing import Optional
 
 from model.player import Player
+from types_ import Position
 
 
 class Cell:
-    def __init__(self):
+    def __init__(self, position: Position):
+        self.position = position
         self.has_mine = False
         self.mines_around = 0
         self.is_uncovered = False

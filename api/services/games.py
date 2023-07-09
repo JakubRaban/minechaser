@@ -10,7 +10,7 @@ from responses.lobby import create_public_game
 def create_game(player_ids: List[str]):
     game_id = _generate_game_id()
     games[game_id] = GameProxy(player_ids, on_game_finished=end_game)
-    create_public_game(game_id, player_ids)
+    create_public_game(games[game_id], game_id, player_ids)
 
 
 def _generate_game_id():

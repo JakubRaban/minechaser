@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import List
+from typing import List, Dict
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -11,8 +11,11 @@ from model.board import Board, BoardDef, standard_defs
 
 @dataclass
 class ActionResult:
-    player: Player
+    players: Dict[PlayerColor, Player]
     events: List[GameEvent]
+
+    def __getstate__(self):
+        return {'players': self.players, 'cells': [event.cell for event in self.events]}
 
 
 class Game:
@@ -30,8 +33,8 @@ class Game:
             player.position = new_position
             events = self.board.step(new_position)
             player.process_events(events)
-            return ActionResult(player, events)
-        return ActionResult(player, [])
+            return ActionResult(self.players[player_color, ], events)
+        return ActionResult(self.players[player_color, ], [])
 
     def flag(self, player_color: PlayerColor, direction: Direction) -> ActionResult:
         player = self.players[player_color]
@@ -39,8 +42,8 @@ class Game:
         if new_position not in self.players.positions:
             events = self.board.flag(new_position, player_color)
             player.process_events(events)
-            return ActionResult(player, events)
-        return ActionResult(player, [])
+            return ActionResult(self.players[player_color, ], events)
+        return ActionResult(self.players[player_color, ], [])
 
 
 class GameProxy:

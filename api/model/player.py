@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import List, Tuple, Dict
 
 from helpers import sum_positions
 from model.events import GameEvent
@@ -8,8 +8,8 @@ from types_ import Position
 
 class PlayerColor(Enum):
     RED = 'red'
-    GREEN = 'green'
     BLUE = 'blue'
+    GREEN = 'green'
     YELLOW = 'yellow'
 
     def __getstate__(self):
@@ -57,7 +57,9 @@ class Players:
             if index < len(starting_positions)
         }
 
-    def __getitem__(self, color: PlayerColor) -> Player:
+    def __getitem__(self, color: PlayerColor | Tuple[PlayerColor]) -> Player | Dict[PlayerColor, Player]:
+        if isinstance(color, tuple):
+            return {color: self.players[color] for color in color}
         return self.players[color]
 
     def colors(self):

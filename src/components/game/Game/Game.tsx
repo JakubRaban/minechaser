@@ -13,6 +13,7 @@ export const Game: FC = () => {
 
     useEffect(() => {
         socket.emit('get_game_state', { gameId }, (game: GameState) => {
+            debugger
             setGame(game)
         })
     }, [gameId])

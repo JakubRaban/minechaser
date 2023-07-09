@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import List
 
-from apscheduler.jobstores.base import JobLookupError
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from model.events import GameEvent, MineCellFlagged, NoMinesLeft
@@ -49,11 +48,13 @@ class GameProxy:
         players_count = len(player_ids)
         self.game = Game(standard_defs['expert' if players_count == 4 else 'intermediate'], players_count)
         self.player_id_mapping = dict(zip(player_ids, self.game.players.colors()))
+        self.is_finished = False
+        self.on_game_finished = on_game_finished
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
-        self.is_finished = False
-        self.finish_game_job = None
-        self.on_game_finished = on_game_finished
+        self.finish_game_job = self.scheduler.add_job(
+            self.finish_game, 'date', id='end_game', run_date=datetime.now() + timedelta(minutes=15), args=[]
+        )
 
     def move(self, player_id: str, direction: Direction):
         if not self.is_finished and player_id in self.player_id_mapping:
@@ -72,12 +73,8 @@ class GameProxy:
             return result
 
     def reschedule_end_game(self):
-        try:
-            self.scheduler.remove_job(self.finish_game_job.id)
-        except (JobLookupError, AttributeError):
-            pass
-        self.finish_game_job = self.scheduler.add_job(
-            self.on_game_finished, "date", run_date=datetime.now() + timedelta(minutes=1), args=[]
+        self.finish_game_job = self.scheduler.reschedule_job(
+            'end_game', trigger='date', run_date=datetime.now() + timedelta(minutes=1)
         )
 
     def finish_game(self):
@@ -86,4 +83,4 @@ class GameProxy:
         self.on_game_finished()
 
     def __getstate__(self):
-        return {k: v for k, v in self.__dict__.items() if k not in ['scheduler', 'finish_game_job', 'on_game_finished']}
+        return {k: v for k, v in self.__dict__.items() if k in ['game', 'is_finished']}

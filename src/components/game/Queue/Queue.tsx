@@ -8,7 +8,7 @@ export const Queue: FC = () => {
     
     useEffect(() => {
         socket.emit('join_queue')
-        socket.on('game_joined', ({ game_id: gameId }) => {
+        socket.on('game_joined', ({ gameId }) => {
             navigate(`/game/${gameId}`)
         })
         return () => {

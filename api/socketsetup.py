@@ -5,6 +5,15 @@ from functools import wraps
 import socketio
 from bidict import bidict
 import jsonpickle
+import humps
+
+
+def t_dict(d):
+    if isinstance(d, list):
+        return [t_dict(i) if isinstance(i, (dict, list)) or hasattr(i, '__dict__') else i for i in d]
+    if hasattr(d, '__dict__'):
+        return t_dict(d.__getstate__ if hasattr(d, '__getstate__') else d.__dict__)
+    return {humps.camelize(a): t_dict(b) if isinstance(b, (dict, list)) or hasattr(b, '__dict__') else b for a, b in d.items()}
 
 
 def jsonpickle_dumps(value, *args, **kwargs):
@@ -38,7 +47,7 @@ def connect(sid, environ):
 
 @sio.event
 def authenticate(sid, data):
-    token = data['token'] or f"dupa_{''.join([random.choice(string.ascii_letters) for _ in range(13)])}"
+    token = data['token'] or f"dupa{''.join([random.choice(string.ascii_letters) for _ in range(13)])}"
     socket_id_to_player_id.forceput(sid, token)
     print(f"Authenticated {sid} as {token}")
     sio.emit('authenticated', {'token': token}, room=sid)

@@ -12,6 +12,9 @@ class PlayerColor(Enum):
     BLUE = 'blue'
     YELLOW = 'yellow'
 
+    def __getstate__(self):
+        return self.name
+
 
 class Direction(Enum):
     RIGHT = (0, 1)
@@ -19,6 +22,9 @@ class Direction(Enum):
     UP = (-1, 0)
     DOWN = (1, 0)
     NONE = (0, 0)
+
+    def __getstate__(self):
+        return self.name
 
 
 class Player:
@@ -63,3 +69,6 @@ class Players:
     @property
     def positions(self):
         return [player.position for player in self.players.values()]
+
+    def __getstate__(self):
+        return {color.name: player for color, player in self.players.items()}

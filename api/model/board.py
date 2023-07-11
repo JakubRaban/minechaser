@@ -104,5 +104,5 @@ class Board:
 standard_defs = {
     'beginner': BoardDef((10, 10), 10, 2),
     'intermediate': BoardDef((16, 16), 40, 2),
-    'expert': BoardDef((30, 16), 99, 3),
+    'expert': BoardDef((16, 30), 99, 3),
 }

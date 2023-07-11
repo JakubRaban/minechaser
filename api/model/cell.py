@@ -1,6 +1,6 @@
 from typing import Optional
 
-from model.player import Player
+from model.player import PlayerColor
 from types_ import Position
 
 
@@ -10,7 +10,7 @@ class Cell:
         self.has_mine = False
         self.mines_around = 0
         self.is_uncovered = False
-        self.flagging_player: Optional[Player] = None
+        self.flagging_player: Optional[PlayerColor] = None
         self.bonus = None  # TODO - correct type
 
     @property
@@ -22,5 +22,6 @@ class Cell:
             k: v
             for k, v
             in self.__dict__.items()
-            if k not in (['has_mine', 'mines_around' if self.pristine else []])
+            if k not in (['has_mine', 'mines_around'] if self.pristine else [])
+            and v is not None
         }

@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { useSocket } from '../../../hooks/useSocket'
+import { useSocket } from '../../hooks/useSocket'
 import { useNavigate } from 'react-router-dom'
 
 export const Queue: FC = () => {

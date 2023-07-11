@@ -5,7 +5,7 @@ from apscheduler.jobstores.base import JobLookupError
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
-waiting_time = 15
+waiting_time = 5
 
 
 class QueueEntry:

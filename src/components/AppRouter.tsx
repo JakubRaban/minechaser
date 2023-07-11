@@ -1,10 +1,10 @@
 import { FC, useEffect } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { LandingPage } from './LandingPage/LandingPage'
-import { Queue } from './game/Queue/Queue'
+import { Queue } from './Queue/Queue'
 import { HowToPlay } from './HowToPlay/HowToPlay'
 import { useSocket } from '../hooks/useSocket'
-import { GameWrapper } from './game/Game/GameWrapper/GameWrapper'
+import { GameWrapper } from './Game/GameWrapper/GameWrapper'
 
 const storage = process.env.NODE_ENV === 'development' ? sessionStorage : localStorage
 

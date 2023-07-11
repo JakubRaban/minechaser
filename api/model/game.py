@@ -49,7 +49,7 @@ class Game:
 class GameProxy:
     def __init__(self, player_ids: List[str], on_game_finished: callable):
         players_count = len(player_ids)
-        self.game = Game(standard_defs['expert' if players_count == 4 else 'intermediate'], players_count)
+        self.game = Game(standard_defs['expert'], players_count)
         self.player_id_mapping = dict(zip(player_ids, self.game.players.colors()))
         self.is_finished = False
         self.on_game_finished = on_game_finished

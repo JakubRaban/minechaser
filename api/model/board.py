@@ -2,7 +2,7 @@ import operator
 from functools import reduce
 from itertools import product, chain
 from random import sample
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from helpers import sum_positions
 from model.cell import Cell
@@ -44,15 +44,19 @@ class Board:
             self.__init__(board_def)
 
     def step(self, position: Position) -> List[GameEvent]:
-        cell = self.cells[self.normalize_position(position)]
+        cell = self.cells[position]
         if cell.pristine:
             cell.is_uncovered = True
             if cell.has_mine:
-                return [MineCellStepped(cell=cell)]
+                self.mines_left -= 1
+                events = [MineCellStepped(cell=cell)]
+                events.extend([NoMinesLeft(cell=cell)] if self.mines_left == 0 else [])
+                return events
             if cell.mines_around == 0:
-                return [MineFreeCellStepped(cell=cell)] + list(chain(
-                    *[self.step(position) for position in self.get_adjacent_cells(position).keys()]
-                ))
+                events = [MineFreeCellStepped(cell=cell)]
+                for position in self.get_adjacent_cells(position).keys():
+                    events.extend(self.step(position))
+                return events
             else:
                 return [MineFreeCellStepped(cell=cell)]
         else:

@@ -14,7 +14,9 @@ interface CellGridProps {
 export const CellGrid: FC<CellGridProps> = ({ dims, cells, players }) => {
     const [height, width] = dims
     const positionToPlayerColor = Object.fromEntries(
-        Object.entries(players).map(([color, player]) => [toPositionString(player.position), color]),
+        Object.entries(players)
+            .filter(([, player]) => player.alive)
+            .map(([color, player]) => [toPositionString(player.position), color]),
     ) as Record<string, PlayerColor>
 
     return (

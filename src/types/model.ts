@@ -5,7 +5,8 @@ export type PlayerColor = 'RED' | 'GREEN' | 'BLUE' | 'YELLOW'
 
 export interface GameState {
     game: Game
-    isFinished: boolean
+    startTimestamp: string
+    endTimestamp: string | null
 }
 
 export interface Game {
@@ -37,5 +38,6 @@ export interface Player {
 
 export interface ActionResult {
     players: Players
-    cells: Cell[]
+    cells: Cell[],
+    minesLeft?: number
 }

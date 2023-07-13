@@ -1,8 +1,17 @@
+@font-face {
+    font-family: 'kanitregular';
+    src: url('../../public/kanit-regular-webfont.woff2') format('woff2'),
+         url('../../public/kanit-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* Box sizing rules */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  font-family: 'kanitregular', sans-serif;
 }
 
 /* Remove default margin */

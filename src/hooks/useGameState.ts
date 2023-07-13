@@ -4,7 +4,11 @@ import { toPositionString } from '../helpers'
 
 export const useGameState = (initialState: GameState) => {
     const [gameState, setGameState] = useState(initialState)
-    const { isFinished, game: { players, board: { cells, dims, minesLeft } } } = gameState
+    const { startTimestamp, endTimestamp, game: { players, board: { cells, dims, minesLeft } } } = gameState
+    const start = new Date(startTimestamp)
+    const end = endTimestamp ? new Date(endTimestamp) : null
+    const isFinished = !!endTimestamp
+
     const resolveAction = (action: ActionResult) => {
         const { players, cells } = action
         setGameState((prev) => ({
@@ -14,6 +18,7 @@ export const useGameState = (initialState: GameState) => {
                 players: { ...prev.game.players, ...players },
                 board: {
                     ...prev.game.board,
+                    minesLeft: action.minesLeft ?? prev.game.board.minesLeft,
                     cells: {
                         ...prev.game.board.cells,
                         ...Object.fromEntries(cells.map(cell => [toPositionString(cell.position), cell])),
@@ -25,5 +30,5 @@ export const useGameState = (initialState: GameState) => {
 
     const finishGame = () => setGameState((prev) => ({ ...prev, isFinished: true }))
 
-    return [{ players, dims, minesLeft, cells, isFinished }, resolveAction, finishGame, setGameState] as const
+    return [{ start, end, players, dims, minesLeft, cells, isFinished }, resolveAction, finishGame, setGameState] as const
 }

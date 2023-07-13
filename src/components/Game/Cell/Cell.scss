@@ -1,6 +1,7 @@
 @import "../../../styles/constants";
 
 .cell {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,23 +20,32 @@
     }
   }
 
-  &.player {
-    border: 4px solid;
+  .cell-player-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
 
-    &-red {
-      border-color: $player-red;
-    }
+    &.player {
+      border: 4px solid;
 
-    &-green {
-      border-color: $player-green;
-    }
+      &-red {
+        border-color: $player-red;
+      }
 
-    &-blue {
-      border-color: $player-blue;
-    }
+      &-green {
+        border-color: $player-green;
+      }
 
-    &-yellow {
-      border-color: $player-yellow;
+      &-blue {
+        border-color: $player-blue;
+      }
+
+      &-yellow {
+        border-color: $player-yellow;
+      }
     }
   }
 }

@@ -1,6 +1,24 @@
+@import "../../../styles/constants";
+
 .scoreboard {
   display: flex;
+  align-items: center;
   background-color: black;
-  color: white;
-  height: 3em;
+  color: $cell-uncovered-color;
+  height: 3.5rem;
+  text-align: center;
+
+  .stopwatch, .mines-counter {
+    flex-basis: 5em;
+  }
+
+  .player-scoreboard {
+    flex-grow: 1;
+  }
+
+  .separator {
+    width: 1px;
+    height: 70%;
+    background-color: $cell-uncovered-color;
+  }
 }

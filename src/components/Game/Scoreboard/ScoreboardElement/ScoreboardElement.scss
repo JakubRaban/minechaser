@@ -1,0 +1,42 @@
+@import "../../../../styles/constants";
+
+.scoreboard-element {
+  display: flex;
+  flex-direction: column;
+  padding-block: 0.125em;
+  position: relative;
+
+  &.red {
+    color: $player-red;
+  }
+
+  &.green {
+    color: $player-green;
+  }
+
+  &.blue {
+    color: $player-blue;
+  }
+
+  &.yellow {
+    color: $player-yellow;
+  }
+
+  .scoreboard-element-label {
+    font-size: 0.875em;
+    padding-block: 0.125em;
+  }
+
+  .scoreboard-element-content {
+    flex-grow: 1;
+    font-size: 1.75em;
+  }
+
+  .scoreboard-element-backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 40%;
+  }
+}

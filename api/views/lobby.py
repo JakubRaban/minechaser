@@ -1,4 +1,4 @@
-from services.games import queue
+from services.game import queue
 
 
 def join_queue(player_id):

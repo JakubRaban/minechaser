@@ -15,10 +15,12 @@ export const Cell: FC<CellProps> = ({ cell, playerColor }) => {
     const uncoveredMine = hasMine && isUncovered
 
     return (
-        <div className={cn('cell', toClassName(playerColor, 'player'), toClassName(flaggingPlayer, 'flag'), { uncovered: isUncovered, mine: uncoveredMine })}>
+        <div className={cn('cell', toClassName(flaggingPlayer, 'flag'), { uncovered: isUncovered, mine: uncoveredMine })}>
             {isUncovered && (
                 hasMine ? 'M' : (minesAround && minesAround > 0 ? minesAround : '')
             )}
+            {flaggingPlayer && 'F'}
+            <div className={cn('cell-player-overlay', toClassName(playerColor, 'player'))} />
         </div>
     )
 }

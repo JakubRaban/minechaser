@@ -1,10 +1,11 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useSocket } from '../../hooks/useSocket'
 import { GameStateResponse } from './GameWrapper/GameWrapper'
 import { useGameState } from '../../hooks/useGameState'
 import { Scoreboard } from './Scoreboard/Scoreboard'
 import { CellGrid } from './CellGrid/CellGrid'
 import { useParams } from 'react-router'
+import { ActionResult } from '../../types/model'
 
 import './Game.scss'
 
@@ -19,10 +20,51 @@ export const Game: FC<GameStateResponse> = ({ gameState, playerColor }) => {
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
         socket.emit('player_action', { gameId, actionType, direction })
     }
+
+    useEffect(() => {
+        const actionListener = (e: KeyboardEvent) => {
+            switch (e.code) {
+            case 'ArrowUp':
+                return handlePlayerAction('STEP', 'UP')
+            case 'ArrowDown':
+                return handlePlayerAction('STEP', 'DOWN')
+            case 'ArrowLeft':
+                return handlePlayerAction('STEP', 'LEFT')
+            case 'ArrowRight':
+                return handlePlayerAction('STEP', 'RIGHT')
+            case 'KeyW':
+                return handlePlayerAction('FLAG', 'UP')
+            case 'KeyS':
+                return handlePlayerAction('FLAG', 'DOWN')
+            case 'KeyA':
+                return handlePlayerAction('FLAG', 'LEFT')
+            case 'KeyD':
+                return handlePlayerAction('FLAG', 'RIGHT')
+            default:
+                return
+            }
+        }
+        document.addEventListener('keyup', actionListener)
+        return () => {
+            document.removeEventListener('keyup', actionListener)
+        }
+    }, [])
+
+    useEffect(() => {
+        socket.on('action_result', (actionResult?: ActionResult) => {
+            if (actionResult) {
+                resolveAction(actionResult)
+            }
+        })
+        return () => {
+            socket.off('action_result')
+        }
+    }, [])
     
     return (
         <div className="game-layout">
-            <Scoreboard players={props.players} minesLeft={props.minesLeft} />
+            <div>You play as {playerColor} start at {String(props.start)}</div>
+            <Scoreboard players={props.players} minesLeft={props.minesLeft} gameStart={props.start} />
             <CellGrid dims={props.dims} cells={props.cells} players={props.players} />
             {/*<SteeringBoard onPlayerAction={handlePlayerAction} />*/}
         </div>

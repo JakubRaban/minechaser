@@ -35,7 +35,7 @@ class Board:
         def assign_number_of_mines_around_and_check_board_correct() -> bool:
             for coords, cell in self.cells.items():
                 cell.mines_around = reduce(operator.add, [c.has_mine for c in self.get_adjacent_cells(coords).values()])
-                if cell.has_mine and cell.mines_around == 8:
+                if cell.mines_around == 8:
                     return False
             return True
 

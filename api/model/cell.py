@@ -12,6 +12,7 @@ class Cell:
         self.is_uncovered = False
         self.flagging_player: Optional[PlayerColor] = None
         self.bonus = None  # TODO - correct type
+        self.hide_pristine = True
 
     @property
     def pristine(self):
@@ -22,6 +23,10 @@ class Cell:
             k: v
             for k, v
             in self.__dict__.items()
-            if k not in (['has_mine', 'mines_around'] if self.pristine else [])
+            if k not in (
+                ['has_mine', 'mines_around']
+                if self.pristine and self.hide_pristine
+                else []
+            )
             and v is not None
         }

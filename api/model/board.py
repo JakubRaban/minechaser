@@ -24,6 +24,7 @@ class Board:
         self.dims = self.board_def.dims
         self.cells: Dict[Position, Cell] = {}
         self.mines_left = self.board_def.mines
+        self.hide_pristine_cells = True
         for cell_position in product(range(self.dims[0]), range(self.dims[1])):
             self.cells[cell_position] = Cell(cell_position)
 
@@ -99,9 +100,19 @@ class Board:
         ]
         return {coords: self.cells[coords] for coords in adjacent_coords if coords in self.cells}
 
+    def show_pristine_cells(self):
+        self.hide_pristine_cells = False
+        for cell in self.cells.values():
+            cell.hide_pristine = False
+
     def __getstate__(self):
-        state = {k: v for k, v in self.__dict__.items() if k not in ['board_def', 'cells']}
-        state['cells'] = {coords: cell for coords, cell in self.cells.items() if not cell.pristine}
+        state = {k: v for k, v in self.__dict__.items() if k not in ['board_def', 'cells', 'hide_pristine_cells']}
+        state['cells'] = {
+            coords: cell
+            for coords, cell
+            in self.cells.items()
+            if (not cell.pristine if self.hide_pristine_cells else True)
+        }
         return state
 
 

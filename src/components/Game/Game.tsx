@@ -59,6 +59,7 @@ export const Game: FC<GameStateResponse> = ({ gameState, playerColor }) => {
             }
         })
         socket.on('game_finished', (gameState: GameState) => {
+            debugger
             setGameState(gameState)
         })
         return () => {

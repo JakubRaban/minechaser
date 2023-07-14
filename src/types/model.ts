@@ -27,6 +27,7 @@ export interface Cell {
     flaggingPlayer?: PlayerColor
     isUncovered: boolean
     bonus: null
+    hidePristine: boolean
 }
 
 export interface Player {

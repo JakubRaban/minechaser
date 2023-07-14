@@ -83,23 +83,25 @@ class GameProxy:
         if self._allow_action(player_id):
             player_color = self.player_id_mapping[player_id]
             result = self.game.step(player_color, direction)
-            for event in result.events:
-                if isinstance(event, MineCellStepped) and self._all_players_dead():
-                    self._finish_game()
-                    return
-            return result
+            if result:
+                for event in result.events:
+                    if isinstance(event, MineCellStepped) and self._all_players_dead():
+                        self._finish_game()
+                        return
+                return result
 
     def flag(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):
             player_color = self.player_id_mapping[player_id]
             result = self.game.flag(player_color, direction)
-            for event in result.events:
-                if isinstance(event, NoMinesLeft):
-                    self._finish_game()
-                    return
-                if isinstance(event, MineCellFlagged):
-                    self._reschedule_end_game()
-            return result
+            if result:
+                for event in result.events:
+                    if isinstance(event, NoMinesLeft):
+                        self._finish_game()
+                        return
+                    if isinstance(event, MineCellFlagged):
+                        self._reschedule_end_game()
+                return result
 
     def _allow_action(self, player_id: str):
         return player_id in self.player_id_mapping and self.is_started() and not self.is_finished()
@@ -114,6 +116,7 @@ class GameProxy:
 
     def _finish_game(self):
         self.end_timestamp = datetime.now()
+        self.game.board.show_pristine_cells()
         self.on_game_finished(self)
 
     def __del__(self):

@@ -41,3 +41,13 @@ export interface ActionResult {
     cells: Cell[],
     minesLeft?: number
 }
+
+export interface GameDef {
+    start: Date
+    end: Date | null
+    players: Players
+    dims: Position
+    minesLeft: number
+    cells: Cells
+    isFinished: boolean
+}

@@ -7,13 +7,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from model import Direction
 from model.game import GameProxy, ActionType
 from queue_ import Queue
-from responses.game import end_game
+from responses.game import finish_game
 from responses.lobby import create_public_game
 
 
 def create_game(player_ids: List[str]):
     game_id = _generate_game_id()
-    games[game_id] = GameProxy(player_ids, on_game_finished=lambda game_proxy: end_game(game_proxy, game_id))
+    games[game_id] = GameProxy(player_ids, on_game_finished=lambda game_proxy: finish_game(game_proxy, game_id))
     create_public_game(games[game_id], game_id, player_ids)
 
 

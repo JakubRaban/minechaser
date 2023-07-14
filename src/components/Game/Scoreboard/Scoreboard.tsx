@@ -10,15 +10,16 @@ interface ScoreboardProps {
     minesLeft: number
     players: Players
     gameStart: Date
+    isFinished: boolean
 }
 
-export const Scoreboard: FC<ScoreboardProps> = ({ minesLeft, players, gameStart }) => {
+export const Scoreboard: FC<ScoreboardProps> = ({ minesLeft, players, gameStart, isFinished }) => {
     const playerEntries = Object.entries(players) as [PlayerColor, Player][]
 
     return (
         <div className="scoreboard">
             <ScoreboardElement label="time" className="stopwatch">
-                <Stopwatch timestampAtZero={gameStart} />
+                <Stopwatch timestampAtZero={gameStart} isActive={!isFinished} />
             </ScoreboardElement>
             <div className="separator" />
             {playerEntries.map(([color, player], i) => (

@@ -84,8 +84,9 @@ class GameProxy:
             player_color = self.player_id_mapping[player_id]
             result = self.game.step(player_color, direction)
             for event in result.events:
-                if isinstance(event, MineCellStepped):
-                    self._finish_if_all_players_dead()
+                if isinstance(event, MineCellStepped) and self._all_players_dead():
+                    self._finish_game()
+                    return
             return result
 
     def flag(self, player_id: str, direction: Direction):
@@ -95,6 +96,7 @@ class GameProxy:
             for event in result.events:
                 if isinstance(event, NoMinesLeft):
                     self._finish_game()
+                    return
                 if isinstance(event, MineCellFlagged):
                     self._reschedule_end_game()
             return result
@@ -107,9 +109,8 @@ class GameProxy:
             'end_game', trigger='date', run_date=datetime.now() + timedelta(minutes=15)
         )
 
-    def _finish_if_all_players_dead(self):
-        if all(not player.alive for player in self.game.players.values()):
-            self._finish_game()
+    def _all_players_dead(self):
+        return all(not player.alive for player in self.game.players.values())
 
     def _finish_game(self):
         self.end_timestamp = datetime.now()

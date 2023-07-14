@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ActionResult, GameState } from '../types/model'
+import { ActionResult, GameDef, GameState } from '../types/model'
 import { toPositionString } from '../helpers'
 
 export const useGameState = (initialState: GameState) => {
@@ -28,7 +28,6 @@ export const useGameState = (initialState: GameState) => {
         }))
     }
 
-    const finishGame = () => setGameState((prev) => ({ ...prev, isFinished: true }))
-
-    return [{ start, end, players, dims, minesLeft, cells, isFinished }, resolveAction, finishGame, setGameState] as const
+    const props: GameDef = { start, end, players, dims, minesLeft, cells, isFinished }
+    return [props, resolveAction, setGameState] as const
 }

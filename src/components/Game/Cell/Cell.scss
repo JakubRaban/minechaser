@@ -10,6 +10,7 @@
   height: 100%;
   aspect-ratio: 1;
   font-size: 20px;
+  font-weight: 600;
   background-color: $cell-normal-color;
 
   &.uncovered {
@@ -18,6 +19,16 @@
     &.mine {
       background-color: $cell-uncovered-mine-color;
     }
+  }
+
+  &.mines- {
+    &1 { color: $number-1-color; }
+    &2 { color: $number-2-color; }
+    &3 { color: $number-3-color; }
+    &4 { color: $number-4-color; }
+    &5 { color: $number-5-color; }
+    &6 { color: $number-6-color; }
+    &7 { color: $number-7-color; }
   }
 
   .cell-player-overlay {

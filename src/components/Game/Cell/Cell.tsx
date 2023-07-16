@@ -13,7 +13,10 @@ interface CellProps {
 export const Cell: FC<CellProps> = ({ cell, playerColor }) => {
     const { hasMine, minesAround, flaggingPlayer, isUncovered, hidePristine } = cell ?? {}
     const uncoveredMine = hasMine && isUncovered
-    const className = cn('cell', { ...toClassName(flaggingPlayer, 'flag'), uncovered: isUncovered, mine: uncoveredMine })
+    const className = cn(
+        'cell',
+        { ...toClassName(flaggingPlayer, 'flag'), [`mines-${minesAround}`]: !!minesAround && !hasMine, uncovered: isUncovered, mine: uncoveredMine },
+    )
 
     if (!hidePristine && hasMine && !flaggingPlayer && !isUncovered) {
         return (

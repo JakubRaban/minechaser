@@ -31,9 +31,9 @@
     &7 { color: $number-7-color; }
   }
 
-  .flag-icon {
-    width: 100%;
-    height: 100%;
+  .mine-icon, .flag-icon {
+    width: 90%;
+    height: 90%;
   }
 
   .cell-player-overlay {

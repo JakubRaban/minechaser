@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { Cell as CellType, PlayerColor } from '../../../types/model'
 import cn from 'classnames'
 import { playerColorToClassName as toClassName } from '../../../helpers'
+import { FlagIcon } from '../../../icons/Flag/FlagIcon'
 
 import './Cell.scss'
 
@@ -21,7 +22,7 @@ export const Cell: FC<CellProps> = ({ cell, playerColor }) => {
     if (!hidePristine && hasMine && !flaggingPlayer && !isUncovered) {
         return (
             <div className={className}>
-                |M|
+                <FlagIcon />
             </div>
         )
     }
@@ -31,7 +32,7 @@ export const Cell: FC<CellProps> = ({ cell, playerColor }) => {
             {isUncovered && (
                 hasMine ? 'M' : (minesAround && minesAround > 0 ? minesAround : '')
             )}
-            {flaggingPlayer && 'F'}
+            {flaggingPlayer && <FlagIcon fill={flaggingPlayer} />}
             <div className={cn('cell-player-overlay', toClassName(playerColor, 'player'))} />
         </div>
     )

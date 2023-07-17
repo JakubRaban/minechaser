@@ -1,23 +1,23 @@
 @font-face {
     font-family: 'kanit';
-    src: url('../../public/kanit-regular-webfont.woff2') format('woff2'),
-         url('../../public/kanit-regular-webfont.woff') format('woff');
+    src: url('../../public/fonts/kanit-regular-webfont.woff2') format('woff2'),
+         url('../../public/fonts/kanit-regular-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'kanit';
-    src: url('../../public/kanit-semibold-webfont.woff2') format('woff2'),
-         url('../../public/kanit-semibold-webfont.woff') format('woff');
+    src: url('../../public/fonts/kanit-semibold-webfont.woff2') format('woff2'),
+         url('../../public/fonts/kanit-semibold-webfont.woff') format('woff');
     font-weight: 600;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'kanit';
-    src: url('../../public/kanit-bold-webfont.woff2') format('woff2'),
-         url('../../public/kanit-bold-webfont.woff') format('woff');
+    src: url('../../public/fonts/kanit-bold-webfont.woff2') format('woff2'),
+         url('../../public/fonts/kanit-bold-webfont.woff') format('woff');
     font-weight: bold;
     font-style: normal;
 }

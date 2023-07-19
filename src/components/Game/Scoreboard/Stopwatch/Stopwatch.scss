@@ -1,0 +1,14 @@
+@import "../../../../styles/constants";
+
+.stopwatch-wrapper {
+  .end-game-timer {
+    color: $cell-uncovered-mine-color;
+    margin-right: 0.25em;
+  }
+
+  .stopwatch-value {
+    &:not(:first-child) {
+      font-size: 0.5em;
+    }
+  }
+}

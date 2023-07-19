@@ -5,7 +5,7 @@ import { useGameState } from '../../hooks/useGameState'
 import { Scoreboard } from './Scoreboard/Scoreboard'
 import { CellGrid } from './CellGrid/CellGrid'
 import { useParams } from 'react-router'
-import { ActionResult, GameState } from '../../types/model'
+import { ActionResult, RawGameState } from '../../types/model'
 import { GameSummary } from '../GameSummary/GameSummary'
 
 import './Game.scss'
@@ -58,8 +58,7 @@ export const Game: FC<GameStateResponse> = ({ gameState, playerColor }) => {
                 resolveAction(actionResult)
             }
         })
-        socket.on('game_finished', (gameState: GameState) => {
-            debugger
+        socket.on('game_finished', (gameState: RawGameState) => {
             setGameState(gameState)
         })
         return () => {
@@ -87,7 +86,13 @@ export const Game: FC<GameStateResponse> = ({ gameState, playerColor }) => {
     return (
         <div className="game-layout">
             <div>You play as {playerColor} start at {String(props.start)}</div>
-            <Scoreboard players={props.players} minesLeft={props.minesLeft} gameStart={props.start} isFinished={props.isFinished} />
+            <Scoreboard
+                players={props.players}
+                minesLeft={props.minesLeft}
+                gameStart={props.start}
+                endScheduled={props.endScheduled}
+                isFinished={props.isFinished}
+            />
             <CellGrid dims={props.dims} cells={props.cells} players={props.players} />
             {/*<SteeringBoard onPlayerAction={handlePlayerAction} />*/}
         </div>

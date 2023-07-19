@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 from typing import List, Dict, Optional
@@ -15,17 +14,21 @@ class ActionType(Enum):
     FLAG = 'flag'
 
 
-@dataclass
 class ActionResult:
-    players: Dict[PlayerColor, Player]
-    events: List[GameEvent]
-    mines_left: Optional[int] = None
+    def __init__(self, players: Dict[PlayerColor, Player], events: List[GameEvent], mines_left: Optional[int] = None):
+        self.players = players
+        self.events = events
+        self.mines_left = mines_left
+        self.end_game_scheduled_timestamp = datetime.now() + timedelta(minutes=1) \
+            if any(isinstance(event, MineCellFlagged) for event in events) \
+            else None
 
     def __getstate__(self):
         return {
             'players': {color.name: player for color, player in self.players.items()},
             'cells': [event.cell for event in self.events],
-            'minesLeft': self.mines_left
+            'minesLeft': self.mines_left,
+            'endGameScheduledTimestamp': self.end_game_scheduled_timestamp
         }
 
 
@@ -45,7 +48,7 @@ class Game:
                 events = self.board.step(new_position)
                 player.position = new_position
                 player.process_events(events)
-                return ActionResult(self.players[player_color, ], events)
+                return ActionResult(self.players[player_color, ], events, self.board.mines_left)
             return ActionResult(self.players[player_color, ], [])
 
     def flag(self, player_color: PlayerColor, direction: Direction) -> ActionResult:
@@ -61,17 +64,12 @@ class Game:
 
 class GameProxy:
     def __init__(self, player_ids: List[str], on_game_finished: callable):
-        players_count = len(player_ids)
-        self.game = Game(standard_defs['expert'], players_count)
+        self.game = Game(standard_defs['expert'], len(player_ids))
         self.player_id_mapping = dict(zip(player_ids, self.game.players.colors()))
         self.start_timestamp = datetime.now() + timedelta(seconds=6)
         self.end_timestamp = None
         self.on_game_finished = on_game_finished
-        self.scheduler = BackgroundScheduler()
-        self.scheduler.start()
-        self.finish_game_job = self.scheduler.add_job(
-            self._finish_game, 'date', id='end_game', run_date=datetime.now() + timedelta(minutes=15), args=[]
-        )
+        self.end_game_scheduler = EndGameScheduler(self._finish_game)
 
     def is_started(self):
         return datetime.now() >= self.start_timestamp
@@ -100,16 +98,11 @@ class GameProxy:
                         self._finish_game()
                         return
                     if isinstance(event, MineCellFlagged):
-                        self._reschedule_end_game()
+                        self.end_game_scheduler.postpone_end(result.end_game_scheduled_timestamp)
                 return result
 
     def _allow_action(self, player_id: str):
         return player_id in self.player_id_mapping and self.is_started() and not self.is_finished()
-
-    def _reschedule_end_game(self):
-        self.finish_game_job = self.scheduler.reschedule_job(
-            'end_game', trigger='date', run_date=datetime.now() + timedelta(minutes=15)
-        )
 
     def _all_players_dead(self):
         return all(not player.alive for player in self.game.players.values())
@@ -119,8 +112,25 @@ class GameProxy:
         self.game.board.show_pristine_cells()
         self.on_game_finished(self)
 
+    def __getstate__(self):
+        base_state = {k: v for k, v in self.__dict__.items() if k in ['game', 'start_timestamp', 'end_timestamp']}
+        return {**base_state, 'endGameScheduledTimestamp': self.end_game_scheduler.end_game_scheduled_timestamp}
+
+
+class EndGameScheduler:
+    def __init__(self, on_game_finished: callable):
+        self.scheduler = BackgroundScheduler()
+        self.scheduler.start()
+        self.finish_game_job = self.scheduler.add_job(
+            on_game_finished, 'date', id='end_game', run_date=datetime.now() + timedelta(minutes=15), args=[]
+        )
+        self.end_game_scheduled_timestamp = None
+
+    def postpone_end(self, end_game_scheduled_timestamp: datetime):
+        self.end_game_scheduled_timestamp = end_game_scheduled_timestamp
+        self.finish_game_job = self.scheduler.reschedule_job(
+            'end_game', trigger='date', run_date=end_game_scheduled_timestamp
+        )
+
     def __del__(self):
         self.scheduler.shutdown()
-
-    def __getstate__(self):
-        return {k: v for k, v in self.__dict__.items() if k in ['game', 'start_timestamp', 'end_timestamp']}

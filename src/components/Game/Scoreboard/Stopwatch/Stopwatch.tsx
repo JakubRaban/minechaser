@@ -1,23 +1,28 @@
 import { FC, useEffect, useState } from 'react'
 
+import './Stopwatch.scss'
+
 interface StopwatchProps {
     timestampAtZero: Date
+    endScheduled: Date | null
     isActive: boolean
 }
 
-export const Stopwatch: FC<StopwatchProps> = ({ timestampAtZero, isActive }) => {
-    const [value, setValue] = useState(0)
+export const Stopwatch: FC<StopwatchProps> = ({ timestampAtZero, endScheduled, isActive }) => {
+    const [stopwatchValue, setStopwatchValue] = useState(0)
+    const [endGameTimer, setEndGameTimer] = useState<number | null>(null)
     let interval: NodeJS.Timeout
 
     useEffect(() => {
         if (isActive) {
             interval = setInterval(() => {
-                setValue(
-                    Math.max(
-                        0,
-                        Math.floor((new Date().getTime() - timestampAtZero.getTime()) / 1000),
-                    ),
+                setStopwatchValue(
+                    Math.max(0, Math.floor((new Date().getTime() - timestampAtZero.getTime()) / 1000)),
                 )
+                if (endScheduled) {
+                    const timeToEnd = Math.max(0, Math.floor((endScheduled.getTime() - new Date().getTime()) / 1000))
+                    setEndGameTimer(timeToEnd <= 20 ? timeToEnd : null)
+                }
             }, 200)
         } else {
             clearInterval(interval)
@@ -25,7 +30,12 @@ export const Stopwatch: FC<StopwatchProps> = ({ timestampAtZero, isActive }) => 
         return () => {
             clearInterval(interval)
         }
-    }, [isActive])
+    }, [isActive, endScheduled])
 
-    return <>{value}</>
+    return (
+        <div className="stopwatch-wrapper">
+            {endGameTimer !== null && <span className="end-game-timer">{endGameTimer}</span>}
+            <span className="stopwatch-value">{stopwatchValue}</span>
+        </div>
+    )
 }

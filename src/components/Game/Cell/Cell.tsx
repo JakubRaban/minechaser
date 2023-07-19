@@ -3,9 +3,9 @@ import { Cell as CellType, PlayerColor } from '../../../types/model'
 import cn from 'classnames'
 import { playerColorToClassName as toClassName } from '../../../helpers'
 import { FlagIcon } from '../../../icons/Flag/FlagIcon'
+import { MineIcon } from '../../../icons/Mine/MineIcon'
 
 import './Cell.scss'
-import { MineIcon } from '../../../icons/Mine/MineIcon'
 
 interface CellProps {
     cell?: CellType
@@ -30,11 +30,13 @@ export const Cell: FC<CellProps> = ({ cell, playerColor }) => {
 
     return (
         <div className={className}>
-            {isUncovered && (
-                hasMine ? <MineIcon /> : (minesAround && minesAround > 0 ? minesAround : '')
-            )}
-            {flaggingPlayer && <FlagIcon fill={flaggingPlayer} />}
-            <div className={cn('cell-player-overlay', toClassName(playerColor, 'player'))} />
+            <div className="cell-content">
+                {isUncovered && (
+                    hasMine ? <MineIcon /> : (minesAround && minesAround > 0 ? minesAround : '')
+                )}
+                {flaggingPlayer && <FlagIcon fill={flaggingPlayer} />}
+                <div className={cn('cell-player-overlay', toClassName(playerColor, 'player'))} />
+            </div>
         </div>
     )
 }

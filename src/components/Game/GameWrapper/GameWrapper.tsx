@@ -2,10 +2,10 @@ import { FC, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { useSocket } from '../../../hooks/useSocket'
 import { Game } from '../Game'
-import { GameState, PlayerColor } from '../../../types/model'
+import { RawGameState, PlayerColor } from '../../../types/model'
 
 export interface GameStateResponse {
-    gameState: GameState
+    gameState: RawGameState
     playerColor: PlayerColor
 }
 

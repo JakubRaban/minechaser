@@ -3,10 +3,17 @@ export type Players = Partial<Record<PlayerColor, Player>>
 export type Cells = Record<string, Cell>
 export type PlayerColor = 'RED' | 'GREEN' | 'BLUE' | 'YELLOW'
 
-export interface GameState {
+export interface RawGameState {
     game: Game
     startTimestamp: string
     endTimestamp: string | null
+    endGameScheduledTimestamp: string | null
+}
+
+export type GameState = Omit<RawGameState, 'startTimestamp' | 'endTimestamp' | 'endGameScheduledTimestamp'> & {
+    start: Date
+    end: Date | null
+    endScheduled: Date | null
 }
 
 export interface Game {
@@ -40,12 +47,14 @@ export interface Player {
 export interface ActionResult {
     players: Players
     cells: Cell[],
-    minesLeft?: number
+    minesLeft: number | null
+    endGameScheduledTimestamp: string | null
 }
 
 export interface GameDef {
     start: Date
     end: Date | null
+    endScheduled: Date | null
     players: Players
     dims: Position
     minesLeft: number

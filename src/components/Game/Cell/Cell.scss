@@ -12,6 +12,8 @@
   font-size: 20px;
   font-weight: 600;
   background-color: $cell-normal-color;
+  container: cell-container / size;
+  line-height: 0.75em;
 
   &.uncovered {
     background-color: $cell-uncovered-color;
@@ -34,6 +36,11 @@
   .mine-icon, .flag-icon {
     width: 90%;
     height: 90%;
+  }
+
+  .cell-content {
+    font-size: 85cqh;
+    margin-top: 0.0625em;
   }
 
   .cell-player-overlay {

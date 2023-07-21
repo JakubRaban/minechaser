@@ -30,10 +30,9 @@ export const Cell: FC<CellProps> = ({ cell, playerColor }) => {
 
     return (
         <div className={className}>
+            {isUncovered && hasMine && <MineIcon />}
             <div className="cell-content">
-                {isUncovered && (
-                    hasMine ? <MineIcon /> : (minesAround && minesAround > 0 ? minesAround : '')
-                )}
+                {isUncovered && !hasMine && (minesAround && minesAround > 0 ? minesAround : '')}
                 {flaggingPlayer && <FlagIcon fill={flaggingPlayer} />}
                 <div className={cn('cell-player-overlay', toClassName(playerColor, 'player'))} />
             </div>

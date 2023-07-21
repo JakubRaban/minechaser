@@ -31,6 +31,7 @@ class Player:
     def __init__(self, starting_position: Position):
         self.position = starting_position
         self.score = 0
+        self.mistakes = 0
         self.bonus = None
         self.inventory = []
         self.effects = []
@@ -42,8 +43,11 @@ class Player:
 
     def process_events(self, events: List[GameEvent]):
         for event in events:
-            if event.points_change:
+            if event.points_change > 0:
                 self.score += event.points_change
+            if event.points_change < 0:
+                self.mistakes += 1
+                self.score += event.points_change * self.mistakes
             if event.kill:
                 self.alive = False
                 break

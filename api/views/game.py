@@ -17,4 +17,7 @@ def player_action(player_id: str, data: dict):
 
 def get_game_state(player_id, data: dict):
     game = games[data['gameId']]
-    return {'gameState': game, 'playerColor': game.player_id_mapping[player_id]}
+    if player_id in game.player_id_mapping:
+        return {'gameState': game, 'playerColor': game.player_id_mapping[player_id]}
+    else:
+        return {'gameState': None, 'playerColor': None}

@@ -16,17 +16,24 @@ export const GameWrapper: FC<MaybeGameStateResponse> = ({ gameState: gameStatePr
     const { gameId } = useParams()
     const [gameState, setGameState] = useState(gameStateProp)
     const [playerColor, setPlayerColor] = useState(playerColorProp)
+    const [notAPlayer, setNotAPlayer] = useState(false)
     
     useEffect(() => {
         if (!gameState) {
-            socket.emit('get_game_state', { gameId }, ({ gameState, playerColor }: GameStateResponse) => {
-                setGameState(gameState)
-                setPlayerColor(playerColor)
+            socket.emit('get_game_state', { gameId }, ({ gameState, playerColor }: MaybeGameStateResponse) => {
+                if (gameState && playerColor) {
+                    setGameState(gameState)
+                    setPlayerColor(playerColor)
+                } else {
+                    setNotAPlayer(true)
+                }
             })
         }
     }, [])
-    
-    if (gameState && playerColor) {
+
+    if (notAPlayer) {
+        return <div>You are not a player in this game</div>
+    } else if (gameState && playerColor) {
         return <Game gameState={gameState} playerColor={playerColor} />
     } else {
         return <div>Loading game {gameId}...</div>

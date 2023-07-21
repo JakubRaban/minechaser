@@ -1,6 +1,6 @@
 from inspect import getmembers, isfunction
 
-from socketsetup import sio, with_player_id
+from socketsetup import with_player_id
 
 from .lobby import *
 from .game import *

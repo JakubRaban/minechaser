@@ -1,7 +1,9 @@
+from gevent import pywsgi, monkey
+monkey.patch_all()
+
 from flask import Flask
 import socketio
 
-from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
 
 from socketsetup import sio

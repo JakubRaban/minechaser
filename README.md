@@ -1,13 +1,9 @@
 # Real Minesweeper
 
-## Main menu appearance
-- Options: Quick Game + Board Size Choice, Play With Friends, How To Play
-- Image: some kind of graphics showing part of the gameplay
+Running backend: app.py
 
-There must be an options panel before joining the game, so that the player is 
-able to invert controls and maybe some other stuff
+Running frontend: npm start
 
-## Architecture
-### Backend
-- Global object storing state of all games (single instance of a class)
-- 
+Test public games: set a name and click "join public game" in two browser tabs
+
+Test private games: set a name and click "create private game". in other browser tab, join directly using the link to the game

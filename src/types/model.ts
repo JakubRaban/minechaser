@@ -2,6 +2,7 @@ export type Position = [number, number]
 export type Players = Partial<Record<PlayerColor, Player>>
 export type Cells = Record<string, Cell>
 export type PlayerColor = 'RED' | 'GREEN' | 'BLUE' | 'YELLOW'
+export type PlayerColorMapping = Partial<Record<PlayerColor, string>>
 
 export interface RawGameState {
     game: Game

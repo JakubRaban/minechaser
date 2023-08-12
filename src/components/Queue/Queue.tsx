@@ -9,15 +9,15 @@ export const Queue: FC = () => {
     
     useEffect(() => {
         socket.emit('join_queue')
-        socket.on('game_joined', ({ gameId, gameState, playerColor }) => {
+        socket.on('public_game_started', ({ gameId, gameState, playerColor, colorMapping }) => {
             joinedSuccessfully = true
-            navigate(`/game/${gameId}`, { state: { gameState, playerColor } })
+            navigate(`/game/${gameId}`, { state: { gameState, playerColor, colorMapping } })
         })
         return () => {
             if (!joinedSuccessfully) {
                 socket.emit('leave_queue')
             }
-            socket.off('game_joined')
+            socket.off('public_game_started')
         }
     }, [])
     

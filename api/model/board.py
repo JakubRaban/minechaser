@@ -1,8 +1,8 @@
 import operator
 from functools import reduce
-from itertools import product, chain
+from itertools import product
 from random import sample
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from helpers import sum_positions
 from model.cell import Cell
@@ -14,8 +14,11 @@ from types_ import Position, Dimensions
 @dataclass
 class BoardDef:
     dims: Dimensions
-    mines: int
     mine_free_area_size: int
+
+    @property
+    def mine_area_size(self) -> int:
+        return self.dims[0] * self.dims[1] - 4 * self.mine_free_area_size ** 2
 
 
 class Board:
@@ -23,14 +26,14 @@ class Board:
         self.board_def = board_def
         self.dims = self.board_def.dims
         self.cells: Dict[Position, Cell] = {}
-        self.mines_left = self.board_def.mines
+        self.mines_left = int(self.board_def.mine_area_size * 0.2)
         self.hide_pristine_cells = True
         for cell_position in product(range(self.dims[0]), range(self.dims[1])):
             self.cells[cell_position] = Cell(cell_position)
 
         def place_mines():
             cells_with_possible_mine = [cell for pos, cell in self.cells.items() if pos not in self.mine_free_area]
-            for cell in sample(cells_with_possible_mine, self.board_def.mines):
+            for cell in sample(cells_with_possible_mine, self.mines_left):
                 cell.has_mine = True
 
         def assign_number_of_mines_around_and_check_board_correct() -> bool:
@@ -117,7 +120,7 @@ class Board:
 
 
 standard_defs = {
-    'beginner': BoardDef((10, 10), 10, 2),
-    'intermediate': BoardDef((16, 16), 40, 2),
-    'expert': BoardDef((16, 30), 99, 3),
+    'beginner': BoardDef((10, 10), 2),
+    'intermediate': BoardDef((16, 16), 2),
+    'expert': BoardDef((16, 30), 3),
 }

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Cells, PlayerColor, Players, Position } from '../../../types/model'
+import { Cells, PlayerColor, PlayerColorMapping, Players, Position } from '../../../types/model'
 import { toPositionString } from '../../../helpers'
 import { Cell } from '../Cell/Cell'
 

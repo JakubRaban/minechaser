@@ -6,7 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from model.events import GameEvent, MineCellFlagged, NoMinesLeft, MineCellStepped
 from model.player import Players, PlayerColor, Direction, Player
-from model.board import Board, BoardDef, standard_defs
+from model.board import Board, BoardDef
 
 
 class ActionType(Enum):
@@ -63,19 +63,37 @@ class Game:
 
 
 class GameProxy:
-    def __init__(self, player_ids: List[str], on_game_finished: callable):
-        self.game = Game(standard_defs['expert'], len(player_ids))
-        self.player_id_mapping = dict(zip(player_ids, self.game.players.colors()))
-        self.start_timestamp = datetime.now() + timedelta(seconds=6)
+    def __init__(self, player_ids: List[str], board_def: BoardDef, on_game_finished: callable, autostart: bool):
+        self.game = Game(board_def, len(player_ids)) if autostart else None
+        self.start_timestamp = datetime.now() + timedelta(seconds=5 if len(player_ids) > 1 else 0) if autostart else None
+        self.player_id_mapping = dict(zip(player_ids, self.game.players.colors())) if autostart else None
+        self.player_ids = player_ids
         self.end_timestamp = None
         self.on_game_finished = on_game_finished
         self.end_game_scheduler = EndGameScheduler(self._finish_game)
 
+    def add_player(self, player_id: str):
+        if player_id not in self.player_ids and not self.is_starting():
+            self.player_ids.append(player_id)
+
+    def remove_player(self, player_id: str):
+        if player_id in self.player_ids and not self.is_starting():
+            self.player_ids.remove(player_id)
+
+    def start_game(self, board_def: BoardDef):
+        if not self.game:
+            self.start_timestamp = datetime.now() + timedelta(seconds=5)
+            self.game = Game(board_def, len(self.player_ids))
+            self.player_id_mapping = dict(zip(self.player_ids, self.game.players.colors()))
+
+    def is_starting(self):
+        return self.start_timestamp is not None
+
     def is_started(self):
-        return datetime.now() >= self.start_timestamp
+        return self.start_timestamp and datetime.now() >= self.start_timestamp
 
     def is_finished(self):
-        return bool(self.end_timestamp)
+        return self.end_timestamp is not None
 
     def step(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):

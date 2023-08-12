@@ -13,7 +13,7 @@ import './Game.scss'
 export type ActionType = 'STEP' | 'FLAG'
 export type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
 
-export const Game: FC<GameStateResponse> = ({ gameState, playerColor }) => {
+export const Game: FC<GameStateResponse> = ({ gameState, playerColor, colorMapping }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
     const [props, resolveAction, setGameState] = useGameState(gameState)
@@ -47,9 +47,7 @@ export const Game: FC<GameStateResponse> = ({ gameState, playerColor }) => {
             }
         }
         document.addEventListener('keyup', actionListener)
-        return () => {
-            document.removeEventListener('keyup', actionListener)
-        }
+        return () => document.removeEventListener('keyup', actionListener)
     }, [])
 
     useEffect(() => {
@@ -88,6 +86,7 @@ export const Game: FC<GameStateResponse> = ({ gameState, playerColor }) => {
             <div>You play as {playerColor} start at {String(props.start)}</div>
             <Scoreboard
                 players={props.players}
+                colorMapping={colorMapping}
                 minesLeft={props.minesLeft}
                 gameStart={props.start}
                 endScheduled={props.endScheduled}

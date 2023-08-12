@@ -6,6 +6,7 @@ import { HowToPlay } from './HowToPlay/HowToPlay'
 import { useSocket } from '../hooks/useSocket'
 import { GameWrapper } from './Game/GameWrapper/GameWrapper'
 import { AuthenticationGuard } from './AuthenticationGuard'
+import { PrivateGameLoading } from './PrivateGameLoading/PrivateGameLoading'
 
 const storage = process.env.NODE_ENV === 'development' ? sessionStorage : localStorage
 
@@ -34,6 +35,11 @@ export const AppRouter: FC = () => {
                 <Route path="/queue" element={
                     <AuthenticationGuard authenticated={authenticated}>
                         <Queue />
+                    </AuthenticationGuard>
+                } />
+                <Route path="/new-game" element={
+                    <AuthenticationGuard authenticated={authenticated}>
+                        <PrivateGameLoading />
                     </AuthenticationGuard>
                 } />
                 <Route path="/game/:gameId" element={

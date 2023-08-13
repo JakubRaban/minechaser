@@ -126,8 +126,9 @@ class GameProxy:
         return all(not player.alive for player in self.game.players.values())
 
     def _finish_game(self):
+        if self.game is not None:
+            self.game.board.show_pristine_cells()
         self.end_timestamp = datetime.now()
-        self.game.board.show_pristine_cells()
         self.on_game_finished(self)
 
     def __getstate__(self):
@@ -140,7 +141,7 @@ class EndGameScheduler:
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
         self.finish_game_job = self.scheduler.add_job(
-            on_game_finished, 'date', id='end_game', run_date=datetime.now() + timedelta(minutes=15), args=[]
+            on_game_finished, 'date', id='end_game', run_date=datetime.now() + timedelta(hours=1), args=[]
         )
         self.end_game_scheduled_timestamp = None
 

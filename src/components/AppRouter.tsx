@@ -39,7 +39,12 @@ export const AppRouter: FC = () => {
                 } />
                 <Route path="/new-game" element={
                     <AuthenticationGuard authenticated={authenticated}>
-                        <PrivateGameLoading />
+                        <PrivateGameLoading singlePlayer={false} />
+                    </AuthenticationGuard>
+                } />
+                <Route path="/new-game/single-player" element={
+                    <AuthenticationGuard authenticated={authenticated}>
+                        <PrivateGameLoading singlePlayer={true} />
                     </AuthenticationGuard>
                 } />
                 <Route path="/game/:gameId" element={

@@ -57,3 +57,14 @@ class LobbyResponses:
                 game_state(game, player_id),
                 room=socket_id
             )
+
+    @staticmethod
+    def start_single_player_game(game: GameProxy, game_id: str, player_id: str):
+        print(f"Response: Starting single player game {game_id}")
+        socket_id = socket_id_to_player_id.inverse[player_id]
+        sio.enter_room(socket_id, game_id)
+        sio.emit(
+            'single_player_game_started',
+            {'gameId': game_id, **game_state(game, player_id)},
+            room=socket_id
+        )

@@ -7,6 +7,7 @@ export const LandingPage: FC = () => {
         <>
             <div><Link to="/queue">Join a public game</Link></div>
             <div><Link to="/new-game">Create a private game</Link></div>
+            <div><Link to="/new-game/single-player">Single Player</Link></div>
             <div><Link to="/how-to-play">How to play</Link></div>
             <NameSetter />
         </>

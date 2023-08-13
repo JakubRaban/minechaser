@@ -8,4 +8,3 @@ export const App: FC = () =>
     <SocketIOContext.Provider value={{ socket: io(config.SERVER_URL, { autoConnect: false, closeOnBeforeunload: true }) }}>
         <AppRouter />
     </SocketIOContext.Provider>
-

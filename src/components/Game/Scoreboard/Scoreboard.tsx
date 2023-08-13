@@ -16,7 +16,6 @@ interface ScoreboardProps {
 }
 
 export const Scoreboard: FC<ScoreboardProps> = ({ minesLeft, players, colorMapping, gameStart, endScheduled, isFinished }) => {
-    debugger
     const playerEntries = Object.entries(players) as [PlayerColor, Player][]
 
     return (

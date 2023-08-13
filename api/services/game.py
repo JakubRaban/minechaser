@@ -28,15 +28,18 @@ class GameService:
     queue = Queue(players_picked=create_public_game)
 
     @staticmethod
-    def create_private_game(player_id: str):
+    def create_private_game(player_id: str, single_player: bool = False):
         game_id = _generate_game_id()
         GameService.games[game_id] = GameProxy(
             [player_id],
             standard_defs['expert'],
             on_game_finished=lambda game_proxy: GameResponses.finish_game(game_proxy, game_id),
-            autostart=False
+            autostart=single_player
         )
-        LobbyResponses.enter_private_game(GameService.games[game_id], game_id, player_id)
+        if single_player:
+            LobbyResponses.start_single_player_game(GameService.games[game_id], game_id, player_id)
+        else:
+            LobbyResponses.enter_private_game(GameService.games[game_id], game_id, player_id)
 
     @staticmethod
     def join_private_game(game_id: str, player_id: str):

@@ -16,6 +16,11 @@ def create_private_game(player_id):
     GameService.create_private_game(player_id)
 
 
+def create_single_player_game(player_id):
+    print(f"Player {player_id} created a single player game")
+    GameService.create_private_game(player_id, single_player=True)
+
+
 def join_private_game(player_id, data: dict):
     print(f"Player {player_id} joined a private game")
     game_id = data.pop('gameId', None)

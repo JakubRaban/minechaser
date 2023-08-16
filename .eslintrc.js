@@ -66,5 +66,7 @@ module.exports = {
         ],
         '@typescript-eslint/no-non-null-assertion': 'off',
         'no-debugger': 'warn',
+        'react/display-name': 'off',
+        'react/prop-types': 'off',
     },
 }

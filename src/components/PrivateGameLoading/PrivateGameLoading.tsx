@@ -14,12 +14,12 @@ export const PrivateGameLoading: FC<PrivateGameLoadingProps> = ({ singlePlayer }
         if (singlePlayer) {
             socket.emit('create_single_player_game')
             socket.on('single_player_game_started', ({ gameId, gameState, playerColor, colorMapping }) => {
-                navigate(`/game/${gameId}`, { state: { gameState, playerColor, colorMapping } })
+                navigate(`/game/${gameId}`, { replace: true, state: { gameState, playerColor, colorMapping } })
             })
         } else {
             socket.emit('create_private_game')
             socket.on('private_game_lobby_update', ({ gameId, players }) => {
-                navigate(`/game/${gameId}`, { state: { players } })
+                navigate(`/game/${gameId}`, { replace: true, state: { players } })
             })
         }
         return () => {

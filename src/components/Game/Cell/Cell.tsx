@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React from 'react'
 import { Cell as CellType, PlayerColor } from '../../../types/model'
 import cn from 'classnames'
 import { playerColorToClassName as toClassName } from '../../../helpers'
@@ -12,7 +12,7 @@ interface CellProps {
     playerColor?: PlayerColor
 }
 
-export const Cell: FC<CellProps> = ({ cell, playerColor }) => {
+export const Cell = React.memo<CellProps>(({ cell, playerColor }) => {
     const { hasMine, minesAround, flaggingPlayer, isUncovered, hidePristine } = cell ?? {}
     const uncoveredMine = hasMine && isUncovered
     const className = cn(
@@ -38,4 +38,4 @@ export const Cell: FC<CellProps> = ({ cell, playerColor }) => {
             </div>
         </div>
     )
-}
+})

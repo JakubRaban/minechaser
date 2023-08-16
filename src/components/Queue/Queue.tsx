@@ -11,7 +11,7 @@ export const Queue: FC = () => {
         socket.emit('join_queue')
         socket.on('public_game_started', ({ gameId, gameState, playerColor, colorMapping }) => {
             joinedSuccessfully = true
-            navigate(`/game/${gameId}`, { state: { gameState, playerColor, colorMapping } })
+            navigate(`/game/${gameId}`, { replace: true, state: { gameState, playerColor, colorMapping } })
         })
         return () => {
             socket.off('public_game_started')

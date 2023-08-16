@@ -18,11 +18,18 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
         socket.on('private_game_lobby_update', ({ players }) => setPlayers(players))
         socket.on('private_game_started', ({ gameState, playerColor, colorMapping }) => onGameStart(gameState, playerColor, colorMapping))
         return () => {
-            if (!gameStarted) {
-                socket.emit('leave_private_game', { gameId })
-            }
             socket.off('private_game_lobby_update')
             socket.off('private_game_started')
+        }
+    }, [])
+
+    const leaveGame = () => !gameStarted && socket.emit('leave_private_game', { gameId })
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', leaveGame)
+        return () => {
+            window.removeEventListener('beforeunload', leaveGame)
+            leaveGame()
         }
     }, [])
 

@@ -14,10 +14,17 @@ export const Queue: FC = () => {
             navigate(`/game/${gameId}`, { state: { gameState, playerColor, colorMapping } })
         })
         return () => {
-            if (!joinedSuccessfully) {
-                socket.emit('leave_queue')
-            }
             socket.off('public_game_started')
+        }
+    }, [])
+
+    const leaveQueue = () => !joinedSuccessfully && socket.emit('leave_queue')
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', leaveQueue)
+        return () => {
+            window.removeEventListener('beforeunload', leaveQueue)
+            leaveQueue()
         }
     }, [])
     

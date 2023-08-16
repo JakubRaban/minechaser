@@ -5,6 +5,6 @@ import config from '../config'
 import { AppRouter } from './AppRouter'
 
 export const App: FC = () =>
-    <SocketIOContext.Provider value={{ socket: io(config.SERVER_URL, { autoConnect: false, closeOnBeforeunload: true }) }}>
+    <SocketIOContext.Provider value={{ socket: io(config.SERVER_URL, { autoConnect: false, closeOnBeforeunload: false }) }}>
         <AppRouter />
     </SocketIOContext.Provider>

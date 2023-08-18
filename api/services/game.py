@@ -39,14 +39,16 @@ class GameService:
         if single_player:
             LobbyResponses.start_single_player_game(GameService.games[game_id], game_id, player_id)
         else:
-            LobbyResponses.enter_private_game(GameService.games[game_id], game_id, player_id)
+            LobbyResponses.private_game_lobby_update(GameService.games[game_id], game_id, player_id)
 
     @staticmethod
     def join_private_game(game_id: str, player_id: str):
         if game_id in GameService.games:
             game = GameService.games[game_id]
-            game.add_player(player_id)
-            return LobbyResponses.enter_private_game(game, game_id, player_id)
+            if game.add_player(player_id):
+                return LobbyResponses.private_game_lobby_update(game, game_id, player_id)
+            else:
+                return {'error': {'code': 'full'}}
 
     @staticmethod
     def leave_private_game(game_id: str, player_id: str):
@@ -80,8 +82,19 @@ class GameService:
                 return game.flag(player_id, direction)
 
     @staticmethod
-    def get(game_id: str):
-        return GameService.games[game_id]
+    def get_state(game_id: str, player_id: str):
+        if game_id in GameService.games:
+            game = GameService.games[game_id]
+            if not game.created():
+                if not game.full:
+                    return game
+                else:
+                    return {'error': {'code': 'full'}}
+            if player_id in game.player_id_mapping:
+                return game
+            return {'error': {'code': 'alien'}}
+        else:
+            return {'error': {'code': 'notFound'}}
 
 
 def _generate_game_id():

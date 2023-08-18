@@ -1,8 +1,8 @@
 from model import Direction
-from model.game import ActionType
+from model.game import ActionType, GameProxy
 from services.game import GameService
 from socketsetup import sio
-from views.helpers import game_state, empty_game_state
+from views.helpers import game_state
 
 
 def player_action(player_id: str, data: dict):
@@ -15,5 +15,7 @@ def player_action(player_id: str, data: dict):
 
 
 def get_game_state(player_id, data: dict):
-    game = GameService.get(data['gameId'])
-    return game_state(game, player_id) if player_id in game.player_id_mapping else empty_game_state()
+    game_or_error = GameService.get_state(data['gameId'], player_id)
+    if isinstance(game_or_error, GameProxy):
+        return game_state(game_or_error, player_id)
+    return game_or_error

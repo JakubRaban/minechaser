@@ -19,7 +19,7 @@ class LobbyResponses:
             )
 
     @staticmethod
-    def enter_private_game(game: GameProxy, game_id: str, player_id: str):
+    def private_game_lobby_update(game: GameProxy, game_id: str, player_id: str):
         print(f"Response: Player {player_id} entered private game {game_id}")
         socket_id = socket_id_to_player_id.inverse[player_id]
         sio.enter_room(socket_id, game_id)

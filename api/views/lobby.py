@@ -13,7 +13,7 @@ def leave_queue(player_id):
 
 def create_private_game(player_id):
     print(f"Player {player_id} created a private game")
-    GameService.create_private_game(player_id)
+    return GameService.create_private_game(player_id)
 
 
 def create_single_player_game(player_id):

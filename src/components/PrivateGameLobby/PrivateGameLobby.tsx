@@ -1,29 +1,34 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useSocket } from '../../hooks/useSocket'
-import { PlayerColor, PlayerColorMapping, RawGameState } from '../../types/model'
 import { useParams } from 'react-router'
+import { GameStateData } from '../Game/GameWrapper/GameWrapper'
+
+export type GameStartFn = (data: GameStateData) => void
 
 interface PrivateGameLobbyProps {
     players: string[]
-    onGameStart: (gameState: RawGameState, playerColor: PlayerColor, colorMapping: PlayerColorMapping) => void
+    onGameStart: GameStartFn
 }
 
 export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersProp, onGameStart }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
     const [players, setPlayers] = useState(playersProp)
-    let gameStarted = false
+    const gameStarted = useRef(false)
 
     useEffect(() => {
         socket.on('private_game_lobby_update', ({ players }) => setPlayers(players))
-        socket.on('private_game_started', ({ gameState, playerColor, colorMapping }) => onGameStart(gameState, playerColor, colorMapping))
+        socket.on('private_game_started', ({ state }) => {
+            gameStarted.current = true
+            onGameStart(state)
+        })
         return () => {
             socket.off('private_game_lobby_update')
             socket.off('private_game_started')
         }
     }, [])
 
-    const leaveGame = () => !gameStarted && socket.emit('leave_private_game', { gameId })
+    const leaveGame = () => !gameStarted.current && socket.emit('leave_private_game', { gameId })
 
     useEffect(() => {
         window.addEventListener('beforeunload', leaveGame)
@@ -34,7 +39,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
     }, [])
 
     const handleStart = () => {
-        gameStarted = true
+        gameStarted.current = true
         socket.emit('start_private_game', { gameId })
     }
 

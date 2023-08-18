@@ -9,3 +9,15 @@ export const playerColorToClassName = (playerColor?: PlayerColor, prefix = '') =
     [`${prefix}${prefix ? '-' : ''}blue`]: playerColor === 'BLUE',
     [`${prefix}${prefix ? '-' : ''}yellow`]: playerColor === 'YELLOW',
 })
+
+export enum ErrorCode {
+    full = 'full',
+    notFound = 'notFound',
+    alien = 'alien',
+}
+
+export const errorCodeToMessage = (errorCode: ErrorCode) => ({
+    [ErrorCode.full]: 'The game you tried to join was already full',
+    [ErrorCode.alien]: 'You are not in this game',
+    [ErrorCode.notFound]: 'This game does not exist',
+})[errorCode]

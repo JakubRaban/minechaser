@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { useSocket } from '../../hooks/useSocket'
-import { GameStateResponse } from './GameWrapper/GameWrapper'
+import { GameStateData } from './GameWrapper/GameWrapper'
 import { useGameState } from '../../hooks/useGameState'
 import { Scoreboard } from './Scoreboard/Scoreboard'
 import { CellGrid } from './CellGrid/CellGrid'
@@ -13,7 +13,7 @@ import './Game.scss'
 export type ActionType = 'STEP' | 'FLAG'
 export type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
 
-export const Game: FC<GameStateResponse> = ({ gameState, playerColor, colorMapping }) => {
+export const Game: FC<GameStateData> = ({ gameState, playerColor, colorMapping }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
     const [props, resolveAction, setGameState] = useGameState(gameState)

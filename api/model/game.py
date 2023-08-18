@@ -73,12 +73,18 @@ class GameProxy:
         self.end_game_scheduler = EndGameScheduler(self._finish_game)
 
     def add_player(self, player_id: str):
-        if player_id not in self.player_ids and not self.is_starting():
+        if not self.full and player_id not in self.player_ids and not self.created():
             self.player_ids.append(player_id)
+            return True
+        return False
 
     def remove_player(self, player_id: str):
-        if player_id in self.player_ids and not self.is_starting():
+        if player_id in self.player_ids and not self.created():
             self.player_ids.remove(player_id)
+
+    @property
+    def full(self):
+        return len(self.player_ids) == 4
 
     def start_game(self, board_def: BoardDef):
         if not self.game:
@@ -86,8 +92,8 @@ class GameProxy:
             self.game = Game(board_def, len(self.player_ids))
             self.player_id_mapping = dict(zip(self.player_ids, self.game.players.colors()))
 
-    def is_starting(self):
-        return self.start_timestamp is not None
+    def created(self):
+        return self.game is not None
 
     def is_started(self):
         return self.start_timestamp and datetime.now() >= self.start_timestamp

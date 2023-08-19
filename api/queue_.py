@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Callable
 
 from apscheduler.jobstores.base import JobLookupError
@@ -10,7 +10,7 @@ waiting_time = 10
 class QueueEntry:
     def __init__(self, player_id: str):
         self.player_id = player_id
-        self.time_added = datetime.now()
+        self.time_added = datetime.now(timezone.utc)
 
 
 class Queue:
@@ -55,7 +55,7 @@ class Queue:
 
     @property
     def highest_waiting_time(self):
-        return datetime.now() - self.queue[0].time_added
+        return datetime.now(timezone.utc) - self.queue[0].time_added
 
     def __len__(self):
         return len(self.queue)

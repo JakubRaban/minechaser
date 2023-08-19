@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import List, Dict, Optional
 
@@ -19,7 +19,7 @@ class ActionResult:
         self.players = players
         self.events = events
         self.mines_left = mines_left
-        self.end_game_scheduled_timestamp = datetime.now() + timedelta(minutes=1) \
+        self.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(minutes=1) \
             if any(isinstance(event, MineCellFlagged) for event in events) \
             else None
 
@@ -28,7 +28,10 @@ class ActionResult:
             'players': {color.name: player for color, player in self.players.items()},
             'cells': [event.cell for event in self.events],
             'minesLeft': self.mines_left,
-            'endGameScheduledTimestamp': self.end_game_scheduled_timestamp
+            'endGameScheduledTimestamp':
+                self.end_game_scheduled_timestamp
+                if hasattr(self, 'end_game_scheduled_timestamp')
+                else None
         }
 
 
@@ -54,23 +57,36 @@ class Game:
     def flag(self, player_color: PlayerColor, direction: Direction) -> ActionResult:
         player = self.players[player_color]
         if player.alive:
-            new_position = self.board.normalize_position(player.calculate_new_position(direction))
-            if new_position not in self.players.positions:
+            new_position = player.calculate_new_position(direction)
+            if new_position not in self.players.positions and new_position in self.board.cells:
                 events = self.board.flag(new_position, player_color)
                 player.process_events(events)
                 return ActionResult(self.players[player_color, ], events, self.board.mines_left)
             return ActionResult(self.players[player_color, ], [])
 
 
+def adjust_end_timestamp(fn):
+    from functools import wraps
+
+    @wraps(fn)
+    def wrapper(self, *args):
+        result = fn(self, *args)
+        if result and not self.end_game_scheduler:
+            del result.end_game_scheduled_timestamp
+        return result
+
+    return wrapper
+
+
 class GameProxy:
     def __init__(self, player_ids: List[str], board_def: BoardDef, on_game_finished: callable, autostart: bool):
         self.game = Game(board_def, len(player_ids)) if autostart else None
-        self.start_timestamp = datetime.now() + timedelta(seconds=5 if len(player_ids) > 1 else 0) if autostart else None
+        self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=5 if len(player_ids) > 1 else 0) if autostart else None
         self.player_id_mapping = dict(zip(player_ids, self.game.players.colors())) if autostart else None
         self.player_ids = player_ids
         self.end_timestamp = None
         self.on_game_finished = on_game_finished
-        self.end_game_scheduler = EndGameScheduler(self._finish_game)
+        self.end_game_scheduler = EndGameScheduler(self._finish_game) if autostart and len(self.player_ids) > 1 else None
 
     def add_player(self, player_id: str):
         if not self.full and player_id not in self.player_ids and not self.created():
@@ -88,19 +104,21 @@ class GameProxy:
 
     def start_game(self, board_def: BoardDef):
         if not self.game:
-            self.start_timestamp = datetime.now() + timedelta(seconds=5)
+            self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=5)
             self.game = Game(board_def, len(self.player_ids))
             self.player_id_mapping = dict(zip(self.player_ids, self.game.players.colors()))
+            self.end_game_scheduler = EndGameScheduler(self._finish_game)
 
     def created(self):
         return self.game is not None
 
     def is_started(self):
-        return self.start_timestamp and datetime.now() >= self.start_timestamp
+        return self.start_timestamp and datetime.now(timezone.utc) >= self.start_timestamp
 
     def is_finished(self):
         return self.end_timestamp is not None
 
+    @adjust_end_timestamp
     def step(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):
             player_color = self.player_id_mapping[player_id]
@@ -112,6 +130,7 @@ class GameProxy:
                         return
                 return result
 
+    @adjust_end_timestamp
     def flag(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):
             player_color = self.player_id_mapping[player_id]
@@ -121,7 +140,7 @@ class GameProxy:
                     if isinstance(event, NoMinesLeft):
                         self._finish_game()
                         return
-                    if isinstance(event, MineCellFlagged):
+                    if isinstance(event, MineCellFlagged) and self.end_game_scheduler:
                         self.end_game_scheduler.postpone_end(result.end_game_scheduled_timestamp)
                 return result
 
@@ -134,12 +153,18 @@ class GameProxy:
     def _finish_game(self):
         if self.game is not None:
             self.game.board.show_pristine_cells()
-        self.end_timestamp = datetime.now()
+        self.end_timestamp = datetime.now(timezone.utc)
         self.on_game_finished(self)
 
     def __getstate__(self):
         base_state = {k: v for k, v in self.__dict__.items() if k in ['game', 'start_timestamp', 'end_timestamp']}
-        return {**base_state, 'endGameScheduledTimestamp': self.end_game_scheduler.end_game_scheduled_timestamp}
+        return {
+            **base_state,
+            'endGameScheduledTimestamp':
+                self.end_game_scheduler.end_game_scheduled_timestamp
+                if self.end_game_scheduler
+                else None
+        }
 
 
 class EndGameScheduler:
@@ -147,7 +172,7 @@ class EndGameScheduler:
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
         self.finish_game_job = self.scheduler.add_job(
-            on_game_finished, 'date', id='end_game', run_date=datetime.now() + timedelta(hours=1), args=[]
+            on_game_finished, 'date', id='end_game', run_date=datetime.now(timezone.utc) + timedelta(hours=1), args=[]
         )
         self.end_game_scheduled_timestamp = None
 

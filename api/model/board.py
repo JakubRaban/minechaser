@@ -67,7 +67,7 @@ class Board:
             return []
 
     def flag(self, position: Position, flagging_player: PlayerColor) -> List[GameEvent]:
-        cell = self.cells[self.normalize_position(position)]
+        cell = self.cells[position]
         if cell.pristine:
             if cell.has_mine:
                 cell.flagging_player = flagging_player

@@ -31,7 +31,7 @@ module.exports = {
         '@typescript-eslint',
         'react',
     ],
-    'ignorePatterns': ['webpack.config.js'],
+    'ignorePatterns': ['vite.config.js'],
     'rules': {
         'indent': [
             'error',

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from threading import RLock
 from typing import List, Callable
 
 from apscheduler.jobstores.base import JobLookupError
@@ -20,7 +21,15 @@ class Queue:
         self.players_picked = players_picked
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
+        self.lock = RLock()
 
+    def locked(func):
+        def wrapper(self, *args, **kwargs):
+            with self.lock:
+                return func(self, *args, **kwargs)
+        return wrapper
+
+    @locked
     def add_player(self, player_id: str):
         print(f"Queue: Player {player_id} joined the queue")
         self.queue.append(QueueEntry(player_id))
@@ -35,18 +44,21 @@ class Queue:
         elif len(self) == 4:
             self.deque_players()
 
+    @locked
     def remove_player(self, player_id: str):
         print(f"Queue: Player {player_id} left the queue")
         self.queue = [entry for entry in self.queue if entry.player_id != player_id]
         if len(self) <= 1:
             self.cancel_auto_pick()
 
+    @locked
     def cancel_auto_pick(self):
         try:
             self.scheduler.remove_job(self.pick_players_job.id)
         except (JobLookupError, AttributeError):
             pass
 
+    @locked
     def deque_players(self):
         print("Queue: Dequeing players")
         players = [entry.player_id for entry in self.queue[:4]]

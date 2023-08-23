@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from enum import Enum
+from multiprocessing import RLock
 from typing import List, Dict, Optional
+from functools import wraps
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -66,8 +68,6 @@ class Game:
 
 
 def adjust_end_timestamp(fn):
-    from functools import wraps
-
     @wraps(fn)
     def wrapper(self, *args):
         result = fn(self, *args)
@@ -87,13 +87,22 @@ class GameProxy:
         self.end_timestamp = None
         self.on_game_finished = on_game_finished
         self.end_game_scheduler = EndGameScheduler(self._finish_game) if autostart and len(self.player_ids) > 1 else None
+        self.lock = RLock()
 
+    def locked(func):
+        def wrapper(self, *args, **kwargs):
+            with self.lock:
+                return func(self, *args, **kwargs)
+        return wrapper
+
+    @locked
     def add_player(self, player_id: str):
         if not self.full and player_id not in self.player_ids and not self.created():
             self.player_ids.append(player_id)
             return True
         return False
 
+    @locked
     def remove_player(self, player_id: str):
         if player_id in self.player_ids and not self.created():
             self.player_ids.remove(player_id)
@@ -102,6 +111,7 @@ class GameProxy:
     def full(self):
         return len(self.player_ids) == 4
 
+    @locked
     def start_game(self, board_def: BoardDef):
         if not self.game:
             self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=5)
@@ -118,6 +128,7 @@ class GameProxy:
     def is_finished(self):
         return self.end_timestamp is not None
 
+    @locked
     @adjust_end_timestamp
     def step(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):
@@ -130,6 +141,7 @@ class GameProxy:
                         return
                 return result
 
+    @locked
     @adjust_end_timestamp
     def flag(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):
@@ -150,6 +162,7 @@ class GameProxy:
     def _all_players_dead(self):
         return all(not player.alive for player in self.game.players.values())
 
+    @locked
     def _finish_game(self):
         if self.game is not None:
             self.game.board.show_pristine_cells()

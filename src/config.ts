@@ -6,6 +6,8 @@ const prodConfig = {
     SERVER_URL: window.location.protocol + '//' + window.location.host,
 }
 
-const config = devConfig
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const config = import.meta.env.MODE === 'development' ? devConfig : prodConfig
 
 export default config

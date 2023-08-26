@@ -1,25 +1,13 @@
 from gevent import pywsgi, monkey
 monkey.patch_all()
 
-from flask import Flask
 import socketio
-
 from geventwebsocket.handler import WebSocketHandler
 
 from socketsetup import sio
 
 
-app = Flask(__name__, template_folder='dist', static_folder='dist')
-app.debug = True
-
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def index(path):
-    return app.send_static_file('index.html')
-
-
-socketio_app = socketio.WSGIApp(sio, app)
+socketio_app = socketio.WSGIApp(sio, static_files={'/': 'dist/index.html', '/dist': './dist'})
 
 
 if __name__ == '__main__':

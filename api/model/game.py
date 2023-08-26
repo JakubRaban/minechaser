@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from multiprocessing import RLock
+from threading import RLock
 from typing import List, Dict, Optional
 from functools import wraps
 

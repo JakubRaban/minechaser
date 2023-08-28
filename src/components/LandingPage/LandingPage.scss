@@ -1,0 +1,41 @@
+@import "../../styles/constants";
+@import "@picocss/pico/scss/settings";
+
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+
+  .grid {
+    flex-grow: 1;
+
+    max-width: min(calc(100% - 20px), 1536px);
+    margin: 0 auto;
+
+    .menu, .rules {
+      flex-basis: 50%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .menu {
+      button {
+        display: block;
+        width: 80%;
+
+        + button {
+          margin-top: $spacing16;
+        }
+      }
+    }
+
+    .rules {
+      text-align: justify;
+      hyphens: auto;
+    }
+  }
+}

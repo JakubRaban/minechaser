@@ -10,4 +10,8 @@
     <orderEntry type="jdk" jdkName="Python 3.10 (real-minesweeper)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PackageRequirementsSettings">
+    <option name="requirementsPath" value="$MODULE_DIR$/api/requirements.txt" />
+    <option name="removeUnused" value="true" />
+  </component>
 </module>

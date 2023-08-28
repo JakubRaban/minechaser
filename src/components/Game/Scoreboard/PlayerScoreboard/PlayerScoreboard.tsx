@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import cn from 'classnames'
-import { Player, PlayerColor } from '../../../../types/model'
+import { Player } from '../../../../types/model'
 
 interface PlayerScoreboardProps {
     player: Player

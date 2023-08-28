@@ -1,0 +1,57 @@
+@use "@picocss/pico/scss/pico" with (
+  $enable-semantic-container: true,
+  $semantic-root-element: "#root",
+
+  $modules: (
+    // Layout
+    "layout/document": true,
+    "layout/landmarks": true,
+    "layout/container": true,
+    "layout/section": true,
+    "layout/grid": true,
+    "layout/scroller": false,
+
+    // Content
+    "content/link": true,
+    "content/typography": true,
+    "content/embedded": true,
+    "content/button": true,
+    "content/table": false,
+    "content/code": true,
+    "content/miscs": true,
+
+    // Forms
+    "forms/basics": true,
+    "forms/checkbox-radio-switch": true,
+    "forms/input-color": false,
+    "forms/input-date": false,
+    "forms/input-file": false,
+    "forms/input-range": false,
+    "forms/input-search": false,
+
+    // Components
+    "components/accordion": true,
+    "components/card": true,
+    "components/dropdown": false,
+    "components/group": true,
+    "components/loading": true,
+    "components/modal": true,
+    "components/nav": true,
+    "components/progress": true,
+    "components/tooltip": true,
+  )
+);
+
+@import "fonts.css";
+
+:root {
+  --pico-font-family: 'kanit';
+  --pico-text-selection-color: rgba(178, 144, 217, 0.1875);
+  --pico-primary: #b290d9;
+  --pico-primary-background: #7540bf;
+  --pico-primary-underline: rgba(178, 144, 217, 0.5);
+  --pico-primary-hover: #c9afe4;
+  --pico-primary-hover-background: #8352c5;
+  --pico-primary-focus: rgba(178, 144, 217, 0.25);
+  --pico-primary-inverse: #fff;
+}

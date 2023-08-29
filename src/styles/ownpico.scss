@@ -43,6 +43,7 @@
 );
 
 @import "fonts.css";
+@import "@picocss/pico/scss/colors";
 
 :root {
   --pico-font-family: 'kanit';
@@ -54,4 +55,13 @@
   --pico-primary-hover-background: #8352c5;
   --pico-primary-focus: rgba(178, 144, 217, 0.25);
   --pico-primary-inverse: #fff;
+
+  --pico-line-height: 1.25;
+}
+
+kbd {
+  background-color: transparent;
+  border: 1px solid $zinc-200;
+  color: $zinc-200;
+  padding-block: 0.25em;
 }

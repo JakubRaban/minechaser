@@ -1,0 +1,47 @@
+@import "../../../styles/constants";
+@import "@picocss/pico/scss/colors";
+
+.name-setter {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  max-width: min(calc(100% - 20px), 768px);
+  margin: 0 auto;
+
+  details {
+    summary {
+      display: flex;
+
+      &::after {
+        float: unset;
+      }
+    }
+
+    aside {
+      margin-block-start: $spacing4;
+
+      &, kbd {
+        color: $zinc-500;
+        border-color: $zinc-500;
+      }
+
+      &.active {
+        &, kbd {
+          color: $violet-500;
+          border-color: $violet-500;
+        }
+      }
+    }
+
+    label + label {
+        margin-block-start: $spacing16;
+    }
+  }
+
+  button {
+    width: 100%;
+  }
+}

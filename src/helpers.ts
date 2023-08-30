@@ -21,3 +21,37 @@ export const errorCodeToMessage = (errorCode: ErrorCode) => ({
     [ErrorCode.alien]: 'You are not in this game',
     [ErrorCode.notFound]: 'This game does not exist',
 })[errorCode]
+
+export const generateRandomUsername = () => {
+    const adjectives = [
+        'mesmerizing',
+        'captivating',
+        'enchanting',
+        'delightful',
+        'exquisite',
+        'blissful',
+        'serene',
+        'vibrant',
+        'charming',
+        'euphoric',
+    ]
+    const nouns = [
+        'empanada',
+        'sushi',
+        'pizza',
+        'croissant',
+        'taco',
+        'ramen',
+        'gelato',
+        'samosa',
+        'paella',
+        'gnocchi',
+        'falafel',
+        'currywurst',
+        'biryani',
+        'pierogi',
+        'ceviche',
+    ]
+    const pickRandom = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)]
+    return `${pickRandom(adjectives)}-${pickRandom(nouns)}-${Math.floor(Math.random() * 990 + 10)}`
+}

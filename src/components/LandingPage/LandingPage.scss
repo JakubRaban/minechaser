@@ -7,13 +7,40 @@
   width: 100vw;
   height: 100vh;
 
+  header {
+    h1 {
+      padding-top: 0.25em;
+      margin-block: 0;
+      line-height: 1;
+      font-size: $text60;
+      font-style: italic;
+
+      @media screen and (min-width: $lg) {
+        font-size: $text96;
+      }
+    }
+
+    h6 {
+      font-size: $text20;
+      font-weight: normal;
+
+      @media screen and (min-width: $lg) {
+        font-size: $text36;
+      }
+    }
+  }
+
+  header, footer {
+    text-align: center;
+  }
+
   main {
     flex-grow: 1;
 
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    max-width: min(calc(100% - 20px), 768px);
+    max-width: min(calc(100% - 20px), $md);
     margin: 0 auto;
 
     section {
@@ -24,12 +51,20 @@
 
       &.menu {
         button {
-          font-size: $text30;
+          font-size: $text20;
           display: block;
           width: 100%;
 
+          @media screen and (min-width: $md) {
+            font-size: $text30;
+          }
+
           + button {
-            margin-top: $spacing16;
+            margin-block-start: $spacing12;
+
+            @media screen and (min-width: $md) {
+              margin-block-start: $spacing16;
+            }
           }
         }
       }
@@ -37,29 +72,14 @@
       &.rules {
         text-align: justify;
         hyphens: auto;
-        padding: $spacing16 $spacing32;
-        border: 3px solid $violet-500;
-        border-radius: 20px;
+
+        @media screen and (min-width: $md) {
+          padding: $spacing16 $spacing32;
+          border: 3px solid $violet-500;
+          border-radius: 20px;
+        }
       }
     }
-  }
-
-  header {
-    h6 {
-      font-size: $text36;
-      font-weight: normal;
-    }
-
-    h1 {
-      margin-block: 0;
-      line-height: 1;
-      font-size: $text96;
-      font-style: italic;
-    }
-  }
-
-  header, footer {
-    text-align: center;
   }
 
   footer {

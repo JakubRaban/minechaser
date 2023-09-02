@@ -24,6 +24,7 @@ const tips = [
     'Stuck in your corner? Step through the board edge to get to the other side.',
     'The winner is the player with the highest score, but who also stayed alive (unless all players died).',
     'You can also play with your friends (up to max. 4 players) or practice by yourself.',
+    'If no player flags any cell for 2 minutes, the game will end.',
 ]
 
 export const Queue: FC = () => {

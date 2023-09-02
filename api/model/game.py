@@ -21,7 +21,7 @@ class ActionResult:
         self.players = players
         self.events = events
         self.mines_left = mines_left
-        self.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(minutes=1) \
+        self.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(minutes=2) \
             if any(isinstance(event, MineCellFlagged) for event in events) \
             else None
 
@@ -86,7 +86,7 @@ class GameProxy:
         self.player_ids = player_ids
         self.end_timestamp = None
         self.on_game_finished = on_game_finished
-        self.end_game_scheduler = EndGameScheduler(self._finish_game) if autostart and len(self.player_ids) > 1 else None
+        self.end_game_scheduler = EndGameScheduler(self._finish_game)
         self.lock = RLock()
 
     def locked(func):
@@ -117,7 +117,6 @@ class GameProxy:
             self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=5)
             self.game = Game(board_def, len(self.player_ids))
             self.player_id_mapping = dict(zip(self.player_ids, self.game.players.colors()))
-            self.end_game_scheduler = EndGameScheduler(self._finish_game)
 
     def created(self):
         return self.game is not None
@@ -152,7 +151,7 @@ class GameProxy:
                     if isinstance(event, NoMinesLeft):
                         self._finish_game()
                         return
-                    if isinstance(event, MineCellFlagged) and self.end_game_scheduler:
+                    if isinstance(event, MineCellFlagged) and len(self.player_id_mapping) > 1:
                         self.end_game_scheduler.postpone_end(result.end_game_scheduled_timestamp)
                 return result
 

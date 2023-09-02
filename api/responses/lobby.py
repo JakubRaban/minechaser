@@ -1,6 +1,7 @@
 from typing import List
 
 from model import GameProxy
+from queue_ import QueueEntry
 from socketsetup import sio, socket_id_to_player_id, player_id_to_player_name
 from views.helpers import game_state
 
@@ -68,3 +69,12 @@ class LobbyResponses:
             {'gameId': game_id, **game_state(game, player_id)},
             room=socket_id
         )
+
+    @staticmethod
+    def update_players_in_queue(queue_state: List[QueueEntry]):
+        for socket_id in [socket_id_to_player_id.inverse[entry.player_id] for entry in queue_state]:
+            sio.emit(
+                'queue_updated',
+                {'players': [player_id_to_player_name[entry.player_id] for entry in queue_state]},
+                room=socket_id
+            )

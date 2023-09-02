@@ -1,0 +1,45 @@
+@import "../../styles/constants";
+@import "@picocss/pico/scss/colors";
+
+.queue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  max-width: min(calc(100% - 20px), $lg);
+  margin: 0 auto;
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 60vh;
+    gap: $spacing32;
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: min(calc(100% - 20px), $sm);
+
+      h1 {
+        text-align: center;
+      }
+
+      progress {
+        line-height: 0;
+      }
+    }
+
+    aside {
+      text-align: center;
+      padding: $spacing16;
+      border: 2px solid $zinc-150;
+      border-radius: $spacing8;
+    }
+  }
+}

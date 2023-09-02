@@ -1,9 +1,11 @@
-import { BaseSyntheticEvent, FC, FormEvent, useRef, useState } from 'react'
+import { BaseSyntheticEvent, FC, FormEvent, useEffect, useRef, useState } from 'react'
 import { useSocket } from '../../../hooks/useSocket'
 import { generateRandomUsername } from '../../../helpers'
+import cn from 'classnames'
+import { useSettings } from '../../../hooks/useSettings'
+import { UserSettings } from '../../../contexts/SettingsContext'
 
 import './NameSetter.scss'
-import cn from 'classnames'
 
 interface NameSetterProps {
     onNameSet?: (name: string) => void
@@ -11,7 +13,9 @@ interface NameSetterProps {
 
 export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
     const { socket } = useSocket()
+    const { setSettings } = useSettings()
     const placeholderName = useRef(generateRandomUsername())
+    const nameInputRef = useRef<HTMLInputElement>(null)
 
     const [formValues, setFormValues] = useState({
         name: '',
@@ -32,9 +36,16 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
         socket.emit(
             'set_name',
             { ...formValues, name: formValues.name.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current },
-            ({ name }: { name: string }) => onNameSet?.(name),
+            (settings: UserSettings) => {
+                setSettings(settings)
+                onNameSet?.(settings.name)
+            },
         )
     }
+
+    useEffect(() => {
+        nameInputRef.current?.focus()
+    }, [])
 
     return (
         <div className="name-setter">
@@ -42,7 +53,7 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                 <fieldset>
                     <label>
                         Your Nickname:
-                        <input name="name" placeholder={placeholderName.current} type="text" value={name} onChange={setFieldValue} />
+                        <input ref={nameInputRef} name="name" placeholder={placeholderName.current} type="text" value={name} onChange={setFieldValue} />
                     </label>
 
                     <details>
@@ -62,7 +73,6 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                             <input name="disableSoundEffects" checked={disableSoundEffects} type="checkbox" role="switch" onChange={setFieldValue} />
                             Disable Sound Effects
                         </label>
-                        {/*</div>*/}
                     </details>
                 </fieldset>
 

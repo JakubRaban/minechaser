@@ -22,6 +22,8 @@ export const errorCodeToMessage = (errorCode: ErrorCode) => ({
     [ErrorCode.notFound]: 'This game does not exist',
 })[errorCode]
 
+export const pickRandom = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)]
+
 export const generateRandomUsername = () => {
     const adjectives = [
         'mesmerizing',
@@ -52,6 +54,5 @@ export const generateRandomUsername = () => {
         'pierogi',
         'ceviche',
     ]
-    const pickRandom = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)]
     return `${pickRandom(adjectives)}-${pickRandom(nouns)}-${Math.floor(Math.random() * 990 + 10)}`
 }

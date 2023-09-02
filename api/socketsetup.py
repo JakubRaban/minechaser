@@ -59,3 +59,5 @@ def is_name_set(sid, _):
     if sid in socket_id_to_player_id:
         player_id = socket_id_to_player_id[sid]
         return {'name': player_id_to_player_name.get(player_id, None)}
+    else:
+        return {'name': None}

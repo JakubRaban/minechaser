@@ -25,7 +25,7 @@ class GameService:
         )
         LobbyResponses.create_public_game(GameService.games[game_id], game_id, player_ids)
 
-    queue = Queue(players_picked=create_public_game)
+    queue = Queue(players_picked=create_public_game, queue_updated=LobbyResponses.update_players_in_queue)
 
     @staticmethod
     def create_private_game(player_id: str, single_player: bool = False):

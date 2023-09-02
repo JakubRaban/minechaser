@@ -1,0 +1,60 @@
+@import "../../styles/constants";
+@import "@picocss/pico/scss/colors";
+
+.player-list-wrapper {
+  width: 100%;
+  border: 1px solid $zinc-650;
+  border-radius: $spacing8;
+  font-size: $text18;
+
+  @media screen and (min-width: $md) {
+    font-size: $text24;
+  }
+
+  &.highlight {
+    border-color: $violet
+  }
+
+  .player-list {
+    padding: 0 $spacing16 $spacing8;
+    margin-block-start: -$spacing8;
+
+    .entry {
+      display: flex;
+      align-items: center;
+      gap: $spacing12;
+      height: $spacing48;
+
+      @media screen and (min-width: $md) {
+        height: $spacing64;
+      }
+
+      .color {
+        height: $spacing32;
+        aspect-ratio: 1;
+        background-color: $grey-500;
+        border-radius: 2px;
+
+        &.red {
+          background-color: $player-red;
+        }
+
+        &.blue {
+          background-color: $player-blue;
+        }
+
+        &.green {
+          background-color: $player-green;
+        }
+
+        &.yellow {
+          background-color: $player-yellow;
+        }
+      }
+
+      .name.own {
+        font-weight: bold;
+      }
+    }
+  }
+}

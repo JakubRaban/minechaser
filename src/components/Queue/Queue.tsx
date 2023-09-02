@@ -39,6 +39,7 @@ export const Queue: FC = () => {
     const tip = useRef(pickRandom(tips))
     
     useEffect(() => {
+        let timeout: NodeJS.Timeout
         socket.emit('join_queue')
         socket.on('queue_updated', ({ players }) => {
             setPlayers(players)
@@ -49,12 +50,13 @@ export const Queue: FC = () => {
         })
         socket.on('public_game_started', ({ gameId, gameState, playerColor, colorMapping }) => {
             setJoinedSuccessfully(true)
-            setTimeout(() => navigate(`/game/${gameId}`, { replace: true, state: { gameState, playerColor, colorMapping } }), 2000)
+            timeout = setTimeout(() => navigate(`/game/${gameId}`, { replace: true, state: { gameState, playerColor, colorMapping } }), 2000)
         })
         return () => {
             socket.off('queue_update')
             socket.off('public_game_started')
             clearInterval(interval.current!)
+            clearTimeout(timeout)
         }
     }, [])
 

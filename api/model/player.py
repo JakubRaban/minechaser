@@ -47,7 +47,7 @@ class Player:
                 self.score += event.points_change
             if event.points_change < 0:
                 self.mistakes += 1
-                self.score += event.points_change * self.mistakes
+                self.score += max(event.points_change * (self.mistakes - 1), -3)
             if event.kill:
                 self.alive = False
                 break

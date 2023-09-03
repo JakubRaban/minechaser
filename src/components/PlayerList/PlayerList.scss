@@ -2,7 +2,7 @@
 @import "@picocss/pico/scss/colors";
 
 .player-list-wrapper {
-  width: 100%;
+  width: min(calc(100% - 20px), $sm);
   border: 1px solid $zinc-650;
   border-radius: $spacing8;
   font-size: $text18;
@@ -16,8 +16,12 @@
   }
 
   .player-list {
-    padding: 0 $spacing16 $spacing8;
-    margin-block-start: -$spacing8;
+    padding: $spacing8 $spacing16;
+
+    &.pad {
+      padding-block-start: 0;
+      margin-block-start: -$spacing8;
+    }
 
     .entry {
       display: flex;
@@ -33,7 +37,7 @@
         height: $spacing32;
         aspect-ratio: 1;
         background-color: $grey-500;
-        border-radius: 2px;
+        border-radius: 4px;
 
         &.red {
           background-color: $player-red;

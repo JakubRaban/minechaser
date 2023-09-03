@@ -2,13 +2,12 @@ import humps
 
 from .game import Game, GameProxy, ActionResult
 from .player import Player, Players, PlayerColor, Direction
-from .board import Board, BoardDef, standard_defs
+from .board import Board
 from .cell import Cell
 from .events import GameEvent, MineCellFlagged, NoMinesLeft, MineCellStepped, MineFreeCellFlagged, MineFreeCellStepped
 
 model_classes = [
     Board,
-    BoardDef,
     Player,
     Players,
     PlayerColor,

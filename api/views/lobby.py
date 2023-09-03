@@ -36,4 +36,6 @@ def leave_private_game(player_id, data: dict):
 def start_private_game(player_id, data: dict):
     print(f"Player {player_id} started a private game")
     game_id = data.pop('gameId', None)
-    GameService.start_private_game(game_id, player_id)
+    size = data.pop('size', None)
+    if game_id and size:
+        GameService.start_private_game(game_id, player_id, tuple(size))

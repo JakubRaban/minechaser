@@ -8,7 +8,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from model.events import GameEvent, MineCellFlagged, NoMinesLeft, MineCellStepped
 from model.player import Players, PlayerColor, Direction, Player
-from model.board import Board, BoardDef
+from model.board import Board
+from types_ import Dimensions
 
 
 class ActionType(Enum):
@@ -38,8 +39,8 @@ class ActionResult:
 
 
 class Game:
-    def __init__(self, board_def: BoardDef, players_count: int):
-        self.board = Board(board_def)
+    def __init__(self, dimensions: Dimensions, players_count: int):
+        self.board = Board(dimensions)
         starting_positions = self.board.corners[:players_count]
         self.players = Players(starting_positions)
         for player in self.players.values():
@@ -79,8 +80,8 @@ def adjust_end_timestamp(fn):
 
 
 class GameProxy:
-    def __init__(self, player_ids: List[str], board_def: BoardDef, on_game_finished: callable, autostart: bool):
-        self.game = Game(board_def, len(player_ids)) if autostart else None
+    def __init__(self, player_ids: List[str], on_game_finished: callable, autostart: bool):
+        self.game = Game((16, 32), len(player_ids)) if autostart else None
         self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=5 if len(player_ids) > 1 else 0) if autostart else None
         self.player_id_mapping = dict(zip(player_ids, self.game.players.colors())) if autostart else None
         self.player_ids = player_ids
@@ -112,10 +113,10 @@ class GameProxy:
         return len(self.player_ids) == 4
 
     @locked
-    def start_game(self, board_def: BoardDef):
+    def start_game(self, dimensions: Dimensions):
         if not self.game:
             self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=5)
-            self.game = Game(board_def, len(self.player_ids))
+            self.game = Game(dimensions, len(self.player_ids))
             self.player_id_mapping = dict(zip(self.player_ids, self.game.players.colors()))
 
     def created(self):

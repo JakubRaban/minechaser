@@ -7,7 +7,7 @@ interface PlayerListProps {
     players: string[]
     currentPlayer: string
     highlight: boolean
-    progressComponent: ReactNode
+    progressComponent?: ReactNode
 }
 
 const colors = ['red', 'blue', 'green', 'yellow']
@@ -15,7 +15,7 @@ const colors = ['red', 'blue', 'green', 'yellow']
 export const PlayerList: FC<PlayerListProps> = ({ players, currentPlayer, highlight, progressComponent }) => (
     <div className={cn('player-list-wrapper', { highlight })}>
         {progressComponent}
-        <div className="player-list">
+        <div className={cn('player-list', { pad: !!progressComponent })}>
             {[...Array(4)].map((_, index) => (
                 <div key={players[index] || index} className="entry">
                     <div className={cn('color', { [colors[index]]: !!players[index] })} />

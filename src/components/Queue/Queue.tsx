@@ -20,7 +20,7 @@ const tips = [
     'One incorrect flagging is fine, but for any subsequent you\'ll be receiving increasing penalty.',
     'If you accidentally leave the game, you can come back to it using the same link.',
     'If you step through the border of the board, you\'ll find yourself the opposite side.',
-    'Both stepping on a cell with a bonus and flagging it will award you that bonus.',
+    'Both stepping and flagging a cell with a bonus will award you that bonus.',
     'Stuck in your corner? Step through the board edge to get to the other side.',
     'The winner is the player with the highest score, but who also stayed alive (unless all players died).',
     'You can also play with your friends (up to max. 4 players) or practice by yourself.',
@@ -84,6 +84,7 @@ export const Queue: FC = () => {
                         highlight={joinedSuccessfully}
                         progressComponent={<progress value={joinedSuccessfully ? 15000 : progress} max="15000" />}
                     />
+                    <button className="outline secondary" onClick={() => navigate('/', { replace: true })}>Leave the queue</button>
                 </main>
                 <aside>
                     <h3>Tip</h3>

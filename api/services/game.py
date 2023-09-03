@@ -4,11 +4,12 @@ from typing import List, Dict
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from model import Direction, standard_defs
+from model import Direction
 from model.game import GameProxy, ActionType
 from queue_ import Queue
 from responses.game import GameResponses
 from responses.lobby import LobbyResponses
+from types_ import Dimensions
 
 
 class GameService:
@@ -19,7 +20,6 @@ class GameService:
         game_id = _generate_game_id()
         GameService.games[game_id] = GameProxy(
             player_ids,
-            standard_defs['expert'],
             on_game_finished=lambda game_proxy: GameResponses.finish_game(game_proxy, game_id),
             autostart=True
         )
@@ -32,7 +32,6 @@ class GameService:
         game_id = _generate_game_id()
         GameService.games[game_id] = GameProxy(
             [player_id],
-            standard_defs['expert'],
             on_game_finished=lambda game_proxy: GameResponses.finish_game(game_proxy, game_id),
             autostart=single_player
         )
@@ -58,10 +57,10 @@ class GameService:
             LobbyResponses.leave_private_room(game, game_id, player_id)
 
     @staticmethod
-    def start_private_game(game_id: str, player_id: str):
+    def start_private_game(game_id: str, player_id: str, size: Dimensions):
         if game_id in GameService.games and player_id in GameService.games[game_id].player_ids:
             game = GameService.games[game_id]
-            game.start_game(standard_defs['expert'])
+            game.start_game(size)
             LobbyResponses.start_private_game(game, game_id)
 
     @staticmethod
@@ -98,8 +97,8 @@ class GameService:
 
 
 def _generate_game_id():
-    letters = 'bcdfghjklmnpqrstvwxyz'
-    return ''.join(random.choice(letters) for _ in range(6))
+    letters = 'bcdfghjklmnpqrstvxz'
+    return ''.join(random.choice(letters) for _ in range(8))
 
 
 def delete_finished_games():

@@ -2,6 +2,11 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useSocket } from '../../hooks/useSocket'
 import { useParams } from 'react-router'
 import { GameStateData } from '../Game/GameWrapper/GameWrapper'
+import { PlayerList } from '../PlayerList/PlayerList'
+import { useSettings } from '../../hooks/useSettings'
+import { BoardSizeForm } from './BoardSizeForm/BoardSizeForm'
+
+import './PrivateGameLobby.scss'
 
 export type GameStartFn = (data: GameStateData) => void
 
@@ -13,11 +18,19 @@ interface PrivateGameLobbyProps {
 export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersProp, onGameStart }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
+    const { name: currentPlayerName } = useSettings()
+
     const [players, setPlayers] = useState(playersProp)
+    const [linkCopied, setLinkCopied] = useState(false)
+    const [size, setSize] = useState<[number, number]>([16, 32])
+
     const gameStarted = useRef(false)
 
     useEffect(() => {
-        socket.on('private_game_lobby_update', ({ players }) => setPlayers(players))
+        socket.on('private_game_lobby_update', ({ players }) => {
+            console.log(players)
+            setPlayers(players)
+        })
         socket.on('private_game_started', ({ state }) => {
             gameStarted.current = true
             onGameStart(state)
@@ -40,15 +53,41 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
 
     const handleStart = () => {
         gameStarted.current = true
-        socket.emit('start_private_game', { gameId })
+        socket.emit('start_private_game', { gameId, size })
+    }
+
+    const copyGameLink = () => {
+        setLinkCopied(true)
+        navigator.clipboard.writeText(window.location.href)
     }
 
     return (
-        <>
-            <div>Send this link to your friends to invite them to your game: {window.location.href}</div>
-            <div>Players in the game:</div>
-            {players.map(player => <div key={player}>{player}</div>)}
-            <button disabled={players.length < 2} onClick={handleStart}>Start game</button>
-        </>
+        <div className="private-game-lobby-wrapper">
+            <h1>New Private Game by {players[0]}</h1>
+            <div className="private-game-lobby">
+                <label className="link-label">
+                    <div>Your friends can join this game using the link below:</div>
+                    <div role="group">
+                        <input type="text" value={window.location.href} readOnly onFocus={e => e.target.select()} />
+                        <button onClick={copyGameLink}>
+                            {linkCopied && <span className="copied-icon" />}
+                            {linkCopied ? 'Copied' : 'Copy'}
+                        </button>
+                    </div>
+                </label>
+
+                <div className="players">
+                    Players in the game:
+                    <PlayerList players={players} currentPlayer={currentPlayerName!} highlight={false} />
+                </div>
+
+                <label className="board-size-label">
+                    Board size:
+                    <BoardSizeForm size={size} onChange={setSize} />
+                </label>
+
+                <button className="game-start-button" disabled={players.length < 2} onClick={handleStart}>Start the game</button>
+            </div>
+        </div>
     )
 }

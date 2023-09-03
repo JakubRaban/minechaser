@@ -24,7 +24,7 @@ export const LandingPage: FC = () => {
                     <h2>Quick Rules</h2>
                     <ul>
                         <li>
-                            Basic mechanics of this game are the same as in the&nbsp;
+                            Basic mechanics are the same as in the&nbsp;
                             <a href="https://minesweepergame.com/strategy/how-to-play-minesweeper.php">traditional Minesweeper</a>
                         </li>
                         <li>
@@ -33,7 +33,7 @@ export const LandingPage: FC = () => {
                             If you step on a mine, you&apos;re eliminated!
                         </li>
                         <li>
-                            Flag an adjacent cell using <kbd>WASD</kbd> keys. You get one point for flagging a cell with a mine.
+                            You can only flag adjacent cells using <kbd>WASD</kbd> keys. You get points for flagging a cell with a mine.
                             You also get penalty points for flagging a safe cell.
                         </li>
                         <li>

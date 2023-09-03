@@ -36,6 +36,9 @@ export const generateRandomUsername = () => {
         'vibrant',
         'charming',
         'euphoric',
+        'astonishing',
+        'magnificent',
+        'fascinating',
     ]
     const nouns = [
         'empanada',
@@ -53,6 +56,8 @@ export const generateRandomUsername = () => {
         'biryani',
         'pierogi',
         'ceviche',
+        'fondue',
+        'yassa',
     ]
     return `${pickRandom(adjectives)}-${pickRandom(nouns)}-${Math.floor(Math.random() * 990 + 10)}`
 }

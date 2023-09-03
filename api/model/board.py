@@ -10,23 +10,15 @@ from model.events import *
 from model.player import PlayerColor
 from types_ import Position, Dimensions
 
-
-@dataclass
-class BoardDef:
-    dims: Dimensions
-    mine_free_area_size: int
-
-    @property
-    def mine_area_size(self) -> int:
-        return self.dims[0] * self.dims[1] - 4 * self.mine_free_area_size ** 2
+mine_free_area_size = 3
+mine_density = 0.2
 
 
 class Board:
-    def __init__(self, board_def: BoardDef):
-        self.board_def = board_def
-        self.dims = self.board_def.dims
+    def __init__(self, dims: Dimensions):
+        self.dims = dims
         self.cells: Dict[Position, Cell] = {}
-        self.mines_left = int(self.board_def.mine_area_size * 0.2)
+        self.mines_left = int((self.dims[0] * self.dims[1] - 4 * mine_free_area_size ** 2) * mine_density)
         self.hide_pristine_cells = True
         for cell_position in product(range(self.dims[0]), range(self.dims[1])):
             self.cells[cell_position] = Cell(cell_position)
@@ -45,7 +37,7 @@ class Board:
 
         place_mines()
         if not assign_number_of_mines_around_and_check_board_correct():
-            self.__init__(board_def)
+            self.__init__(dims)
 
     def step(self, position: Position) -> List[GameEvent]:
         cell = self.cells[position]
@@ -89,9 +81,9 @@ class Board:
 
     @property
     def mine_free_area(self):
-        start_indices = list(range(self.board_def.mine_free_area_size))
-        row_end_indices = list(range(self.dims[0] - self.board_def.mine_free_area_size, self.dims[0]))
-        col_end_indices = list(range(self.dims[1] - self.board_def.mine_free_area_size, self.dims[1]))
+        start_indices = list(range(mine_free_area_size))
+        row_end_indices = list(range(self.dims[0] - mine_free_area_size, self.dims[0]))
+        col_end_indices = list(range(self.dims[1] - mine_free_area_size, self.dims[1]))
         return set(product(start_indices + row_end_indices, start_indices + col_end_indices))
 
     def get_adjacent_cells(self, position: Position):
@@ -109,7 +101,7 @@ class Board:
             cell.hide_pristine = False
 
     def __getstate__(self):
-        state = {k: v for k, v in self.__dict__.items() if k not in ['board_def', 'cells', 'hide_pristine_cells']}
+        state = {k: v for k, v in self.__dict__.items() if k not in ['cells', 'hide_pristine_cells']}
         state['cells'] = {
             coords: cell
             for coords, cell
@@ -117,10 +109,3 @@ class Board:
             if (not cell.pristine if self.hide_pristine_cells else True)
         }
         return state
-
-
-standard_defs = {
-    'beginner': BoardDef((10, 10), 2),
-    'intermediate': BoardDef((16, 16), 2),
-    'expert': BoardDef((16, 30), 3),
-}

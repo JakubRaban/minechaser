@@ -6,7 +6,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100vw;
   height: 100vh;
   max-width: min(calc(100% - 20px), $lg);
   margin: 0 auto;
@@ -17,6 +16,7 @@
     align-items: center;
     justify-content: space-between;
     min-height: 60vh;
+    width: 100%;
     gap: $spacing32;
 
     main {
@@ -24,7 +24,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: min(calc(100% - 20px), $sm);
+      width: 100%;
 
       h1 {
         text-align: center;
@@ -32,6 +32,10 @@
 
       progress {
         line-height: 0;
+      }
+
+      button {
+        margin-block-start: $spacing16;
       }
     }
 

@@ -11,9 +11,22 @@ interface NameSetterProps {
     onNameSet?: (name: string) => void
 }
 
+const nameValidator = (name: string) => {
+    if (name.length) {
+        const sanitized = name.trim().replaceAll(/\s+/g, ' ').substring(0, 32)
+        if (sanitized.length < 3) {
+            return 'Name too short'
+        } else if (sanitized.length > 32) {
+            return 'Name too long'
+        }
+    }
+    return ''
+}
+
 export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
     const { socket } = useSocket()
     const { setSettings } = useSettings()
+    const [nameError, setNameError] = useState('')
     const placeholderName = useRef(generateRandomUsername())
     const nameInputRef = useRef<HTMLInputElement>(null)
 
@@ -24,11 +37,16 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
         disableSoundEffects: false,
     })
     const { name, invertControls, colorBlindMode, disableSoundEffects } = formValues
+
     const setFieldValue = (event: BaseSyntheticEvent) => {
         setFormValues(value => ({
             ...value,
             [event.target.name]: typeof value[event.target.name as keyof typeof formValues] === 'boolean' ? event.target.checked : event.target.value,
         }))
+    }
+
+    const handleNameBlur = (event: BaseSyntheticEvent) => {
+        setNameError(nameValidator(event.target.value))
     }
 
     const submit = (event: FormEvent) => {
@@ -53,7 +71,17 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                 <fieldset>
                     <label>
                         Your Nickname:
-                        <input ref={nameInputRef} name="name" placeholder={placeholderName.current} type="text" value={name} onChange={setFieldValue} />
+                        <input
+                            ref={nameInputRef}
+                            name="name"
+                            placeholder={placeholderName.current}
+                            type="text" value={name}
+                            onChange={setFieldValue}
+                            onBlur={handleNameBlur}
+                            aria-invalid={!!nameError || undefined}
+                            aria-describedby="name-error"
+                        />
+                        <small id="name-error">{nameError}</small>
                     </label>
 
                     <details>
@@ -76,7 +104,7 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                     </details>
                 </fieldset>
 
-                <button type="submit">Join the Game</button>
+                <button type="submit" disabled={!!nameError}>Join the Game</button>
             </form>
         </div>
     )

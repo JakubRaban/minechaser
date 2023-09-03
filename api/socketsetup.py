@@ -47,11 +47,13 @@ def authenticate(sid, data):
 @sio.event
 def set_name(sid, data: dict):
     name = data.pop('name', None)
-    if name and sid in socket_id_to_player_id:
+    if isinstance(name, str) and sid in socket_id_to_player_id:
         print('setting name')
         player_id = socket_id_to_player_id[sid]
-        player_id_to_player_name[player_id] = name
-        return {'name': name}
+        sanitized_name = ' '.join(name.split())[:32].lower()
+        if len(sanitized_name) >= 3:
+            player_id_to_player_name[player_id] = sanitized_name
+            return {'name': sanitized_name}
 
 
 @sio.event

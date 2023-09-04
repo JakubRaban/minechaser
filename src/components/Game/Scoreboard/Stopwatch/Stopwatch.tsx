@@ -1,4 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react'
+import { dateDiff } from '../../../../helpers'
 
 import './Stopwatch.scss'
 
@@ -16,11 +17,9 @@ export const Stopwatch: FC<StopwatchProps> = ({ timestampAtZero, endScheduled, i
     useEffect(() => {
         if (isActive) {
             interval.current = setInterval(() => {
-                setStopwatchValue(
-                    Math.max(0, Math.floor((new Date().getTime() - timestampAtZero.getTime()) / 1000)),
-                )
+                setStopwatchValue(dateDiff(new Date(), timestampAtZero).seconds)
                 if (endScheduled) {
-                    const timeToEnd = Math.max(0, Math.floor((endScheduled.getTime() - new Date().getTime()) / 1000))
+                    const timeToEnd = dateDiff(endScheduled, new Date()).seconds
                     setEndGameTimer(timeToEnd <= 30 ? timeToEnd : null)
                 }
             }, 200)

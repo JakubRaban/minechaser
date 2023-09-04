@@ -92,7 +92,7 @@ export const Game: FC<GameStateData> = ({ gameState, playerColor, colorMapping }
                 endScheduled={props.endScheduled}
                 isFinished={props.isFinished}
             />
-            <CellGrid dims={props.dims} cells={props.cells} players={props.players} />
+            <CellGrid dims={props.dims} cells={props.cells} players={props.players} gameStart={props.start} />
             {/*<SteeringBoard onPlayerAction={handlePlayerAction} />*/}
         </div>
     )

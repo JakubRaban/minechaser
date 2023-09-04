@@ -61,3 +61,11 @@ export const generateRandomUsername = () => {
     ]
     return `${pickRandom(adjectives)}-${pickRandom(nouns)}-${Math.floor(Math.random() * 990 + 10)}`
 }
+
+export const dateDiff = (date1: Date, date2: Date) => {
+    const diff = Math.max(date1.getTime() - date2.getTime(), 0)
+    return {
+        seconds: Math.ceil(diff / 1000),
+        millis: diff,
+    }
+}

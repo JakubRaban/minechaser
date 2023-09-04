@@ -3,14 +3,14 @@ import { useSocket } from '../../hooks/useSocket'
 import { useNavigate } from 'react-router-dom'
 import { PlayerList } from '../PlayerList/PlayerList'
 import { useSettings } from '../../hooks/useSettings'
-import { pickRandom } from '../../helpers'
+import { dateDiff, pickRandom } from '../../helpers'
 
 import './Queue.scss'
 
 const progressUpdaterFactory = (waitingStart: Date) => {
     const start = waitingStart
     return () => {
-        const timeElapsed = Date.now() - start.getTime()
+        const timeElapsed = dateDiff(start, new Date()).millis
         return timeElapsed < 12000 ? timeElapsed : Math.min(14500, Math.floor(1500 * Math.log10(timeElapsed - 11000) + 7500))
     }
 }

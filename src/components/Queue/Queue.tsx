@@ -10,7 +10,7 @@ import './Queue.scss'
 const progressUpdaterFactory = (waitingStart: Date) => {
     const start = waitingStart
     return () => {
-        const timeElapsed = dateDiff(start, new Date()).millis
+        const timeElapsed = dateDiff(new Date(), start).millis
         return timeElapsed < 12000 ? timeElapsed : Math.min(14500, Math.floor(1500 * Math.log10(timeElapsed - 11000) + 7500))
     }
 }

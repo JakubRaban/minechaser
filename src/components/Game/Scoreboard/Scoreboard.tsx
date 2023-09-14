@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react'
+import { forwardRef, Fragment } from 'react'
 import { PlayerScoreboard } from './PlayerScoreboard/PlayerScoreboard'
 import { Player, PlayerColor, PlayerColorMapping, Players } from '../../../types/model'
 import { ScoreboardElement } from './ScoreboardElement/ScoreboardElement'
@@ -15,11 +15,11 @@ interface ScoreboardProps {
     isFinished: boolean
 }
 
-export const Scoreboard: FC<ScoreboardProps> = ({ minesLeft, players, colorMapping, gameStart, endScheduled, isFinished }) => {
+export const Scoreboard = forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLeft, players, colorMapping, gameStart, endScheduled, isFinished }, ref) => {
     const playerEntries = Object.entries(players) as [PlayerColor, Player][]
 
     return (
-        <div className="scoreboard">
+        <div className="scoreboard" ref={ref}>
             <ScoreboardElement label="time" className="stopwatch">
                 <Stopwatch timestampAtZero={gameStart} isActive={!isFinished} endScheduled={endScheduled} />
             </ScoreboardElement>
@@ -37,4 +37,4 @@ export const Scoreboard: FC<ScoreboardProps> = ({ minesLeft, players, colorMappi
             </ScoreboardElement>
         </div>
     )
-}
+})

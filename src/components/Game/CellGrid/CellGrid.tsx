@@ -10,9 +10,10 @@ interface CellGridProps {
     cells: Cells
     players: Players
     gameStart: Date
+    cellSizePx: number
 }
 
-export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, gameStart }) => {
+export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, gameStart, cellSizePx }) => {
     const [height, width] = dims
     const [secondsUntilStart, setSecondsUntilStart] = useState(dateDiff(gameStart, new Date()).seconds)
     const hasStarted = secondsUntilStart <= 0
@@ -36,8 +37,14 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, gameStart })
         }
     }, [secondsUntilStart])
 
+    useEffect(() => {
+        document.documentElement.style.setProperty('--board-cols', `${width}`)
+        document.documentElement.style.setProperty('--board-rows', `${height}`)
+        document.documentElement.style.setProperty('--cell-size', `${cellSizePx}px`)
+    }, [dims, cellSizePx])
+
     return (
-        <div className="cell-grid" style={{ gridTemplateRows: `repeat(${height}, 1fr)`, gridTemplateColumns: `repeat(${width}, 1fr)` }}>
+        <div className="cell-grid">
             {[...Array(height)].map((_, col) => (
                 [...Array(width)].map((_, row) => {
                     const positionString = toPositionString([col, row])

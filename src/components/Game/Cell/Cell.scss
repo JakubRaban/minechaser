@@ -38,8 +38,12 @@
   }
 
   .cell-content {
-    font-size: 85cqh;
+    font-size: 100cqh;
     margin-top: 0.0625em;
+
+    @media screen and (min-width: $sm) and (min-height: $sm) {
+      font-size: 85cqh;
+    }
   }
 
   .cell-player-overlay {
@@ -51,7 +55,11 @@
     background-color: transparent;
 
     &.player {
-      border: 10cqh solid;
+      border: 15cqh solid;
+
+      @media screen and (min-width: $sm) and (min-height: $sm) {
+        border: 10cqh solid;
+      }
 
       &-red {
         border-color: $player-red;

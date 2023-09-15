@@ -1,15 +1,18 @@
-import { FC, useEffect, useState, useRef, useCallback } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useSocket } from '../../hooks/useSocket'
 import { GameStateData } from './GameWrapper/GameWrapper'
 import { useGameState } from '../../hooks/useGameState'
 import { Scoreboard } from './Scoreboard/Scoreboard'
 import { CellGrid } from './CellGrid/CellGrid'
+import { SteeringBoard } from './SteeringBoard/SteeringBoard'
 import { useParams } from 'react-router'
 import { ActionResult, RawGameState } from '../../types/model'
 import { GameSummary } from '../GameSummary/GameSummary'
+import { useCellSize } from './useCellSize'
 
 import './Game.scss'
-import { useCellSize } from './useCellSize'
+import { useSettings } from '../../hooks/useSettings'
+import cn from 'classnames'
 
 export type ActionType = 'STEP' | 'FLAG'
 export type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
@@ -20,9 +23,8 @@ export const Game: FC<GameStateData> = ({ gameState, playerColor, colorMapping }
     const [props, resolveAction, setGameState] = useGameState(gameState)
     const [moveToSummaryScreen, setMoveToSummaryScreen] = useState(false)
 
-    // const [containerRef, setContainerRef] = useCallbackRef()
-    // const [scoreboardRef, setScoreboardRef] = useCallbackRef()
     const [cellSizePx, containerRef, scoreboardRef] = useCellSize(props.dims)
+    const { showOnScreenControls } = useSettings()
 
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
         socket.emit('player_action', { gameId, actionType, direction })
@@ -90,7 +92,7 @@ export const Game: FC<GameStateData> = ({ gameState, playerColor, colorMapping }
         <div className="game-page">
             {/* Ads could go here */}
             <div className="game-container" ref={containerRef}>
-                <div className="game-layout">
+                <div className={cn('game-layout', { keyboard: !showOnScreenControls })}>
                     <Scoreboard
                         ref={scoreboardRef}
                         players={props.players}
@@ -101,7 +103,7 @@ export const Game: FC<GameStateData> = ({ gameState, playerColor, colorMapping }
                         isFinished={props.isFinished}
                     />
                     <CellGrid dims={props.dims} cells={props.cells} players={props.players} gameStart={props.start} cellSizePx={cellSizePx} />
-                    {/*<SteeringBoard onPlayerAction={handlePlayerAction} />*/}
+                    <SteeringBoard onAction={handlePlayerAction} />
                 </div>
             </div>
         </div>

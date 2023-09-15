@@ -10,3 +10,16 @@
   justify-content: center;
   align-items: center;
 }
+
+.game-layout {
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  grid-template-columns: max-content 150px;
+  grid-template-areas:
+    "board scoreboard"
+    "board controls";
+  
+  &.keyboard {
+    display: block;
+  }
+}

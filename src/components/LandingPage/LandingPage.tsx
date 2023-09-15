@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
-import { Button } from '../lib/Button/Button'
+import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
 
 import './LandingPage.scss'
 
@@ -16,9 +16,9 @@ export const LandingPage: FC = () => {
             </header>
             <main>
                 <section className="menu">
-                    <Button text="Play Online" link="/queue" />
-                    <Button text="Play With Friends" link="/new-game" />
-                    <Button text="Single Player" link="/new-game/single-player" />
+                    <LandingPageButton text="Play Online" link="/queue" />
+                    <LandingPageButton text="Play With Friends" link="/new-game" />
+                    <LandingPageButton text="Single Player" link="/new-game/single-player" />
                 </section>
                 <section className="rules">
                     <h2>Quick Rules</h2>

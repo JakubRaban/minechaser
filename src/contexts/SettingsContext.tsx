@@ -1,18 +1,24 @@
-import { createContext, FC, PropsWithChildren, useState } from 'react'
+import { createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useState } from 'react'
 
 export interface UserSettings {
-    name: string,
+    name?: string,
     invertControls: boolean,
     colorBlindMode: boolean,
     disableSoundEffects: boolean,
+    showOnScreenControls: boolean,
 }
 
-interface UserSettingsContext extends Partial<UserSettings> {
-    setSettings: (settings: Partial<UserSettings>) => void
+interface UserSettingsContext extends UserSettings {
+    setSettings: Dispatch<SetStateAction<UserSettings>>
 }
 
 export const SettingsContextProvider: FC<PropsWithChildren> = ({ children }) => {
-    const [settings, setSettings] = useState<Partial<UserSettings>>({})
+    const [settings, setSettings] = useState<UserSettings>({
+        invertControls: false,
+        colorBlindMode: false,
+        disableSoundEffects: false,
+        showOnScreenControls: ('ontouchstart' in window) || (navigator.maxTouchPoints > 0),
+    })
 
     return (
         <SettingsContext.Provider value={{ ...settings, setSettings }}>
@@ -22,4 +28,4 @@ export const SettingsContextProvider: FC<PropsWithChildren> = ({ children }) => 
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export const SettingsContext = createContext<UserSettingsContext>({ setSettings: () => {} })
+export const SettingsContext = createContext<UserSettingsContext>({ setSettings: () => {} } as any)

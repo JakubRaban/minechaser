@@ -24,7 +24,7 @@ export const FlagIcon: FC<FlagIconProps> = ({ className, fill }) => (
                     />
                 </g>
                 <g transform="matrix(1 0 0 1 -102.783 -34.912)" id="flat_x2C__basic_x2C__home_x2C__flag__x2C_">
-                    <polygon points="-19.607,199.683 19.607,199.683 19.607,41.967 19.607,-170.655 19.607,-199.683 -19.607,-199.683" />
+                    <polygon fill="rgb(0,0,0)" points="-19.607,199.683 19.607,199.683 19.607,41.967 19.607,-170.655 19.607,-199.683 -19.607,-199.683" />
                 </g>
                 <g transform="matrix(1 0 0 1 66.7015 -111.756)" id="flat_x2C__basic_x2C__home_x2C__flag__x2C_">
                     <polygon className={cn('color-triangle', playerColorToClassName(fill))} points="-149.8775,118.811 149.8775,-0.381 -149.8775,-118.811" />

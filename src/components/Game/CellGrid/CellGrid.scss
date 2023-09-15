@@ -2,12 +2,15 @@
   --cell-size: 20px;
   --board-rows: 8;
   --board-cols: 16;
+  --grid-gap: 1px;
 }
 
 .cell-grid {
+  grid-area: board;
+
   display: grid;
   grid-template-rows: repeat(var(--board-rows), var(--cell-size));
   grid-template-columns: repeat(var(--board-cols), var(--cell-size));
-  gap: 2px;
+  gap: var(--grid-gap);
   background-color: black;
 }

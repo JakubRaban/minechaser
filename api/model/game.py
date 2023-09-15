@@ -2,7 +2,6 @@ from datetime import datetime, timedelta, timezone
 from enum import Enum
 from threading import RLock
 from typing import List, Dict, Optional
-from functools import wraps
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -68,21 +67,10 @@ class Game:
             return ActionResult(self.players[player_color, ], [])
 
 
-def adjust_end_timestamp(fn):
-    @wraps(fn)
-    def wrapper(self, *args):
-        result = fn(self, *args)
-        if result and not self.end_game_scheduler:
-            del result.end_game_scheduled_timestamp
-        return result
-
-    return wrapper
-
-
 class GameProxy:
     def __init__(self, player_ids: List[str], on_game_finished: callable, autostart: bool):
-        self.game = Game((16, 32), len(player_ids)) if autostart else None
-        self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=5 if len(player_ids) > 1 else 0) if autostart else None
+        self.game = Game((18, 27), len(player_ids)) if autostart else None
+        self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=7 if len(player_ids) > 1 else 0) if autostart else None
         self.player_id_mapping = dict(zip(player_ids, self.game.players.colors())) if autostart else None
         self.player_ids = player_ids
         self.end_timestamp = None
@@ -129,7 +117,6 @@ class GameProxy:
         return self.end_timestamp is not None
 
     @locked
-    @adjust_end_timestamp
     def step(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):
             player_color = self.player_id_mapping[player_id]
@@ -142,7 +129,6 @@ class GameProxy:
                 return result
 
     @locked
-    @adjust_end_timestamp
     def flag(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):
             player_color = self.player_id_mapping[player_id]
@@ -173,10 +159,7 @@ class GameProxy:
         base_state = {k: v for k, v in self.__dict__.items() if k in ['game', 'start_timestamp', 'end_timestamp']}
         return {
             **base_state,
-            'endGameScheduledTimestamp':
-                self.end_game_scheduler.end_game_scheduled_timestamp
-                if self.end_game_scheduler
-                else None
+            'endGameScheduledTimestamp': self.end_game_scheduler.end_game_scheduled_timestamp
         }
 
 
@@ -184,10 +167,10 @@ class EndGameScheduler:
     def __init__(self, on_game_finished: callable):
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
+        self.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(hours=1)
         self.finish_game_job = self.scheduler.add_job(
-            on_game_finished, 'date', id='end_game', run_date=datetime.now(timezone.utc) + timedelta(hours=1), args=[]
+            on_game_finished, 'date', id='end_game', run_date=self.end_game_scheduled_timestamp, args=[]
         )
-        self.end_game_scheduled_timestamp = None
 
     def postpone_end(self, end_game_scheduled_timestamp: datetime):
         self.end_game_scheduled_timestamp = end_game_scheduled_timestamp

@@ -1,24 +1,48 @@
 @import "../../../styles/constants";
 
 .scoreboard {
-  display: flex;
-  align-items: center;
-  background-color: black;
-  color: $cell-uncovered-color;
-  height: 3.5rem;
-  text-align: center;
+  grid-area: scoreboard;
 
-  .stopwatch, .mines-counter {
-    flex-basis: 5em;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas:
+    "stopwatch mines-counter";
+  grid-auto-flow: row;
+
+  text-align: center;
+  background-color: black;
+
+  .stopwatch {
+    grid-area: stopwatch;
+  }
+
+  .mines-counter {
+    grid-area: mines-counter;
   }
 
   .player-scoreboard {
-    flex-grow: 1;
-  }
-
-  .separator {
-    width: 1px;
-    height: 70%;
-    background-color: $cell-uncovered-color;
+    grid-column: 1 / 3;
   }
 }
+
+.keyboard .scoreboard {
+    display: flex;
+    align-items: center;
+    height: 3.5rem;
+
+    .stopwatch, .mines-counter {
+      flex-basis: 5em;
+    }
+
+    .player-scoreboard {
+      flex-grow: 1;
+    }
+
+    .separator {
+      display: block;
+      width: 1px;
+      height: 70%;
+      background-color: $cell-uncovered-color;
+    }
+  }

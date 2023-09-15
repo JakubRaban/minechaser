@@ -12,9 +12,9 @@ interface SizeDef {
 
 const is = (size1: [number, number], size2: [number, number]) => size1[0] === size2[0] && size1[1] === size2[1]
 const sizeDefs: SizeDef[] = [
-    { name: 'Small (8 x 16)', size: [8, 16] },
-    { name: 'Medium (12 x 24)', size: [12, 24] },
-    { name: 'Large (16 x 32)', size: [16, 32] },
+    { name: 'Small (10 x 15)', size: [10, 15] },
+    { name: 'Medium (14 x 21)', size: [14, 21] },
+    { name: 'Large (18 x 27)', size: [18, 27] },
 ]
 
 export const BoardSizeForm: FC<BoardSizeFormProps> = ({ size, onChange }) => {

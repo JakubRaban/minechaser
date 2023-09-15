@@ -4,6 +4,7 @@ import { generateRandomUsername } from '../../../helpers'
 import cn from 'classnames'
 import { useSettings } from '../../../hooks/useSettings'
 import { UserSettings } from '../../../contexts/SettingsContext'
+import { usePhysicalKeyboardDetector } from '../../../hooks/usePhysicalKeyboardDetector'
 
 import './NameSetter.scss'
 
@@ -25,23 +26,17 @@ const nameValidator = (name: string) => {
 
 export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
     const { socket } = useSocket()
-    const { setSettings } = useSettings()
+    const { setSettings, ...settings } = useSettings()
     const [nameError, setNameError] = useState('')
     const placeholderName = useRef(generateRandomUsername())
     const nameInputRef = useRef<HTMLInputElement>(null)
-
-    const [formValues, setFormValues] = useState({
-        name: '',
-        invertControls: false,
-        colorBlindMode: false,
-        disableSoundEffects: false,
-    })
-    const { name, invertControls, colorBlindMode, disableSoundEffects } = formValues
+    
+    usePhysicalKeyboardDetector()
 
     const setFieldValue = (event: BaseSyntheticEvent) => {
-        setFormValues(value => ({
+        setSettings(value => ({
             ...value,
-            [event.target.name]: typeof value[event.target.name as keyof typeof formValues] === 'boolean' ? event.target.checked : event.target.value,
+            [event.target.name]: typeof value[event.target.name as keyof typeof settings] === 'boolean' ? event.target.checked : event.target.value,
         }))
     }
 
@@ -53,10 +48,13 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
         event.preventDefault()
         socket.emit(
             'set_name',
-            { ...formValues, name: formValues.name.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current },
+            {
+                ...settings,
+                name: settings.name?.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current,
+            },
             (settings: UserSettings) => {
                 setSettings(settings)
-                onNameSet?.(settings.name)
+                onNameSet?.(settings.name!)
             },
         )
     }
@@ -75,7 +73,8 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                             ref={nameInputRef}
                             name="name"
                             placeholder={placeholderName.current}
-                            type="text" value={name}
+                            type="text"
+                            value={settings.name || ''}
                             onChange={setFieldValue}
                             onBlur={handleNameBlur}
                             aria-invalid={!!nameError || undefined}
@@ -87,19 +86,25 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                     <details>
                         <summary>Settings</summary>
                         <label>
-                            <input name="invertControls" checked={invertControls} type="checkbox" role="switch" onChange={setFieldValue} />
+                            <input name="invertControls" checked={settings.invertControls} type="checkbox" role="switch" onChange={setFieldValue} />
                             Invert Controls
-                            <aside className={cn({ active: invertControls })}>(Use <kbd>WASD</kbd> to move and <kbd>Arrow Keys</kbd> to flag)</aside>
+                            <aside className={cn({ active: settings.invertControls })}>(Use <kbd>WASD</kbd> to move and <kbd>Arrow Keys</kbd> to flag)</aside>
                         </label>
 
                         <label>
-                            <input name="colorBlindMode" checked={colorBlindMode} type="checkbox" role="switch" onChange={setFieldValue} />
+                            <input name="colorBlindMode" checked={settings.colorBlindMode} type="checkbox" role="switch" onChange={setFieldValue} />
                             Enable Color Blind Mode
                         </label>
 
                         <label>
-                            <input name="disableSoundEffects" checked={disableSoundEffects} type="checkbox" role="switch" onChange={setFieldValue} />
+                            <input name="disableSoundEffects" checked={settings.disableSoundEffects} type="checkbox" role="switch" onChange={setFieldValue} />
                             Disable Sound Effects
+                        </label>
+
+                        <label>
+                            <input name="showOnScreenControls" checked={settings.showOnScreenControls} type="checkbox" role="switch" onChange={setFieldValue} />
+                            Show on-screen controls
+                            <aside>(for touchscreen devices)</aside>
                         </label>
                     </details>
                 </fieldset>

@@ -7,7 +7,7 @@ from geventwebsocket.handler import WebSocketHandler
 from socketsetup import sio
 
 
-socketio_app = socketio.WSGIApp(sio, static_files={'/': 'dist/index.html', '/dist': './dist'})
+socketio_app = socketio.WSGIApp(sio, static_files={'/dist': './dist', '/': 'dist/index.html'})
 
 
 if __name__ == '__main__':

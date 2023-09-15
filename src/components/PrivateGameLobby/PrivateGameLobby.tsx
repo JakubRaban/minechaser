@@ -22,7 +22,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
 
     const [players, setPlayers] = useState(playersProp)
     const [linkCopied, setLinkCopied] = useState(false)
-    const [size, setSize] = useState<[number, number]>([16, 32])
+    const [size, setSize] = useState<[number, number]>([18, 27])
 
     const gameStarted = useRef(false)
 
@@ -78,7 +78,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
 
                 <div className="players">
                     Players in the game:
-                    <PlayerList players={players} currentPlayer={currentPlayerName!} highlight={false} />
+                    <PlayerList players={players} currentPlayer={currentPlayerName!} highlight={players.length === 4} />
                 </div>
 
                 <label className="board-size-label">

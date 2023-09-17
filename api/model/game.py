@@ -134,8 +134,7 @@ class GameProxy:
             if result:
                 for event_type in result.outcome.event_types:
                     if event_type == MineCellStepped and self._all_players_dead():
-                        self._finish_game()
-                        return
+                        self.end_game_scheduler.finish_now()
                 return result
 
     @locked
@@ -187,6 +186,11 @@ class EndGameScheduler:
         self.end_game_scheduled_timestamp = end_game_scheduled_timestamp
         self.finish_game_job = self.scheduler.reschedule_job(
             'end_game', trigger='date', run_date=end_game_scheduled_timestamp
+        )
+
+    def finish_now(self):
+        self.finish_game_job = self.scheduler.reschedule_job(
+            'end_game', trigger='date', run_date=datetime.now(timezone.utc)
         )
 
     def __del__(self):

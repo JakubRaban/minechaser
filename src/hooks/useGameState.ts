@@ -1,6 +1,16 @@
-import { useState } from 'react'
-import { ActionResult, GameDef, GameState, RawGameState } from '../types/model'
+import { useRef, useState } from 'react'
+import { ActionResult, GameDef, GameState, PlayerColor, RawGameState } from '../types/model'
 import { toPositionString } from '../helpers'
+import { EventType } from '../types/model'
+
+export interface EventDef {
+    id: number
+    type: EventType
+    originatorColor: PlayerColor
+    pointsChange: number
+}
+
+export type PositionedEvents = Record<string, EventDef>
 
 const parseRawGameState = (rawGameState: RawGameState): GameState => {
     const { startTimestamp, endTimestamp, endGameScheduledTimestamp } = rawGameState
@@ -23,8 +33,11 @@ export const useGameState = (initialState: RawGameState) => {
     } = gameState
     const isFinished = !!end
 
+    const [events, setEvents] = useState<PositionedEvents | null>(null)
+    const eventId = useRef(0)
+
     const resolveActionResult = (result: ActionResult) => {
-        const { players, cells, endGameScheduledTimestamp } = result
+        const { players, cells, endGameScheduledTimestamp, originatorColor, events, pointsChange } = result
         setRawGameState((prev: RawGameState): RawGameState => ({
             ...prev,
             game: {
@@ -41,8 +54,15 @@ export const useGameState = (initialState: RawGameState) => {
             },
             endGameScheduledTimestamp: endGameScheduledTimestamp ?? prev.endGameScheduledTimestamp,
         }))
+        if (events.includes('MineFreeCellFlagged') || events.includes('MineCellFlagged')) {
+            const type = events.find(e => ['MineFreeCellFlagged', 'MineCellFlagged'].includes(e))!
+            setEvents(e => ({
+                ...(e ?? {}),
+                [toPositionString(cells[0].position)]: { originatorColor, type, pointsChange, id: eventId.current++ },
+            }))
+        }
     }
 
     const props: GameDef = { start, end, endScheduled, players, dims, minesLeft, cells, isFinished }
-    return [props, resolveActionResult, setRawGameState] as const
+    return [props, events, resolveActionResult, setRawGameState] as const
 }

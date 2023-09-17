@@ -2,6 +2,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { Cells, PlayerColor, Players, Position } from '../../../types/model'
 import { dateDiff, toPositionString } from '../../../helpers'
 import { Cell } from '../Cell/Cell'
+import { PositionedEvents } from '../../../hooks/useGameState'
 
 import './CellGrid.scss'
 
@@ -11,9 +12,10 @@ interface CellGridProps {
     players: Players
     gameStart: Date
     cellSizePx: number
+    events: PositionedEvents | null
 }
 
-export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, gameStart, cellSizePx }) => {
+export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, gameStart, cellSizePx, events }) => {
     const [height, width] = dims
     const [secondsUntilStart, setSecondsUntilStart] = useState(dateDiff(gameStart, new Date()).seconds)
     const hasStarted = secondsUntilStart <= 0
@@ -52,7 +54,8 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, gameStart, c
                         <Cell
                             key={positionString}
                             cell={hasStarted ? cells[positionString] : undefined}
-                            playerColor={positionToPlayerColor[positionString]}
+                            steppingPlayerColor={positionToPlayerColor[positionString]}
+                            event={events?.[positionString]}
                         />
                     )
                 })

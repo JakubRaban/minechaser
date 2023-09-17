@@ -1,8 +1,7 @@
 import { Position } from '../../types/model'
 import { useEffect, useState } from 'react'
 import { useSettings } from '../../hooks/useSettings'
-
-const rootStyle = getComputedStyle(document.documentElement)
+import { rootStyle } from '../../helpers'
 
 export const useCellSize = (boardDimensions: Position) => {
     const [cellSize, setCellSize] = useState<number>(16)

@@ -69,3 +69,4 @@ export const dateDiff = (date1: Date, date2: Date) => {
         millis: diff,
     }
 }
+export const rootStyle = getComputedStyle(document.documentElement)

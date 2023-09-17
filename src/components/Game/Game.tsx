@@ -9,10 +9,10 @@ import { useParams } from 'react-router'
 import { ActionResult, RawGameState } from '../../types/model'
 import { GameSummary } from '../GameSummary/GameSummary'
 import { useCellSize } from './useCellSize'
-
-import './Game.scss'
 import { useSettings } from '../../hooks/useSettings'
 import cn from 'classnames'
+
+import './Game.scss'
 
 export type ActionType = 'STEP' | 'FLAG'
 export type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
@@ -20,7 +20,7 @@ export type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
 export const Game: FC<GameStateData> = ({ gameState, playerColor, colorMapping }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
-    const [props, resolveAction, setGameState] = useGameState(gameState)
+    const [props, events, resolveAction, setGameState] = useGameState(gameState)
     const [moveToSummaryScreen, setMoveToSummaryScreen] = useState(false)
 
     const [cellSizePx, containerRef, scoreboardRef] = useCellSize(props.dims)
@@ -102,7 +102,14 @@ export const Game: FC<GameStateData> = ({ gameState, playerColor, colorMapping }
                         endScheduled={props.endScheduled}
                         isFinished={props.isFinished}
                     />
-                    <CellGrid dims={props.dims} cells={props.cells} players={props.players} gameStart={props.start} cellSizePx={cellSizePx} />
+                    <CellGrid
+                        dims={props.dims}
+                        cells={props.cells}
+                        players={props.players}
+                        gameStart={props.start}
+                        cellSizePx={cellSizePx}
+                        events={events}
+                    />
                     <SteeringBoard onAction={handlePlayerAction} />
                 </div>
             </div>

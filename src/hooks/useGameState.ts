@@ -3,10 +3,10 @@ import { ActionResult, GameDef, GameState, RawGameState } from '../types/model'
 import { toPositionString } from '../helpers'
 
 const parseRawGameState = (rawGameState: RawGameState): GameState => {
-    const { endTimestamp, endGameScheduledTimestamp } = rawGameState
+    const { startTimestamp, endTimestamp, endGameScheduledTimestamp } = rawGameState
     return {
         ...rawGameState,
-        start: new Date(rawGameState.startTimestamp),
+        start: new Date(startTimestamp),
         end: endTimestamp ? new Date(endTimestamp) : null,
         endScheduled: endGameScheduledTimestamp ? new Date(endGameScheduledTimestamp) : null,
     }
@@ -23,8 +23,8 @@ export const useGameState = (initialState: RawGameState) => {
     } = gameState
     const isFinished = !!end
 
-    const resolveAction = (action: ActionResult) => {
-        const { players, cells, endGameScheduledTimestamp } = action
+    const resolveActionResult = (result: ActionResult) => {
+        const { players, cells, endGameScheduledTimestamp } = result
         setRawGameState((prev: RawGameState): RawGameState => ({
             ...prev,
             game: {
@@ -32,7 +32,7 @@ export const useGameState = (initialState: RawGameState) => {
                 players: { ...prev.game.players, ...players },
                 board: {
                     ...prev.game.board,
-                    minesLeft: action.minesLeft ?? prev.game.board.minesLeft,
+                    minesLeft: result.minesLeft ?? prev.game.board.minesLeft,
                     cells: {
                         ...prev.game.board.cells,
                         ...Object.fromEntries(cells.map(cell => [toPositionString(cell.position), cell])),
@@ -44,5 +44,5 @@ export const useGameState = (initialState: RawGameState) => {
     }
 
     const props: GameDef = { start, end, endScheduled, players, dims, minesLeft, cells, isFinished }
-    return [props, resolveAction, setRawGameState] as const
+    return [props, resolveActionResult, setRawGameState] as const
 }

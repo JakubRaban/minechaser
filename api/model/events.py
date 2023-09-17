@@ -1,10 +1,10 @@
 from abc import ABC
 from dataclasses import dataclass
+from typing import List, Set, Type
 
 
 @dataclass(kw_only=True)
 class GameEvent(ABC):
-    cell: 'Cell'
     points_change: int = 0
     kill: bool = False
 
@@ -40,3 +40,25 @@ class MineCellFlagged(GameEvent):
 class NoMinesLeft(GameEvent):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+
+@dataclass
+class CellAction:
+    cell: 'Cell'
+    event: GameEvent
+
+
+class ActionOutcome:
+    def __init__(self):
+        self.cells: Set['Cell'] = set()
+        self.event_types: Set[Type[GameEvent]] = set()
+        self.points_change: int = 0
+        self.kill: bool = False
+
+    def add_action(self, action: CellAction | List[CellAction]):
+        for action in ([action] if isinstance(action, CellAction) else action):
+            self.event_types.add(type(action.event))
+            self.cells.add(action.cell)
+            self.points_change = action.event.points_change
+            self.kill = self.kill or action.event.kill
+        return self

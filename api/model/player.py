@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List, Tuple, Dict
 
 from helpers import sum_positions
-from model.events import GameEvent
+from model.events import ActionOutcome
 from types_ import Position
 
 
@@ -41,16 +41,15 @@ class Player:
         # TODO process the direction through the list of effects
         return sum_positions(self.position, direction.value)
 
-    def process_events(self, events: List[GameEvent]):
-        for event in events:
-            if event.points_change > 0:
-                self.score += event.points_change
-            if event.points_change < 0:
-                self.mistakes += 1
-                self.score += max(event.points_change * (self.mistakes - 1), -3)
-            if event.kill:
-                self.alive = False
-                break
+    def process_outcome(self, outcome: ActionOutcome):
+        if outcome.points_change > 0:
+            self.score += outcome.points_change
+        if outcome.points_change < 0:
+            self.mistakes += 1
+            outcome.points_change = max(outcome.points_change * (self.mistakes - 1), -3)
+            self.score += outcome.points_change
+        if outcome.kill:
+            self.alive = False
 
 
 class Players:
@@ -63,7 +62,7 @@ class Players:
 
     def __getitem__(self, color: PlayerColor | Tuple[PlayerColor]) -> Player | Dict[PlayerColor, Player]:
         if isinstance(color, tuple):
-            return {color: self.players[color] for color in color}
+            return {c: self.players[c] for c in color}
         return self.players[color]
 
     def colors(self):

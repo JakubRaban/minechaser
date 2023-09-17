@@ -39,38 +39,41 @@ class Board:
         if not assign_number_of_mines_around_and_check_board_correct():
             self.__init__(dims)
 
-    def step(self, position: Position) -> List[GameEvent]:
-        cell = self.cells[position]
-        if cell.pristine:
-            cell.is_uncovered = True
-            if cell.has_mine:
-                self.mines_left -= 1
-                events = [MineCellStepped(cell=cell)]
-                events.extend([NoMinesLeft(cell=cell)] if self.mines_left == 0 else [])
-                return events
-            if cell.mines_around == 0:
-                events = [MineFreeCellStepped(cell=cell)]
-                for position in self.get_adjacent_cells(position).keys():
-                    events.extend(self.step(position))
-                return events
-            else:
-                return [MineFreeCellStepped(cell=cell)]
-        else:
-            return []
+    def step(self, position: Position) -> ActionOutcome:
+        outcome = ActionOutcome()
 
-    def flag(self, position: Position, flagging_player: PlayerColor) -> List[GameEvent]:
+        def do_step(pos: Position, result_outcome: ActionOutcome) -> ActionOutcome:
+            cell = self.cells[pos]
+            if cell.pristine:
+                cell.is_uncovered = True
+                if cell.has_mine:
+                    self.mines_left -= 1
+                    result_outcome.add_action(CellAction(cell=cell, event=MineCellStepped()))
+                    if self.mines_left == 0:
+                        result_outcome.add_action(CellAction(cell=cell, event=NoMinesLeft()))
+                elif cell.mines_around == 0:
+                    result_outcome.add_action(CellAction(cell=cell, event=MineFreeCellStepped()))
+                    for p in self.get_adjacent_cells(pos).keys():
+                        do_step(p, result_outcome)
+                else:
+                    result_outcome.add_action(CellAction(cell=cell, event=MineFreeCellStepped()))
+            return result_outcome
+
+        return do_step(position, outcome)
+
+    def flag(self, position: Position, flagging_player: PlayerColor) -> ActionOutcome:
         cell = self.cells[position]
+        outcome = ActionOutcome()
         if cell.pristine:
             if cell.has_mine:
                 cell.flagging_player = flagging_player
                 self.mines_left -= 1
-                events = [MineCellFlagged(cell=cell)]
-                events.extend([NoMinesLeft(cell=cell)] if self.mines_left == 0 else [])
-                return events
+                outcome.add_action(CellAction(cell=cell, event=MineCellFlagged()))
+                if self.mines_left == 0:
+                    outcome.add_action(CellAction(cell=cell, event=NoMinesLeft()))
             else:
-                return [MineFreeCellFlagged(cell=cell)]
-        else:
-            return []
+                outcome.add_action(CellAction(cell=cell, event=MineFreeCellFlagged()))
+        return outcome
 
     def normalize_position(self, position: Position) -> Position:
         return position[0] % self.dims[0], position[1] % self.dims[1]

@@ -1,14 +1,15 @@
 from datetime import datetime, timedelta, timezone
 from enum import Enum
+from functools import wraps
 from threading import RLock
-from typing import List, Dict, Optional
+from typing import List, Optional
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from model.events import GameEvent, MineCellFlagged, NoMinesLeft, MineCellStepped
+from model.events import MineCellFlagged, NoMinesLeft, MineCellStepped, ActionOutcome
 from model.player import Players, PlayerColor, Direction, Player
 from model.board import Board
-from types_ import Dimensions
+from types_ import Dimensions, Position
 
 
 class ActionType(Enum):
@@ -17,23 +18,33 @@ class ActionType(Enum):
 
 
 class ActionResult:
-    def __init__(self, players: Dict[PlayerColor, Player], events: List[GameEvent], mines_left: Optional[int] = None):
-        self.players = players
-        self.events = events
+    def __init__(
+            self,
+            originator: Player,
+            originator_color: PlayerColor,
+            action_type: ActionType,
+            position: Position,
+            outcome: ActionOutcome,
+            mines_left: Optional[int] = None
+    ):
+        self.originator_color = originator_color
+        self.players = {originator_color: originator}
+        self.outcome = outcome
+        self.points_change = outcome.points_change
         self.mines_left = mines_left
-        self.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(minutes=2) \
-            if any(isinstance(event, MineCellFlagged) for event in events) \
-            else None
+        self.action_type = action_type
+        self.position = position
+        self.end_game_scheduled_timestamp = None
 
     def __getstate__(self):
         return {
+            'originatorColor': self.originator_color.name,
             'players': {color.name: player for color, player in self.players.items()},
-            'cells': [event.cell for event in self.events],
+            'cells': [cell for cell in self.outcome.cells],
+            'events': [event.__name__ for event in self.outcome.event_types],
+            'pointsChange': self.points_change,
             'minesLeft': self.mines_left,
-            'endGameScheduledTimestamp':
-                self.end_game_scheduled_timestamp
-                if hasattr(self, 'end_game_scheduled_timestamp')
-                else None
+            'endGameScheduledTimestamp': self.end_game_scheduled_timestamp
         }
 
 
@@ -50,11 +61,10 @@ class Game:
         if player.alive:
             new_position = self.board.normalize_position(player.calculate_new_position(direction))
             if new_position not in self.players.positions:
-                events = self.board.step(new_position)
+                outcome = self.board.step(new_position)
                 player.position = new_position
-                player.process_events(events)
-                return ActionResult(self.players[player_color, ], events, self.board.mines_left)
-            return ActionResult(self.players[player_color, ], [])
+                player.process_outcome(outcome)
+                return ActionResult(player, player_color, ActionType.STEP, new_position, outcome, self.board.mines_left)
 
     def flag(self, player_color: PlayerColor, direction: Direction) -> ActionResult:
         player = self.players[player_color]
@@ -62,9 +72,8 @@ class Game:
             new_position = player.calculate_new_position(direction)
             if new_position not in self.players.positions and new_position in self.board.cells:
                 events = self.board.flag(new_position, player_color)
-                player.process_events(events)
-                return ActionResult(self.players[player_color, ], events, self.board.mines_left)
-            return ActionResult(self.players[player_color, ], [])
+                player.process_outcome(events)
+                return ActionResult(player, player_color, ActionType.FLAG, new_position, events, self.board.mines_left)
 
 
 class GameProxy:
@@ -79,6 +88,7 @@ class GameProxy:
         self.lock = RLock()
 
     def locked(func):
+        @wraps(func)
         def wrapper(self, *args, **kwargs):
             with self.lock:
                 return func(self, *args, **kwargs)
@@ -122,8 +132,8 @@ class GameProxy:
             player_color = self.player_id_mapping[player_id]
             result = self.game.step(player_color, direction)
             if result:
-                for event in result.events:
-                    if isinstance(event, MineCellStepped) and self._all_players_dead():
+                for event_type in result.outcome.event_types:
+                    if event_type == MineCellStepped and self._all_players_dead():
                         self._finish_game()
                         return
                 return result
@@ -134,11 +144,12 @@ class GameProxy:
             player_color = self.player_id_mapping[player_id]
             result = self.game.flag(player_color, direction)
             if result:
-                for event in result.events:
-                    if isinstance(event, NoMinesLeft):
+                for event_type in result.outcome.event_types:
+                    if event_type == NoMinesLeft:
                         self._finish_game()
                         return
-                    if isinstance(event, MineCellFlagged) and len(self.player_id_mapping) > 1:
+                    if event_type == MineCellFlagged and len(self.player_id_mapping) > 1:
+                        result.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(minutes=2)
                         self.end_game_scheduler.postpone_end(result.end_game_scheduled_timestamp)
                 return result
 

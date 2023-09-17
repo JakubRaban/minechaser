@@ -2,6 +2,7 @@ export type Position = [number, number]
 export type Players = Partial<Record<PlayerColor, Player>>
 export type Cells = Record<string, Cell>
 export type PlayerColor = 'RED' | 'GREEN' | 'BLUE' | 'YELLOW'
+export type Event = 'MineFreeCellStepped' | 'MineCellStepped' | 'MineFreeCellFlagged' | 'MineCellFlagged' | 'NoMinesLeft'
 export type PlayerColorMapping = Partial<Record<PlayerColor, string>>
 
 export interface RawGameState {
@@ -11,7 +12,7 @@ export interface RawGameState {
     endGameScheduledTimestamp: string | null
 }
 
-export type GameState = Omit<RawGameState, 'startTimestamp' | 'endTimestamp' | 'endGameScheduledTimestamp'> & {
+export interface GameState extends Omit<RawGameState, 'startTimestamp' | 'endTimestamp' | 'endGameScheduledTimestamp'> {
     start: Date
     end: Date | null
     endScheduled: Date | null
@@ -46,9 +47,12 @@ export interface Player {
 }
 
 export interface ActionResult {
+    originatorColor: PlayerColor
     players: Players
     cells: Cell[],
+    events: Event[]
     minesLeft: number | null
+    pointsChange: number
     endGameScheduledTimestamp: string | null
 }
 

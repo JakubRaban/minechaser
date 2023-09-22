@@ -78,7 +78,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
 
                 <div className="players">
                     Players in the game:
-                    <PlayerList players={players} currentPlayer={currentPlayerName!} highlight={players.length === 4} />
+                    <PlayerList players={players} currentPlayerName={currentPlayerName!} highlight={players.length === 4} />
                 </div>
 
                 <label className="board-size-label">

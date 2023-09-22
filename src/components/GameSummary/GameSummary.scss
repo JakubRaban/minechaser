@@ -1,0 +1,148 @@
+@import "../../styles/constants";
+@import "@picocss/pico/scss/colors";
+
+.game-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  font-size: $text30;
+
+  h1 {
+    font-size: $text60;
+    margin-block-end: 0;
+  }
+
+  h3 {
+    font-weight: normal;
+    margin-block-end: $spacing32;
+
+    span {
+      font-weight: bold;
+    }
+  }
+
+  .stats {
+    display: flex;
+    position: relative;
+    left: 10px;
+  }
+
+  button.show-more {
+    position: relative;
+    top: 2%;
+    left: -20px;
+    padding-inline-start: 1.25rem;
+    padding-inline-end: 0.75rem;
+    height: 96%;
+    color: $zinc-550;
+    border-color: $zinc-550;
+  }
+
+  table {
+    margin: 0;
+    border-spacing: 0;
+    border-radius: 0.5em;
+    border: 1px solid $slate-900;
+    overflow: hidden;
+    text-align: center;
+    z-index: 1;
+
+    th, td {
+      border: 1px solid $slate-900;
+      border-inline-width: 0;
+      padding-block: $spacing12;
+      padding-inline: $spacing24;
+
+      &:first-child {
+        padding-inline-start: $spacing32;
+      }
+
+      &:last-child {
+        padding-inline-end: $spacing32;
+      }
+    }
+
+    thead {
+      background-color: $slate-900;
+    }
+
+    tbody {
+      background-color: $slate-850;
+
+      tr {
+        &.dead {
+          color: $slate-550;
+        }
+
+        td {
+          &.color-cell {
+            padding-inline: 0;
+          }
+
+          &.name-cell {
+            text-align: left;
+            padding-inline-end: $spacing48;
+
+            &.current {
+              font-weight: bold;
+            }
+          }
+
+          &.dead-cell {
+            padding-inline: 0;
+
+            .dead-indicator {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: $spacing32;
+              aspect-ratio: 1;
+              background-color: $cell-uncovered-mine-color;
+
+              &.alive {
+                visibility: hidden;
+              }
+
+              .mine-icon {
+                height: 80%;
+                width: 80%;
+              }
+            }
+          }
+
+          &.score-cell {
+            padding-inline-start: $spacing12;
+          }
+
+          span.percent {
+            font-size: 0.75em;
+            margin-left: 0.5em;
+          }
+        }
+      }
+    }
+
+    &.general-stats {
+      margin-block-start: $spacing48;
+
+      tr {
+        td:first-child {
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  .action-buttons {
+    margin-block-start: $spacing48;
+    display: flex;
+    gap: $spacing16;
+
+    button {
+      font-size: $text24;
+    }
+  }
+}

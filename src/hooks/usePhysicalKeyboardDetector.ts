@@ -11,10 +11,10 @@ export const usePhysicalKeyboardDetector = () => {
     
     const recompute = () => {
         registerPressEnd()
-        console.log(pressLog.map(l => l.end! - l.start))
+        const diffs = pressLog.map(p => p.end! - p.start).filter(t => !!t)
         setSettings(s => ({ 
             ...s, 
-            showOnScreenControls: pressLog.reduce((prev, curr) => prev + curr.end! - curr.start, 0) / pressLog.length < 25,
+            showOnScreenControls: diffs.reduce((acc, curr) => acc + curr) / diffs.length < 25,
         }))
     }
 

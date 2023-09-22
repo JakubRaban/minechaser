@@ -50,21 +50,20 @@
       margin: auto 0;
 
       &.menu {
+        a + a {
+          margin-block-start: $spacing12;
+
+          @media screen and (min-width: $md) {
+            margin-block-start: $spacing16;
+          }
+        }
+
         button {
           font-size: $text20;
-          display: block;
           width: 100%;
 
           @media screen and (min-width: $md) {
             font-size: $text30;
-          }
-
-          + button {
-            margin-block-start: $spacing12;
-
-            @media screen and (min-width: $md) {
-              margin-block-start: $spacing16;
-            }
           }
         }
       }

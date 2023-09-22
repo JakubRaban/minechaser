@@ -1,25 +1,27 @@
 import { FC, ReactNode } from 'react'
 import cn from 'classnames'
+import { PlayerColor as PlayerColorComponent } from '../lib/PlayerColor/PlayerColor'
+import { PlayerColor } from '../../types/model'
 
 import './PlayerList.scss'
 
 interface PlayerListProps {
     players: string[]
-    currentPlayer: string
+    currentPlayerName: string
     highlight: boolean
     progressComponent?: ReactNode
 }
 
-const colors = ['red', 'blue', 'green', 'yellow']
+const colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'] as PlayerColor[]
 
-export const PlayerList: FC<PlayerListProps> = ({ players, currentPlayer, highlight, progressComponent }) => (
+export const PlayerList: FC<PlayerListProps> = ({ players, currentPlayerName, highlight, progressComponent }) => (
     <div className={cn('player-list-wrapper', { highlight })}>
         {progressComponent}
         <div className={cn('player-list', { pad: !!progressComponent })}>
             {[...Array(4)].map((_, index) => (
                 <div key={players[index] || index} className="entry">
-                    <div className={cn('color', { [colors[index]]: !!players[index] })} />
-                    <div className={cn('name', { own: players[index] === currentPlayer })}>{players[index] ?? ''}</div>
+                    <PlayerColorComponent color={players[index] ? colors[index] : undefined} />
+                    <div className={cn('name', { own: players[index] === currentPlayerName })}>{players[index] ?? ''}</div>
                 </div>
             ))}
         </div>

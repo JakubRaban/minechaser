@@ -2,7 +2,7 @@ import operator
 from functools import reduce
 from itertools import product
 from random import sample
-from typing import Dict, List
+from typing import Dict
 
 from helpers import sum_positions
 from model.cell import Cell
@@ -18,7 +18,8 @@ class Board:
     def __init__(self, dims: Dimensions):
         self.dims = dims
         self.cells: Dict[Position, Cell] = {}
-        self.mines_left = int((self.dims[0] * self.dims[1] - 4 * mine_free_area_size ** 2) * mine_density)
+        self.initial_mines = int((self.dims[0] * self.dims[1] - 4 * mine_free_area_size ** 2) * mine_density)
+        self.mines_left = self.initial_mines
         self.hide_pristine_cells = True
         for cell_position in product(range(self.dims[0]), range(self.dims[1])):
             self.cells[cell_position] = Cell(cell_position)

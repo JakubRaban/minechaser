@@ -1,6 +1,7 @@
 import { FC } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useSettings } from '../../../hooks/useSettings'
+import { Link } from 'react-router-dom'
+
+import './LandingPageButton.scss'
 
 interface ButtonProps {
     text: string
@@ -9,14 +10,13 @@ interface ButtonProps {
 }
 
 export const LandingPageButton: FC<ButtonProps> = ({ text, onClick, link }) => {
-    const navigate = useNavigate()
-    const { setSettings } = useSettings()
-    
-    const onClickHandler = () => link ? navigate(link) : onClick?.()
-    
-    return (
-        <button onClick={onClickHandler} onTouchStart={() => setSettings(s => ({ ...s, showOnScreenControls: true }))}>
+    const onClickHandler = () => onClick?.()
+
+    const button = (
+        <button role="a" onClick={onClickHandler}>
             {text}
         </button>
     )
+    
+    return link ? <Link className="landing-page-link" to={link}>{button}</Link> : button
 }

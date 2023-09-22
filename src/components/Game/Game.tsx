@@ -17,11 +17,11 @@ import './Game.scss'
 export type ActionType = 'STEP' | 'FLAG'
 export type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
 
-export const Game: FC<GameStateData> = ({ gameState, playerColor, colorMapping }) => {
+export const Game: FC<GameStateData> = ({ gameState: rawGameState, playerColor, colorMapping }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
-    const [props, events, resolveAction, setGameState] = useGameState(gameState)
-    const [moveToSummaryScreen, setMoveToSummaryScreen] = useState(false)
+    const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState)
+    const [goToSummary, setGoToSummary] = useState(false)
 
     const [cellSizePx, containerRef, scoreboardRef] = useCellSize(props.dims)
     const { showOnScreenControls } = useSettings()
@@ -58,34 +58,31 @@ export const Game: FC<GameStateData> = ({ gameState, playerColor, colorMapping }
     }, [])
 
     useEffect(() => {
+        let timeout: NodeJS.Timeout
         socket.on('action_result', (actionResult?: ActionResult) => {
             if (actionResult) {
                 resolveAction(actionResult)
             }
         })
-        socket.on('game_finished', (gameState: RawGameState) => {
-            setGameState(gameState)
+        socket.on('game_finished', (finalGameState: RawGameState) => {
+            setGameState(finalGameState)
         })
         return () => {
             socket.off('action_result')
             socket.off('game_finished')
+            clearTimeout(timeout)
         }
     }, [])
 
     useEffect(() => {
-        let timeout: NodeJS.Timeout
-        if (props.isFinished) {
-            timeout = setTimeout(() => {
-                setMoveToSummaryScreen(true)
-            }, 3000)
+        if (props.end) {
+            const timeout = setTimeout(() => setGoToSummary(true), 3000)
+            return () => clearTimeout(timeout)
         }
-        return () => {
-            clearTimeout(timeout)
-        }
-    }, [props.isFinished])
+    }, [props.end])
 
-    if (moveToSummaryScreen) {
-        return <GameSummary gameDef={props} />
+    if (goToSummary) {
+        return <GameSummary gameState={gameState} colorMapping={colorMapping} playerColor={playerColor} />
     }
     
     return (

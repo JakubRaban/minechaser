@@ -70,3 +70,18 @@ export const dateDiff = (date1: Date, date2: Date) => {
     }
 }
 export const rootStyle = getComputedStyle(document.documentElement)
+
+export const readableTime = (seconds: number) => {
+    const levels = [
+        [Math.floor(seconds / 86400), 'd'],
+        [Math.floor((seconds % 86400) / 3600), 'h'],
+        [Math.floor((seconds % 86400 % 3600) / 60), 'min'],
+        [seconds % 86400 % 3600 % 60, 'sec'],
+    ] as [number, string][]
+    let result = ''
+
+    for (let i = 0; i < levels.length; i++) {
+        if (levels[i][0]) result += ' ' + levels[i][0] + ' ' + levels[i][1]
+    }
+    return result.trim()
+}

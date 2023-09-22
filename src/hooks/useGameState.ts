@@ -64,5 +64,5 @@ export const useGameState = (initialState: RawGameState) => {
     }
 
     const props: GameDef = { start, end, endScheduled, players, dims, minesLeft, cells, isFinished }
-    return [props, events, resolveActionResult, setRawGameState] as const
+    return [props, gameState, events, resolveActionResult, setRawGameState] as const
 }

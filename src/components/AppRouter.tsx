@@ -1,12 +1,9 @@
 import { FC, useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { LandingPage } from './LandingPage/LandingPage'
-import { Queue } from './Queue/Queue'
-import { HowToPlay } from './HowToPlay/HowToPlay'
 import { useSocket } from '../hooks/useSocket'
-import { GameWrapper } from './Game/GameWrapper/GameWrapper'
 import { AuthenticationGuard } from './AuthenticationGuard'
-import { PrivateGameLoading } from './PrivateGameLoading/PrivateGameLoading'
+import { GameWrapper, HowToPlay, PrivateGameLoading, Queue } from './lazy-components'
 
 const storage = process.env.NODE_ENV === 'development' ? sessionStorage : localStorage
 

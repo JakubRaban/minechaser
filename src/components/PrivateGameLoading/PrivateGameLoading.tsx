@@ -7,7 +7,7 @@ interface PrivateGameLoadingProps {
     singlePlayer?: boolean
 }
 
-export const PrivateGameLoading: FC<PrivateGameLoadingProps> = ({ singlePlayer }) => {
+const PrivateGameLoading: FC<PrivateGameLoadingProps> = ({ singlePlayer }) => {
     const { socket } = useSocket()
     const navigate = useNavigate()
     const { pathname, state } = useLocation()
@@ -36,3 +36,5 @@ export const PrivateGameLoading: FC<PrivateGameLoadingProps> = ({ singlePlayer }
 
     return <div>Creating private game...</div>
 }
+
+export default PrivateGameLoading

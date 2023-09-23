@@ -5,6 +5,7 @@ import { GameStateData } from '../Game/GameWrapper/GameWrapper'
 import { PlayerList } from '../PlayerList/PlayerList'
 import { useSettings } from '../../hooks/useSettings'
 import { BoardSizeForm } from './BoardSizeForm/BoardSizeForm'
+import { Game } from '../lazy-components'
 
 import './PrivateGameLobby.scss'
 
@@ -48,6 +49,10 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
             window.removeEventListener('beforeunload', leaveGame)
             leaveGame()
         }
+    }, [])
+    
+    useEffect(() => {
+        Game.preload()
     }, [])
 
     const handleStart = () => {

@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import { PlayerList } from '../PlayerList/PlayerList'
 import { useSettings } from '../../hooks/useSettings'
 import { dateDiff, pickRandom } from '../../helpers'
+import { useLocation } from 'react-router'
+import { Game, GameWrapper } from '../lazy-components'
 
 import './Queue.scss'
-import { useLocation } from 'react-router'
 
 const progressUpdaterFactory = (waitingStart: Date) => {
     const start = waitingStart
@@ -28,7 +29,7 @@ const tips = [
     'If no player flags any cell for 2 minutes, the game will end.',
 ]
 
-export const Queue: FC = () => {
+const Queue: FC = () => {
     const { socket } = useSocket()
     const { name: currentPlayerName } = useSettings()
     const navigate = useNavigate()
@@ -61,6 +62,11 @@ export const Queue: FC = () => {
             clearInterval(interval.current!)
             clearTimeout(timeout)
         }
+    }, [])
+
+    useEffect(() => {
+        GameWrapper.preload()
+        Game.preload()
     }, [])
 
     const leaveQueue = () => !joinedSuccessfully && socket.emit('leave_queue')
@@ -96,3 +102,5 @@ export const Queue: FC = () => {
         </div>
     )
 }
+
+export default Queue

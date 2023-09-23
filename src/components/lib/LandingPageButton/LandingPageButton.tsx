@@ -6,14 +6,13 @@ import './LandingPageButton.scss'
 interface ButtonProps {
     text: string
     onClick?: () => void
+    onHover?: () => void
     link?: string
 }
 
-export const LandingPageButton: FC<ButtonProps> = ({ text, onClick, link }) => {
-    const onClickHandler = () => onClick?.()
-
+export const LandingPageButton: FC<ButtonProps> = ({ text, onClick, onHover, link }) => {
     const button = (
-        <button role="a" onClick={onClickHandler}>
+        <button role="a" onClick={onClick} onMouseEnter={onHover}>
             {text}
         </button>
     )

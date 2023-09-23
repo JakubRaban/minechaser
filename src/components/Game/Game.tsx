@@ -7,10 +7,10 @@ import { CellGrid } from './CellGrid/CellGrid'
 import { SteeringBoard } from './SteeringBoard/SteeringBoard'
 import { useParams } from 'react-router'
 import { ActionResult, RawGameState } from '../../types/model'
-import { GameSummary } from '../GameSummary/GameSummary'
 import { useCellSize } from './useCellSize'
 import { useSettings } from '../../hooks/useSettings'
 import cn from 'classnames'
+import { GameSummary } from '../lazy-components'
 
 import './Game.scss'
 
@@ -21,7 +21,7 @@ interface GameProps extends GameStateData {
     isPrivate: boolean
 }
 
-export const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMapping, isPrivate }) => {
+const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMapping, isPrivate }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
     const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState)
@@ -80,6 +80,7 @@ export const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colo
 
     useEffect(() => {
         if (props.end) {
+            GameSummary.preload()
             const timeout = setTimeout(() => setGoToSummary(true), 3000)
             return () => clearTimeout(timeout)
         }
@@ -124,3 +125,5 @@ export const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colo
         </div>
     )
 }
+
+export default Game

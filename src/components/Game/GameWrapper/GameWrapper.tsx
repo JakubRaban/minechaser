@@ -1,12 +1,12 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router'
-import { Game } from '../Game'
 import { RawGameState, PlayerColor, PlayerColorMapping } from '../../../types/model'
 import { PrivateGameInviteeWrapper } from './PrivateGameInviteeWrapper/PrivateGameInviteeWrapper'
 import { PrivateGameLobby } from '../../PrivateGameLobby/PrivateGameLobby'
 import { useSocket } from '../../../hooks/useSocket'
 import { useNavigate } from 'react-router-dom'
 import { ErrorCode, errorCodeToMessage } from '../../../helpers'
+import { Game } from '../../lazy-components'
 
 export interface GameStateData {
     gameState: RawGameState
@@ -27,7 +27,7 @@ type GameStateResponse = { state: Partial<GameStateData>, error?: GameStateError
 
 const Loading = () => <div>Loading...</div>
 
-export const GameWrapper: FC = () => {
+const GameWrapper: FC = () => {
     const { socket } = useSocket()
     const navigate = useNavigate()
     const { gameId } = useParams()
@@ -71,3 +71,5 @@ export const GameWrapper: FC = () => {
         return <Loading />
     }
 }
+
+export default GameWrapper

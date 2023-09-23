@@ -41,7 +41,7 @@ const firstPlaceDead = [
     'It\'s a pity you didn\'t stay alive',
 ]
 
-export const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColor, isPrivate, isSinglePlayer }) => {
+const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColor, isPrivate, isSinglePlayer }) => {
     const { gameId } = useParams()
     const playAgainLink = isSinglePlayer ? '/new-game/single-player' : isPrivate ? '/new-game' : '/queue'
     const playAgainState = isPrivate ? { restartedGameId: gameId } : undefined
@@ -127,3 +127,5 @@ export const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, pla
         </div>
     )
 }
+
+export default GameSummary

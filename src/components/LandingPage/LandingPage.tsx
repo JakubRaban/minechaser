@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
+import { HowToPlay, PrivateGameLoading, Queue } from '../lazy-components'
 
 import './LandingPage.scss'
 
@@ -16,9 +17,9 @@ export const LandingPage: FC = () => {
             </header>
             <main>
                 <section className="menu">
-                    <LandingPageButton text="Play Online" link="/queue" />
-                    <LandingPageButton text="Play With Friends" link="/new-game" />
-                    <LandingPageButton text="Single Player" link="/new-game/single-player" />
+                    <LandingPageButton text="Play Online" link="/queue" onHover={Queue.preload} />
+                    <LandingPageButton text="Play With Friends" link="/new-game" onHover={PrivateGameLoading.preload} />
+                    <LandingPageButton text="Single Player" link="/new-game/single-player" onHover={PrivateGameLoading.preload} />
                 </section>
                 <section className="rules">
                     <h2>Quick Rules</h2>
@@ -40,7 +41,7 @@ export const LandingPage: FC = () => {
                             Stay alive and gain more points than your opponents to win!
                         </li>
                     </ul>
-                    <div>You can find more detailed rules <Link to="/how-to-play">here</Link></div>
+                    <div onMouseEnter={HowToPlay.preload}>You can find more detailed rules <Link to="/how-to-play">here</Link></div>
                 </section>
             </main>
             <footer>

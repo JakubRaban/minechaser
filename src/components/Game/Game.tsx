@@ -30,6 +30,8 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const [cellSizePx, containerRef, scoreboardRef] = useCellSize(props.dims)
     const { showOnScreenControls } = useSettings()
 
+    const isSinglePlayer = Object.entries(colorMapping).length === 1
+
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
         socket.emit('player_action', { gameId, actionType, direction })
     }
@@ -89,7 +91,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     if (goToSummary) {
         return <GameSummary
             isPrivate={isPrivate}
-            isSinglePlayer={Object.entries(colorMapping).length === 1}
+            isSinglePlayer={isSinglePlayer}
             gameState={gameState}
             colorMapping={colorMapping}
             playerColor={playerColor}
@@ -104,6 +106,9 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
                     <Scoreboard
                         ref={scoreboardRef}
                         players={props.players}
+                        playerColor={playerColor}
+                        isPrivate={isPrivate}
+                        isSinglePlayer={isSinglePlayer}
                         colorMapping={colorMapping}
                         minesLeft={props.minesLeft}
                         gameStart={props.start}

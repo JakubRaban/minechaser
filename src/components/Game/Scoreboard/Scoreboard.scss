@@ -1,48 +1,61 @@
 @import "../../../styles/constants";
+@import "@picocss/pico/scss/colors";
 
-.scoreboard {
+.scoreboard-wrapper {
   grid-area: scoreboard;
 
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-  grid-template-areas:
-    "stopwatch mines-counter";
-  grid-auto-flow: row;
+  .scoreboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas:
+      "stopwatch mines-counter";
+    grid-auto-flow: row;
 
-  text-align: center;
-  background-color: black;
+    text-align: center;
+    background-color: black;
 
-  .stopwatch {
-    grid-area: stopwatch;
-  }
+    .stopwatch {
+      grid-area: stopwatch;
+    }
 
-  .mines-counter {
-    grid-area: mines-counter;
-  }
-
-  .player-scoreboard {
-    grid-column: 1 / 3;
-  }
-}
-
-.keyboard .scoreboard {
-    display: flex;
-    align-items: center;
-    height: 3.5rem;
-
-    .stopwatch, .mines-counter {
-      flex-basis: 5em;
+    .mines-counter {
+      grid-area: mines-counter;
     }
 
     .player-scoreboard {
-      flex-grow: 1;
-    }
-
-    .separator {
-      display: block;
-      width: 1px;
-      height: 70%;
-      background-color: $cell-uncovered-color;
+      grid-column: 1 / 3;
     }
   }
+
+  .defeated-player-message {
+    margin-block: $spacing2;
+    text-align: center;
+    background-color: $slate-850;
+
+    a {
+      margin-inline-start: $spacing12;
+    }
+  }
+}
+
+.keyboard .scoreboard-wrapper .scoreboard {
+  display: flex;
+  align-items: center;
+  height: 3.5rem;
+
+  .stopwatch, .mines-counter {
+    flex-basis: 5em;
+  }
+
+  .player-scoreboard {
+    flex-grow: 1;
+  }
+
+  .separator {
+    display: block;
+    width: 1px;
+    height: 70%;
+    background-color: $cell-uncovered-color;
+  }
+}

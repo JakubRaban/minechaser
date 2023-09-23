@@ -28,7 +28,6 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
 
     useEffect(() => {
         socket.on('private_game_lobby_update', ({ players }) => {
-            console.log(players)
             setPlayers(players)
         })
         socket.on('private_game_started', ({ state }) => {

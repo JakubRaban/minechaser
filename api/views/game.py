@@ -19,3 +19,9 @@ def get_game_state(player_id, data: dict):
     if isinstance(game_or_error, GameProxy):
         return game_state(game_or_error, player_id)
     return game_or_error
+
+
+def restart_game(player_id, data: dict):
+    game_id = data.pop('gameId', None)
+    if game_id:
+        return GameService.restart_private_game(game_id, player_id)

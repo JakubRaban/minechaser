@@ -17,7 +17,11 @@ import './Game.scss'
 export type ActionType = 'STEP' | 'FLAG'
 export type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
 
-export const Game: FC<GameStateData> = ({ gameState: rawGameState, playerColor, colorMapping }) => {
+interface GameProps extends GameStateData {
+    isPrivate: boolean
+}
+
+export const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMapping, isPrivate }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
     const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState)
@@ -82,7 +86,13 @@ export const Game: FC<GameStateData> = ({ gameState: rawGameState, playerColor, 
     }, [props.end])
 
     if (goToSummary) {
-        return <GameSummary gameState={gameState} colorMapping={colorMapping} playerColor={playerColor} />
+        return <GameSummary
+            isPrivate={isPrivate}
+            isSinglePlayer={Object.entries(colorMapping).length === 1}
+            gameState={gameState}
+            colorMapping={colorMapping}
+            playerColor={playerColor}
+        />
     }
     
     return (

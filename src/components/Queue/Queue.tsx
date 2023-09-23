@@ -6,6 +6,7 @@ import { useSettings } from '../../hooks/useSettings'
 import { dateDiff, pickRandom } from '../../helpers'
 
 import './Queue.scss'
+import { useLocation } from 'react-router'
 
 const progressUpdaterFactory = (waitingStart: Date) => {
     const start = waitingStart
@@ -22,7 +23,7 @@ const tips = [
     'If you step through the border of the board, you\'ll find yourself the opposite side.',
     'Both stepping and flagging a cell with a bonus will award you that bonus.',
     'Stuck in your corner? Step through the board edge to get to the other side.',
-    'The winner is the player with the highest score, but who also stayed alive (unless all players died).',
+    'To win, not only gain most points, but also stay alive (unless nobody stays alive).',
     'You can also play with your friends (up to max. 4 players) or practice by yourself.',
     'If no player flags any cell for 2 minutes, the game will end.',
 ]
@@ -31,6 +32,7 @@ export const Queue: FC = () => {
     const { socket } = useSocket()
     const { name: currentPlayerName } = useSettings()
     const navigate = useNavigate()
+    const { pathname } = useLocation()
 
     const [players, setPlayers] = useState<string[]>([])
     const [progress, setProgress] = useState<number>(0)
@@ -51,7 +53,7 @@ export const Queue: FC = () => {
         })
         socket.on('public_game_started', ({ gameId, gameState, playerColor, colorMapping }) => {
             setJoinedSuccessfully(true)
-            timeout = setTimeout(() => navigate(`/game/${gameId}`, { replace: true, state: { gameState, playerColor, colorMapping } }), 2000)
+            timeout = setTimeout(() => navigate(`/game/${gameId}`, { replace: true, state: { gameState, playerColor, colorMapping, origin: pathname } }), 2000)
         })
         return () => {
             socket.off('queue_update')
@@ -80,7 +82,7 @@ export const Queue: FC = () => {
                     <h1>{header}</h1>
                     <PlayerList
                         players={players}
-                        currentPlayer={currentPlayerName!}
+                        currentPlayerName={currentPlayerName!}
                         highlight={joinedSuccessfully}
                         progressComponent={<progress value={joinedSuccessfully ? 15000 : progress} max="15000" />}
                     />

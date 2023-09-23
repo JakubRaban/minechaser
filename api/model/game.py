@@ -77,7 +77,7 @@ class Game:
 
 
 class GameProxy:
-    def __init__(self, player_ids: List[str], on_game_finished: callable, autostart: bool):
+    def __init__(self, player_ids: List[str], on_game_finished: callable, autostart: bool, next_game_id: Optional[str] = None):
         self.game = Game((18, 27), len(player_ids)) if autostart else None
         self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=7 if len(player_ids) > 1 else 0) if autostart else None
         self.player_id_mapping = dict(zip(player_ids, self.game.players.colors())) if autostart else None
@@ -86,6 +86,7 @@ class GameProxy:
         self.on_game_finished = on_game_finished
         self.end_game_scheduler = EndGameScheduler(self._finish_game)
         self.lock = RLock()
+        self.next_game_id = next_game_id
 
     def locked(func):
         @wraps(func)

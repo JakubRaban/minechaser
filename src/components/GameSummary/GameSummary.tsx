@@ -5,6 +5,7 @@ import cn from 'classnames'
 import { MineIcon } from '../../icons/Mine/MineIcon'
 import { dateDiff, pickRandom, readableTime } from '../../helpers'
 import { Link } from 'react-router-dom'
+import { useParams } from 'react-router'
 
 import './GameSummary.scss'
 
@@ -12,6 +13,8 @@ interface GameSummaryProps {
     gameState: GameState
     colorMapping: PlayerColorMapping
     playerColor: PlayerColor
+    isPrivate: boolean
+    isSinglePlayer: boolean
 }
 
 const standingsMapping: Record<number, { emoji: string; text: string }> = {
@@ -31,14 +34,18 @@ const greetings = [
 ]
 
 const firstPlaceDead = [
-    'But you died',
-    'But you\'re dead',
-    'You\'re dead though',
+    'But you didn\'t stay alive',
+    'It would be better if you stayed alive though',
+    'Not alive though',
     'If only you were alive',
-    'It\'s a pity you died',
+    'It\'s a pity you didn\'t stay alive',
 ]
 
-export const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColor }) => {
+export const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColor, isPrivate, isSinglePlayer }) => {
+    const { gameId } = useParams()
+    const playAgainLink = isSinglePlayer ? '/new-game/single-player' : isPrivate ? '/new-game' : '/queue'
+    const playAgainState = isPrivate ? { restartedGameId: gameId } : undefined
+
     const players = Object.entries(gameState.game.players) as [PlayerColor, Player][]
     players.sort(([, player1], [, player2]) => (player2.score - (player2.alive ? 0 : 10000)) - (player1.score - (player1.alive ? 0 : 10000)))
 
@@ -46,7 +53,7 @@ export const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, pla
     const currentPlayerStanding = players.findIndex(([p]) => p === playerColor) + 1
 
     const { initialMines, minesLeft, dims } = gameState.game.board
-    const minesFlagged = initialMines - minesLeft
+    const minesFlagged = initialMines - minesLeft - players.reduce((acc, [, player]) => !player.alive ? acc + 1 : acc, 0)
 
     const uncoveredCells = Object.values(gameState.game.board.cells).reduce((acc: number, cell: Cell) => cell.isUncovered ? acc + 1 : acc, 0)
     const totalCells = dims[0] * dims[1]
@@ -55,43 +62,45 @@ export const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, pla
         <div className="game-summary">
             <h1>Game Summary</h1>
             <h3>
-                You finished in the <span>{standingsMapping[currentPlayerStanding].text}</span> place
+                {!isSinglePlayer ? <>You finished in the <span>{standingsMapping[currentPlayerStanding].text}</span> place </> : <>You finished the game </>}
                 with <span>{gameState.game.players[playerColor]!.score} points</span>.
-                {currentPlayerStanding === 1 && (
+                {!isSinglePlayer && currentPlayerStanding === 1 && (
                     <>&nbsp;{gameState.game.players[playerColor]!.alive ? `${pickRandom(greetings) }!`: `${pickRandom(firstPlaceDead)}...`}</>
                 )}
             </h3>
-            <div className="stats">
-                <table>
-                    {/*<thead>*/}
-                    {/*    <tr>*/}
-                    {/*        <th />*/}
-                    {/*        <th />*/}
-                    {/*        <th />*/}
-                    {/*        <th />*/}
-                    {/*        <th />*/}
-                    {/*    </tr>*/}
-                    {/*</thead>*/}
-                    <tbody>
-                        {players.map(([playerColor, player], i) => (
-                            <tr key={playerColor} className={cn({ dead: !player.alive && players.some(([, p]) => p.alive) })}>
-                                <td>{standingsMapping[i + 1].emoji}</td>
-                                <td className="color-cell"><PlayerColorComponent color={playerColor} /></td>
-                                <td className={cn('name-cell', { current: colorMapping[playerColor] === currentPlayerName })}>{colorMapping[playerColor]}</td>
-                                {players.some(([, p]) => !p.alive) && (
-                                    <td className="dead-cell">
-                                        <div className={cn('dead-indicator', { alive: player.alive })}>
-                                            <MineIcon />
-                                        </div>
-                                    </td>
-                                )}
-                                <td className="score-cell">{player.score}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <button className="show-more outline">&gt;</button>
-            </div>
+            {!isSinglePlayer && (
+                <div className="stats">
+                    <table>
+                        {/*<thead>*/}
+                        {/*    <tr>*/}
+                        {/*        <th />*/}
+                        {/*        <th />*/}
+                        {/*        <th />*/}
+                        {/*        <th />*/}
+                        {/*        <th />*/}
+                        {/*    </tr>*/}
+                        {/*</thead>*/}
+                        <tbody>
+                            {players.map(([playerColor, player], i) => (
+                                <tr key={playerColor} className={cn({ dead: !player.alive && players.some(([, p]) => p.alive) })}>
+                                    <td>{standingsMapping[i + 1].emoji}</td>
+                                    <td className="color-cell"><PlayerColorComponent color={playerColor} /></td>
+                                    <td className={cn('name-cell', { current: colorMapping[playerColor] === currentPlayerName })}>{colorMapping[playerColor]}</td>
+                                    {players.some(([, p]) => !p.alive) && (
+                                        <td className="dead-cell">
+                                            <div className={cn('dead-indicator', { alive: player.alive })}>
+                                                <MineIcon />
+                                            </div>
+                                        </td>
+                                    )}
+                                    <td className="score-cell">{player.score}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <button className="show-more outline">&gt;</button>
+                </div>
+            )}
             <table className="general-stats">
                 <tbody>
                     <tr>
@@ -104,12 +113,14 @@ export const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, pla
                     </tr>
                     <tr>
                         <td>Cells Uncovered</td>
-                        <td>{uncoveredCells}/{totalCells} <span className="percent">({Math.floor(uncoveredCells / totalCells * 100)}%)</span></td>
+                        <td>
+                            {uncoveredCells}/{totalCells - initialMines} <span className="percent">({Math.floor(uncoveredCells / (totalCells - initialMines) * 100)}%)</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
             <div className="action-buttons">
-                <Link to="/queue"><button>Play Again</button></Link>
+                <Link to={playAgainLink} state={playAgainState}><button>Play Again</button></Link>
                 <Link to="/"><button className="outline">Back to Main Menu</button></Link>
                 <button className="outline">Share</button>
             </div>

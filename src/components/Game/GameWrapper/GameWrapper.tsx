@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router'
 import { Game } from '../Game'
 import { RawGameState, PlayerColor, PlayerColorMapping } from '../../../types/model'
@@ -20,6 +20,7 @@ interface GameStateError {
 
 interface GameWrapperState extends GameStateData {
     players: string[]
+    origin: string
 }
 
 type GameStateResponse = { state: Partial<GameStateData>, error?: GameStateError }
@@ -30,14 +31,14 @@ export const GameWrapper: FC = () => {
     const { socket } = useSocket()
     const navigate = useNavigate()
     const { gameId } = useParams()
-    const { gameState, playerColor, players , colorMapping } = (useLocation().state ?? {}) as Partial<GameWrapperState>
+    const { gameState, playerColor, players , colorMapping, origin } = (useLocation().state ?? {}) as Partial<GameWrapperState>
 
     const [gameData, setGameData] = useState(
         gameState && playerColor && colorMapping ? { gameState, playerColor, colorMapping } : undefined,
     )
     const [gameStateChecked, setGameStateChecked] = useState(false)
 
-    const isGamePrivate = players || (!players && !gameData)
+    const isGamePrivate = useRef(!origin || origin === '/new-game')
 
     const handleStart = (data: GameStateData) => {
         setGameData(data)
@@ -59,8 +60,8 @@ export const GameWrapper: FC = () => {
     if (!gameStateChecked) {
         return <Loading />
     } else if (gameData) {
-        return <Game {...gameData} />
-    } else if (isGamePrivate) {
+        return <Game isPrivate={isGamePrivate.current} {...gameData} />
+    } else if (isGamePrivate.current) {
         if (players) {
             return <PrivateGameLobby players={players} onGameStart={handleStart} />
         } else {

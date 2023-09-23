@@ -1,6 +1,6 @@
 import random
 from datetime import datetime, timedelta, timezone
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -28,12 +28,14 @@ class GameService:
     queue = Queue(players_picked=create_public_game, queue_updated=LobbyResponses.update_players_in_queue)
 
     @staticmethod
-    def create_private_game(player_id: str, single_player: bool = False):
-        game_id = _generate_game_id()
+    def create_private_game(player_id: str, single_player: bool = False, restarted_game_id: Optional[str] = None):
+        game_id = restarted_game_id or _generate_game_id()
+        next_game_id = _generate_game_id()
         GameService.games[game_id] = GameProxy(
             [player_id],
             on_game_finished=lambda game_proxy: GameResponses.finish_game(game_proxy, game_id),
-            autostart=single_player
+            autostart=single_player,
+            next_game_id=next_game_id
         )
         if single_player:
             LobbyResponses.start_single_player_game(GameService.games[game_id], game_id, player_id)
@@ -64,6 +66,16 @@ class GameService:
             LobbyResponses.start_private_game(game, game_id)
 
     @staticmethod
+    def restart_private_game(game_id: str, player_id: str):
+        if game_id in GameService.games and player_id in GameService.games[game_id].player_ids:
+            game = GameService.games[game_id]
+            new_game_id = game.next_game_id
+            if new_game_id in GameService.games:
+                GameService.join_private_game(new_game_id, player_id)
+            else:
+                GameService.create_private_game(player_id, restarted_game_id=new_game_id)
+
+    @staticmethod
     def add_player_to_queue(player_id: str):
         GameService.queue.add_player(player_id)
 
@@ -85,7 +97,7 @@ class GameService:
         if game_id in GameService.games:
             game = GameService.games[game_id]
             if not game.created():
-                if not game.full:
+                if not game.full or player_id in game.player_ids:
                     return game
                 else:
                     return {'error': {'code': 'full'}}

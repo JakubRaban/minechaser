@@ -1,4 +1,4 @@
-@import "../../../styles/constants";
+@import "../../../styles/player-colors";
 @import "@picocss/pico/scss/colors";
 
 .player-color {
@@ -7,19 +7,5 @@
   background-color: $grey-500;
   border-radius: 4px;
 
-  &.red {
-    background-color: $player-red;
-  }
-
-  &.blue {
-    background-color: $player-blue;
-  }
-
-  &.green {
-    background-color: $player-green;
-  }
-
-  &.yellow {
-    background-color: $player-yellow;
-  }
+  @include player-color("background");
 }

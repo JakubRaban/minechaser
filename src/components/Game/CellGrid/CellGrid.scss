@@ -1,3 +1,6 @@
+@import "../../../styles/player-colors";
+@import "@picocss/pico/scss/colors";
+
 :root {
   --cell-size: 20px;
   --board-rows: 8;
@@ -6,6 +9,7 @@
 }
 
 .cell-grid {
+  position: relative;
   grid-area: board;
 
   display: grid;
@@ -13,4 +17,64 @@
   grid-template-columns: repeat(var(--board-cols), var(--cell-size));
   gap: var(--grid-gap);
   background-color: black;
+
+  .game-starting-overlay {
+    background-color: $slate-900;
+    position: absolute;
+    top: calc(3 * (var(--cell-size) + var(--grid-gap)));
+    left: calc(3 * (var(--cell-size) + var(--grid-gap)));
+    height: calc(100% - 6 * (var(--cell-size) + var(--grid-gap)));
+    width: calc(100% - 6 * (var(--cell-size) + var(--grid-gap)));
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    container: game-starting-overlay / size;
+    text-align: center;
+    opacity: 85%;
+
+    .player-info {
+      font-size: 8cqh;
+
+      span {
+        font-weight: bold;
+        @include player-color("text");
+      }
+    }
+
+    .countdown {
+      font-size: 20cqh;
+    }
+
+    .arrow-icon {
+      position: absolute;
+      width: 20cqh;
+      height: 20cqh;
+      @include player-color("text");
+
+      &.top-left {
+        top: 0;
+        left: 0;
+        transform: rotate(225deg);
+      }
+
+      &.top-right {
+        top: 0;
+        right: 0;
+        transform: rotate(315deg);
+      }
+
+      &.bottom-left {
+        bottom: 0;
+        left: 0;
+        transform: rotate(135deg);
+      }
+
+      &.bottom-right {
+        bottom: 0;
+        right: 0;
+        transform: rotate(45deg);
+      }
+    }
+  }
 }

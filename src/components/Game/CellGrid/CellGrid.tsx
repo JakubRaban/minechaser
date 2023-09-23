@@ -1,8 +1,10 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { Cells, PlayerColor, Players, Position } from '../../../types/model'
-import { dateDiff, toPositionString } from '../../../helpers'
+import { dateDiff, playerColorToClassName, toPositionString } from '../../../helpers'
 import { Cell } from '../Cell/Cell'
 import { PositionedEvents } from '../../../hooks/useGameState'
+import cn from 'classnames'
+import { ArrowIcon } from '../../../icons/Arrow/ArrowIcon'
 
 import './CellGrid.scss'
 
@@ -10,12 +12,20 @@ interface CellGridProps {
     dims: Position
     cells: Cells
     players: Players
+    playerColor: PlayerColor
     gameStart: Date
     cellSizePx: number
     events: PositionedEvents | null
 }
 
-export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, gameStart, cellSizePx, events }) => {
+const colorToCorner: Record<PlayerColor, string> = {
+    'RED': 'bottom-left',
+    'BLUE': 'top-right',
+    'GREEN': 'top-left',
+    'YELLOW': 'bottom-right',
+}
+
+export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor, gameStart, cellSizePx, events }) => {
     const [height, width] = dims
     const [secondsUntilStart, setSecondsUntilStart] = useState(dateDiff(gameStart, new Date()).seconds)
     const hasStarted = secondsUntilStart <= 0
@@ -60,6 +70,16 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, gameStart, c
                     )
                 })
             ))}
+            {!hasStarted && (
+                <div className="game-starting-overlay">
+                    <div className="player-info">
+                        <div>You play as <span className={cn('color', playerColorToClassName(playerColor))}>{playerColor}</span>,</div>
+                        <div>starting in the <span>{colorToCorner[playerColor]}</span> corner</div>
+                    </div>
+                    <div className="countdown">{secondsUntilStart}</div>
+                    <ArrowIcon className={cn(colorToCorner[playerColor], playerColorToClassName(playerColor))} />
+                </div>
+            )}
         </div>
     )
 }

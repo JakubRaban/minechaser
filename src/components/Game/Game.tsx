@@ -103,6 +103,7 @@ export const Game: FC<GameStateData> = ({ gameState: rawGameState, playerColor, 
                         dims={props.dims}
                         cells={props.cells}
                         players={props.players}
+                        playerColor={playerColor}
                         gameStart={props.start}
                         cellSizePx={cellSizePx}
                         events={events}

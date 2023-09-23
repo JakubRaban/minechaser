@@ -1,24 +1,11 @@
 @import "../../../../styles/constants";
+@import "../../../../styles/player-colors";
 
 .scoreboard-element {
   position: relative;
   padding-block: $spacing2;
 
-  &.red {
-    color: $player-red;
-  }
-
-  &.green {
-    color: $player-green;
-  }
-
-  &.blue {
-    color: $player-blue;
-  }
-
-  &.yellow {
-    color: $player-yellow;
-  }
+  @include player-color("text");
 
   .scoreboard-element-label {
     font-size: $text12;

@@ -12,7 +12,7 @@ interface ButtonProps {
 
 export const LandingPageButton: FC<ButtonProps> = ({ text, onClick, onHover, link }) => {
     const button = (
-        <button role="a" onClick={onClick} onMouseEnter={onHover}>
+        <button onClick={onClick} onMouseEnter={onHover}>
             {text}
         </button>
     )

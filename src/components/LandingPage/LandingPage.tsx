@@ -41,7 +41,7 @@ export const LandingPage: FC = () => {
                             Stay alive and gain more points than your opponents to win!
                         </li>
                     </ul>
-                    <div onMouseEnter={HowToPlay.preload}>You can find more detailed rules <Link to="/how-to-play">here</Link></div>
+                    <div onMouseEnter={HowToPlay.preload}>You can also check the <Link to="/how-to-play">detailed rules</Link></div>
                 </section>
             </main>
             <footer>

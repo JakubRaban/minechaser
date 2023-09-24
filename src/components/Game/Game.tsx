@@ -28,7 +28,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const [goToSummary, setGoToSummary] = useState(false)
 
     const [cellSizePx, containerRef, scoreboardRef] = useCellSize(props.dims)
-    const { showOnScreenControls } = useSettings()
+    const { showOnScreenControls, invertControls } = useSettings()
 
     const isSinglePlayer = Object.entries(colorMapping).length === 1
 
@@ -38,23 +38,25 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
 
     useEffect(() => {
         const actionListener = (e: KeyboardEvent) => {
+            const arrowAction: ActionType = invertControls ? 'FLAG' : 'STEP'
+            const wasdAction: ActionType = invertControls ? 'STEP' : 'FLAG'
             switch (e.code) {
             case 'ArrowUp':
-                return handlePlayerAction('STEP', 'UP')
+                return handlePlayerAction(arrowAction, 'UP')
             case 'ArrowDown':
-                return handlePlayerAction('STEP', 'DOWN')
+                return handlePlayerAction(arrowAction, 'DOWN')
             case 'ArrowLeft':
-                return handlePlayerAction('STEP', 'LEFT')
+                return handlePlayerAction(arrowAction, 'LEFT')
             case 'ArrowRight':
-                return handlePlayerAction('STEP', 'RIGHT')
+                return handlePlayerAction(arrowAction, 'RIGHT')
             case 'KeyW':
-                return handlePlayerAction('FLAG', 'UP')
+                return handlePlayerAction(wasdAction, 'UP')
             case 'KeyS':
-                return handlePlayerAction('FLAG', 'DOWN')
+                return handlePlayerAction(wasdAction, 'DOWN')
             case 'KeyA':
-                return handlePlayerAction('FLAG', 'LEFT')
+                return handlePlayerAction(wasdAction, 'LEFT')
             case 'KeyD':
-                return handlePlayerAction('FLAG', 'RIGHT')
+                return handlePlayerAction(wasdAction, 'RIGHT')
             default:
                 return
             }

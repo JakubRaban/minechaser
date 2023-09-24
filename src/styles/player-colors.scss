@@ -11,6 +11,24 @@
     @else if $context == "text" {
       color: $player-red;
     }
+    @else if $context == "fill" {
+      fill: $player-red;
+    }
+
+    &.colorblind {
+      @if $context == "background" {
+        background-color: $player-red-colorblind;
+      }
+      @else if $context == "border" {
+        border-color: $player-red-colorblind;
+      }
+      @else if $context == "text" {
+        color: $player-red-colorblind;
+      }
+      @else if $context == "fill" {
+        fill: $player-red-colorblind
+      }
+    }
   }
 
   &.blue {
@@ -22,6 +40,24 @@
     }
     @else if $context == "text" {
       color: $player-blue;
+    }
+    @else if $context == "fill" {
+      fill: $player-blue;
+    }
+
+    &.colorblind {
+      @if $context == "background" {
+        background-color: $player-blue-colorblind;
+      }
+      @else if $context == "border" {
+        border-color: $player-blue-colorblind;
+      }
+      @else if $context == "text" {
+        color: $player-blue-colorblind;
+      }
+      @else if $context == "fill" {
+        fill: $player-blue-colorblind
+      }
     }
   }
 
@@ -35,6 +71,24 @@
     @else if $context == "text" {
       color: $player-green;
     }
+    @else if $context == "fill" {
+      fill: $player-green;
+    }
+
+    &.colorblind {
+      @if $context == "background" {
+        background-color: $player-green-colorblind;
+      }
+      @else if $context == "border" {
+        border-color: $player-green-colorblind;
+      }
+      @else if $context == "text" {
+        color: $player-green-colorblind;
+      }
+      @else if $context == "fill" {
+        fill: $player-green-colorblind
+      }
+    }
   }
 
   &.yellow {
@@ -46,6 +100,24 @@
     }
     @else if $context == "text" {
       color: $player-yellow;
+    }
+    @else if $context == "fill" {
+      fill: $player-yellow;
+    }
+
+    &.colorblind {
+      @if $context == "background" {
+        background-color: $player-yellow-colorblind;
+      }
+      @else if $context == "border" {
+        border-color: $player-yellow-colorblind;
+      }
+      @else if $context == "text" {
+        color: $player-yellow-colorblind;
+      }
+      @else if $context == "fill" {
+        fill: $player-yellow-colorblind;
+      }
     }
   }
 }

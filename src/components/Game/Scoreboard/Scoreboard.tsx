@@ -4,6 +4,7 @@ import { Player, PlayerColor, PlayerColorMapping, Players } from '../../../types
 import { ScoreboardElement } from './ScoreboardElement/ScoreboardElement'
 import { Stopwatch } from './Stopwatch/Stopwatch'
 import { Link } from 'react-router-dom'
+import { useSettings } from '../../../hooks/useSettings'
 
 import './Scoreboard.scss'
 
@@ -22,6 +23,7 @@ interface ScoreboardProps {
 export const Scoreboard = forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLeft, players, playerColor, isPrivate, isSinglePlayer, colorMapping, gameStart, endScheduled, isFinished }, ref) => {
     const playerEntries = Object.entries(players) as [PlayerColor, Player][]
     const [showDefeatedMessage, setShowDefeatedMessage] = useState(false)
+    const { colorBlindMode } = useSettings()
     
     useEffect(() => {
         let timeout: NodeJS.Timeout
@@ -46,7 +48,7 @@ export const Scoreboard = forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLe
                 <div className="separator" />
                 {playerEntries.map(([color, player]) => (
                     <Fragment key={color}>
-                        <ScoreboardElement label={colorMapping[color]!} color={color} backdrop={!player.alive} className="player-scoreboard">
+                        <ScoreboardElement label={colorMapping[color]!} color={color} backdrop={!colorBlindMode && !player.alive} className="player-scoreboard">
                             <PlayerScoreboard key={color} player={player} />
                         </ScoreboardElement>
                         <div className="separator" />

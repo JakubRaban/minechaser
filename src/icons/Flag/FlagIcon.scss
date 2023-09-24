@@ -1,23 +1,7 @@
-@import "../../styles/constants";
+@import "../../styles/player-colors";
 
 .flag-icon {
   .color-triangle {
-    fill: $cell-uncovered-color;
-
-    &.red {
-      fill: $player-red
-    }
-
-    &.green {
-      fill: $player-green
-    }
-
-    &.blue {
-      fill: $player-blue
-    }
-
-    &.yellow {
-      fill: $player-yellow
-    }
+    @include player-color("fill")
   }
 }

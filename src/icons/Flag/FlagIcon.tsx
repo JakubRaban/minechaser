@@ -1,16 +1,14 @@
 import { FC } from 'react'
 import cn from 'classnames'
-import { playerColorToClassName } from '../../helpers'
-import { PlayerColor } from '../../types/model'
 
 import './FlagIcon.scss'
 
 interface FlagIconProps {
     className?: string
-    fill?: PlayerColor
+    fillClassName?: any
 }
 
-export const FlagIcon: FC<FlagIconProps> = ({ className, fill }) => (
+export const FlagIcon: FC<FlagIconProps> = ({ className, fillClassName }) => (
     <svg className={cn('flag-icon', className)} xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" version="1.1" width="1000" height="1000" viewBox="0 0 1000 1000" xmlSpace="preserve">
         <rect x="0" y="0" width="100%" height="100%" fill="none" />
         <g transform="matrix(1.3541 0 0 1.7756 631.8525 500.0081)" id="924093">
@@ -27,7 +25,7 @@ export const FlagIcon: FC<FlagIconProps> = ({ className, fill }) => (
                     <polygon fill="rgb(0,0,0)" points="-19.607,199.683 19.607,199.683 19.607,41.967 19.607,-170.655 19.607,-199.683 -19.607,-199.683" />
                 </g>
                 <g transform="matrix(1 0 0 1 66.7015 -111.756)" id="flat_x2C__basic_x2C__home_x2C__flag__x2C_">
-                    <polygon className={cn('color-triangle', playerColorToClassName(fill))} points="-149.8775,118.811 149.8775,-0.381 -149.8775,-118.811" />
+                    <polygon className={cn('color-triangle', fillClassName)} points="-149.8775,118.811 149.8775,-0.381 -149.8775,-118.811" />
                 </g>
             </g>
         </g>

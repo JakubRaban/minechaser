@@ -53,7 +53,7 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                 name: settings.name?.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current,
             },
             (settings: UserSettings) => {
-                setSettings(settings)
+                setSettings(currentSettings => ({ ...currentSettings, ...settings }))
                 onNameSet?.(settings.name!)
             },
         )

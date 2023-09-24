@@ -1,10 +1,11 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { Cells, PlayerColor, Players, Position } from '../../../types/model'
-import { dateDiff, playerColorToClassName, toPositionString } from '../../../helpers'
+import { dateDiff, toPositionString } from '../../../helpers'
 import { Cell } from '../Cell/Cell'
 import { PositionedEvents } from '../../../hooks/useGameState'
 import cn from 'classnames'
 import { ArrowIcon } from '../../../icons/Arrow/ArrowIcon'
+import { usePlayerColorToClassName } from '../../../hooks/usePlayerColorToClassName'
 
 import './CellGrid.scss'
 
@@ -35,6 +36,8 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
             .map(([color, player]) => [toPositionString(player.position), color]),
     ) as Record<string, PlayerColor>
     const interval = useRef<NodeJS.Timeout | null>(null)
+    
+    const playerColorToClassName = usePlayerColorToClassName()
 
     useEffect(() => {
         if (!interval.current && secondsUntilStart > 0) {

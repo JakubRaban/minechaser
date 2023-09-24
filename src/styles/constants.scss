@@ -1,3 +1,5 @@
+@import "@picocss/pico/scss/colors";
+
 // Breakpoints
 
 $sm: 576px;
@@ -53,6 +55,11 @@ $player-red: oklch(65% 0.163 29.233);
 $player-blue: oklch(65% 0.163 262.3);
 $player-green: oklch(65% 0.163 145.8);
 $player-yellow: oklch(65% 0.133 92.4);
+
+$player-red-colorblind: $purple-300;
+$player-blue-colorblind: $purple-400;
+$player-green-colorblind: $purple-550;
+$player-yellow-colorblind: $purple-700;
 
 $number-1-color: #0100FB;
 $number-2-color: #007E01;

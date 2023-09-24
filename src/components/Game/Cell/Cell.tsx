@@ -1,10 +1,10 @@
 import { useState, memo, useEffect, useLayoutEffect } from 'react'
 import { Cell as CellType, PlayerColor } from '../../../types/model'
 import cn from 'classnames'
-import { playerColorToClassName as toClassName } from '../../../helpers'
 import { FlagIcon } from '../../../icons/Flag/FlagIcon'
 import { MineIcon } from '../../../icons/Mine/MineIcon'
 import { EventDef } from '../../../hooks/useGameState'
+import { usePlayerColorToClassName } from '../../../hooks/usePlayerColorToClassName'
 
 import './Cell.scss'
 
@@ -17,9 +17,13 @@ interface CellProps {
 export const Cell = memo<CellProps>(({ cell, steppingPlayerColor, event }) => {
     const { hasMine, minesAround, flaggingPlayer, isUncovered, hidePristine } = cell ?? {}
     const uncoveredMine = hasMine && isUncovered
+
+    const toClassName = usePlayerColorToClassName()
+    const toClassNameFlag = usePlayerColorToClassName('flag')
+    const toClassNamePlayer = usePlayerColorToClassName('player')
     const className = cn(
         'cell',
-        { ...toClassName(flaggingPlayer, 'flag'), [`mines-${minesAround}`]: !!minesAround && !hasMine, uncovered: isUncovered, mine: uncoveredMine },
+        { ...toClassNameFlag(flaggingPlayer), [`mines-${minesAround}`]: !!minesAround && !hasMine, uncovered: isUncovered, mine: uncoveredMine },
     )
 
     const [incorrectFlagColor, setIncorrectFlagColor] = useState<PlayerColor | null>(null)
@@ -57,14 +61,14 @@ export const Cell = memo<CellProps>(({ cell, steppingPlayerColor, event }) => {
             {isUncovered && hasMine && <MineIcon />}
             <div className="cell-content">
                 {isUncovered && !hasMine && (minesAround && minesAround > 0 ? minesAround : '')}
-                {flaggingPlayer && <FlagIcon fill={flaggingPlayer} />}
-                {incorrectFlagColor && <FlagIcon fill={incorrectFlagColor} className="incorrect" />}
+                {flaggingPlayer && <FlagIcon fillClassName={toClassName(flaggingPlayer)} />}
+                {incorrectFlagColor && <FlagIcon fillClassName={toClassName(incorrectFlagColor)} className="incorrect" />}
                 {pointsChange && (
                     <div className={cn('points-change', { negative: pointsChange < 0 })}>
                         {pointsChange > 0 ? `+${pointsChange}` : pointsChange}
                     </div>
                 )}
-                <div className={cn('cell-player-overlay', toClassName(steppingPlayerColor, 'player'))} />
+                <div className={cn('cell-player-overlay', toClassNamePlayer(steppingPlayerColor))} />
             </div>
         </div>
     )

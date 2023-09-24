@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from 'react'
 import { PlayerColor } from '../../../../types/model'
 import cn from 'classnames'
-import { playerColorToClassName } from '../../../../helpers'
+import { usePlayerColorToClassName } from '../../../../hooks/usePlayerColorToClassName'
 
 import './ScoreboardElement.scss'
 
@@ -15,8 +15,10 @@ interface ScoreboardElementBaseProps {
 type ScoreboardElementProps = PropsWithChildren<ScoreboardElementBaseProps>
 
 export const ScoreboardElement: FC<ScoreboardElementProps> = ({ label, color, className, children, backdrop }) => {
+    const playerColorToClassName = usePlayerColorToClassName()
+    
     return (
-        <div className={cn('scoreboard-element', className, { ...playerColorToClassName(color) })}>
+        <div className={cn('scoreboard-element', className, playerColorToClassName(color))}>
             {backdrop && <div className="scoreboard-element-backdrop" />}
             <div className={cn('scoreboard-element-label')}>
                 {label}

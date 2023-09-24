@@ -7,9 +7,10 @@ import { ErrorCode } from '../../../../helpers'
 
 interface PrivateGameInviteeWrapperProps {
     onGameStart: GameStartFn
+    className?: string
 }
 
-export const PrivateGameInviteeWrapper: FC<PrivateGameInviteeWrapperProps> = ({ onGameStart }) => {
+export const PrivateGameInviteeWrapper: FC<PrivateGameInviteeWrapperProps> = ({ onGameStart, className }) => {
     const { socket } = useSocket()
     const navigate = useNavigate()
     const { gameId } = useParams()
@@ -26,7 +27,7 @@ export const PrivateGameInviteeWrapper: FC<PrivateGameInviteeWrapperProps> = ({ 
     }, [])
 
     if (players.length) {
-        return <PrivateGameLobby players={players} onGameStart={onGameStart} />
+        return <PrivateGameLobby players={players} onGameStart={onGameStart} className={className} />
     } else {
         return <div>Joining game...</div>
     }

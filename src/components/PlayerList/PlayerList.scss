@@ -33,8 +33,17 @@
         height: $spacing64;
       }
 
-      .name.own {
-        font-weight: bold;
+      .name {
+        opacity: 0;
+        transition: opacity .2s;
+
+        &.has-name {
+          opacity: 1;
+        }
+
+        &.own {
+          font-weight: bold;
+        }
       }
     }
   }

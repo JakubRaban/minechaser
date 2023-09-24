@@ -6,6 +6,8 @@ import { PlayerList } from '../PlayerList/PlayerList'
 import { useSettings } from '../../hooks/useSettings'
 import { BoardSizeForm } from './BoardSizeForm/BoardSizeForm'
 import { Game } from '../lazy-components'
+import { usePreload } from '../../hooks/usePreload'
+import cn from 'classnames'
 
 import './PrivateGameLobby.scss'
 
@@ -14,12 +16,14 @@ export type GameStartFn = (data: GameStateData) => void
 interface PrivateGameLobbyProps {
     players: string[]
     onGameStart: GameStartFn
+    className?: string
 }
 
-export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersProp, onGameStart }) => {
+export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersProp, onGameStart, className }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
     const { name: currentPlayerName } = useSettings()
+    usePreload(Game)
 
     const [players, setPlayers] = useState(playersProp)
     const [linkCopied, setLinkCopied] = useState(false)
@@ -50,10 +54,6 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
             leaveGame()
         }
     }, [])
-    
-    useEffect(() => {
-        Game.preload()
-    }, [])
 
     const handleStart = () => {
         gameStarted.current = true
@@ -66,7 +66,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
     }
 
     return (
-        <div className="private-game-lobby-wrapper">
+        <div className={cn('private-game-lobby-wrapper', className)}>
             <h1>New Private Game by {players[0]}</h1>
             <div className="private-game-lobby">
                 <label className="link-label">

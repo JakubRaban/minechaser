@@ -34,7 +34,7 @@ const PrivateGameLoading: FC<PrivateGameLoadingProps> = ({ singlePlayer }) => {
         }
     }, [])
 
-    return <div>Creating private game...</div>
+    return <div>Loading...</div>
 }
 
 export default PrivateGameLoading

@@ -1,19 +1,15 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
 import { HowToPlay, PrivateGameLoading, Queue } from '../lazy-components'
+import { usePreload } from '../../hooks/usePreload'
 
 import './LandingPage.scss'
 
 export const LandingPage: FC = () => {
     const { error } = useLocation().state ?? {}
-
-    useEffect(() => {
-        Queue.preload()
-        PrivateGameLoading.preload()
-        HowToPlay.preload()
-    }, [])
+    usePreload(Queue, PrivateGameLoading, HowToPlay)
 
     return (
         <div className="landing-page">
@@ -47,7 +43,7 @@ export const LandingPage: FC = () => {
                             Stay alive and gain more points than your opponents to win!
                         </li>
                     </ul>
-                    <div onMouseEnter={HowToPlay.preload}>You can also check the <Link to="/how-to-play">detailed rules</Link></div>
+                    <div>You can also check the <Link to="/how-to-play">detailed rules</Link></div>
                 </section>
             </main>
             <footer>

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { useSocket } from '../../hooks/useSocket'
 import { GameStateData } from './GameWrapper/GameWrapper'
 import { useGameState } from '../../hooks/useGameState'
@@ -11,6 +11,7 @@ import { useCellSize } from './useCellSize'
 import { useSettings } from '../../hooks/useSettings'
 import cn from 'classnames'
 import { GameSummary } from '../lazy-components'
+import { useDelayedFlag } from '../../hooks/useDelayedFlag'
 
 import './Game.scss'
 
@@ -25,7 +26,8 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const { socket } = useSocket()
     const { gameId } = useParams()
     const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState)
-    const [goToSummary, setGoToSummary] = useState(false)
+
+    const [fadeOut, goToSummary, startFadingOut] = useDelayedFlag(700)
 
     const [cellSizePx, containerRef, scoreboardRef] = useCellSize(props.dims)
     const { showOnScreenControls, invertControls } = useSettings()
@@ -85,7 +87,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     useEffect(() => {
         if (props.end) {
             GameSummary.preload()
-            const timeout = setTimeout(() => setGoToSummary(true), 3000)
+            const timeout = setTimeout(startFadingOut, 2500)
             return () => clearTimeout(timeout)
         }
     }, [props.end])
@@ -101,7 +103,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     }
     
     return (
-        <div className="game-page">
+        <div className={cn('game-page', { disappearing: fadeOut })}>
             {/* Ads could go here */}
             <div className="game-container" ref={containerRef}>
                 <div className={cn('game-layout', { keyboard: !showOnScreenControls })}>

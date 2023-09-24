@@ -6,6 +6,10 @@ import { useSettings } from '../../hooks/useSettings'
 import { dateDiff, pickRandom } from '../../helpers'
 import { useLocation } from 'react-router'
 import { Game, GameWrapper } from '../lazy-components'
+import { useDelayedFlag } from '../../hooks/useDelayedFlag'
+import { GameStateData } from '../Game/GameWrapper/GameWrapper'
+import cn from 'classnames'
+import { usePreload } from '../../hooks/usePreload'
 
 import './Queue.scss'
 
@@ -34,10 +38,12 @@ const Queue: FC = () => {
     const { name: currentPlayerName } = useSettings()
     const navigate = useNavigate()
     const { pathname } = useLocation()
+    usePreload(Game, GameWrapper)
 
     const [players, setPlayers] = useState<string[]>([])
     const [progress, setProgress] = useState<number>(0)
-    const [joinedSuccessfully, setJoinedSuccessfully] = useState(false)
+    const [dequeuedSuccessfully, setDequeuedSuccessfully] = useState<(GameStateData & { gameId: number }) | null>(null)
+    const [fadingOut, navigateToGame, startFadingOut] = useDelayedFlag(700)
     const interval = useRef<NodeJS.Timeout | null>(null)
 
     const tip = useRef(pickRandom(tips))
@@ -53,8 +59,7 @@ const Queue: FC = () => {
             }
         })
         socket.on('public_game_started', ({ gameId, gameState, playerColor, colorMapping }) => {
-            setJoinedSuccessfully(true)
-            timeout = setTimeout(() => navigate(`/game/${gameId}`, { replace: true, state: { gameState, playerColor, colorMapping, origin: pathname } }), 2000)
+            setDequeuedSuccessfully({ gameId, gameState, playerColor, colorMapping })
         })
         return () => {
             socket.off('queue_update')
@@ -65,11 +70,15 @@ const Queue: FC = () => {
     }, [])
 
     useEffect(() => {
-        GameWrapper.preload()
-        Game.preload()
-    }, [])
+        if (dequeuedSuccessfully && !navigateToGame) {
+            setTimeout(startFadingOut, 1500)
+        } else if (dequeuedSuccessfully && navigateToGame) {
+            const { gameId, ...stateData } = dequeuedSuccessfully
+            navigate(`/game/${gameId}`, { replace: true, state: { ...stateData, origin: pathname } })
+        }
+    }, [dequeuedSuccessfully, navigateToGame])
 
-    const leaveQueue = () => !joinedSuccessfully && socket.emit('leave_queue')
+    const leaveQueue = () => !dequeuedSuccessfully && socket.emit('leave_queue')
 
     useEffect(() => {
         window.addEventListener('beforeunload', leaveQueue)
@@ -79,18 +88,18 @@ const Queue: FC = () => {
         }
     }, [])
 
-    const header = joinedSuccessfully ? 'Let\'s play!' : progress <= 13250 ? 'You\'ll join a new game soon' : 'This is taking a bit longer than expected...'
+    const header = dequeuedSuccessfully ? 'Let\'s play!' : progress <= 13250 ? 'You\'ll join a new game soon' : 'This is taking a bit longer than expected...'
     
     return (
-        <div className="queue">
+        <div className={cn('queue', { disappearing: fadingOut })}>
             <div className="wrapper">
                 <main>
                     <h1>{header}</h1>
                     <PlayerList
                         players={players}
                         currentPlayerName={currentPlayerName!}
-                        highlight={joinedSuccessfully}
-                        progressComponent={<progress value={joinedSuccessfully ? 15000 : progress} max="15000" />}
+                        highlight={!!dequeuedSuccessfully}
+                        progressComponent={<progress value={dequeuedSuccessfully ? 15000 : progress} max="15000" />}
                     />
                     <button className="outline secondary" onClick={() => navigate('/', { replace: true })}>Leave the queue</button>
                 </main>

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { LandingPage } from './LandingPage/LandingPage'
 import { useSocket } from '../hooks/useSocket'
@@ -35,9 +35,11 @@ export const AppRouter: FC = () => {
                     </AuthenticationGuard>
                 } />
                 <Route path="/new-game" element={
-                    <AuthenticationGuard authenticated={authenticated}>
-                        <PrivateGameLoading singlePlayer={false} />
-                    </AuthenticationGuard>
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <AuthenticationGuard authenticated={authenticated}>
+                            <PrivateGameLoading singlePlayer={false} />
+                        </AuthenticationGuard>
+                    </Suspense>
                 } />
                 <Route path="/new-game/single-player" element={
                     <AuthenticationGuard authenticated={authenticated}>

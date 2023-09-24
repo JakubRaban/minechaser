@@ -7,6 +7,7 @@ import { useSocket } from '../../../hooks/useSocket'
 import { useNavigate } from 'react-router-dom'
 import { ErrorCode, errorCodeToMessage } from '../../../helpers'
 import { Game } from '../../lazy-components'
+import { useDelayedFlag } from '../../../hooks/useDelayedFlag'
 
 export interface GameStateData {
     gameState: RawGameState
@@ -37,35 +38,44 @@ const GameWrapper: FC = () => {
         gameState && playerColor && colorMapping ? { gameState, playerColor, colorMapping } : undefined,
     )
     const [gameStateChecked, setGameStateChecked] = useState(false)
-
+    const [fadeOut, moveToGame, startFadingOut] = useDelayedFlag(700)
+    
     const isGamePrivate = useRef(!origin || origin === '/new-game')
 
     const handleStart = (data: GameStateData) => {
         setGameData(data)
+        startFadingOut()
     }
     
     useEffect(() => {
         if (!gameData) {
-            socket.emit('get_game_state', { gameId }, ({ state, error }: GameStateResponse) => {
-                if (state?.gameState) {
-                    handleStart(state as GameStateData)
-                } else if (error) {
-                    navigate('/', { replace: true, state: { error: errorCodeToMessage(error.code) } })
-                }
-                setGameStateChecked(true)
-            })
+            Promise.all([
+                new Promise<void>(resolve => {
+                    socket.emit('get_game_state', { gameId }, ({ state, error }: GameStateResponse) => {
+                        if (state?.gameState) {
+                            handleStart(state as GameStateData)
+                        } else if (error) {
+                            navigate('/', { replace: true, state: { error: errorCodeToMessage(error.code) } })
+                        }
+                        resolve()
+                    })
+                }),
+                new Promise(resolve => setTimeout(resolve, 300)),
+            ]).then(() => setGameStateChecked(true))
         }
     }, [])
 
+    const className = fadeOut ? 'disappearing' : undefined
+
     if (!gameStateChecked) {
         return <Loading />
-    } else if (gameData) {
+    } else if (gameData && moveToGame) {
         return <Game isPrivate={isGamePrivate.current} {...gameData} />
     } else if (isGamePrivate.current) {
         if (players) {
-            return <PrivateGameLobby players={players} onGameStart={handleStart} />
+            return <PrivateGameLobby players={players} onGameStart={handleStart} className={className} />
         } else {
-            return <PrivateGameInviteeWrapper onGameStart={handleStart} />
+            return <PrivateGameInviteeWrapper onGameStart={handleStart} className={className} />
         }
     } else {
         return <Loading />

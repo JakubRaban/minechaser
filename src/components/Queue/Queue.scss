@@ -1,4 +1,5 @@
 @import "../../styles/constants";
+@import "../../styles/mixins";
 @import "@picocss/pico/scss/colors";
 
 .queue {
@@ -9,6 +10,10 @@
   height: 100vh;
   max-width: min(calc(100% - 20px), $lg);
   margin: 0 auto;
+
+  &.disappearing {
+    @include simple-animation(disappear)
+  }
 
   .wrapper {
     display: flex;

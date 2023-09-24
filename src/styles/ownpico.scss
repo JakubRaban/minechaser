@@ -44,6 +44,7 @@
 
 @import "fonts.css";
 @import "@picocss/pico/scss/colors";
+@import "./mixins";
 
 :root {
   --pico-font-family: 'kanit';
@@ -68,4 +69,24 @@ kbd {
 
 ul {
   padding-inline-start: 20px;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes disappear {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }

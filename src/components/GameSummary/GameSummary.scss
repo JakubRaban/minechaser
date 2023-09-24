@@ -1,4 +1,5 @@
 @import "../../styles/constants";
+@import "../../styles/mixins";
 @import "@picocss/pico/scss/colors";
 
 .game-summary {
@@ -11,6 +12,10 @@
   font-size: $text30;
   text-align: center;
 
+  & > * {
+    @include simple-animation(appear)
+  }
+
   h1 {
     font-size: $text60;
     margin-block-end: 0;
@@ -19,6 +24,7 @@
   h3 {
     font-weight: normal;
     margin-block-end: $spacing32;
+    animation-delay: .5s;
 
     span {
       font-weight: bold;
@@ -26,24 +32,12 @@
   }
 
   .stats {
-    display: flex;
-    position: relative;
-    left: 10px;
-  }
-
-  button.show-more {
-    position: relative;
-    top: 2%;
-    left: -20px;
-    padding-inline-start: 1.25rem;
-    padding-inline-end: 0.75rem;
-    height: 96%;
-    color: $zinc-550;
-    border-color: $zinc-550;
+    animation-delay: 1s;
   }
 
   table {
     margin: 0;
+    margin-block-start: $spacing48;
     border-spacing: 0;
     border-radius: 0.5em;
     border: 1px solid $slate-900;
@@ -127,7 +121,8 @@
     }
 
     &.general-stats {
-      margin-block-start: $spacing48;
+      //margin-block-start: $spacing48;
+      animation-delay: 1.5s;
 
       tr {
         td:first-child {
@@ -138,12 +133,27 @@
   }
 
   .action-buttons {
-    margin-block-start: $spacing48;
+    //margin-block-start: $spacing48;
     display: flex;
     gap: $spacing16;
+    animation-delay: 2s;
 
     button {
       font-size: $text24;
+    }
+  }
+
+  &.single-player {
+    .stats {
+      display: none;
+    }
+
+    .general-stats {
+      animation-delay: 1s;
+    }
+
+    .action-buttons {
+      animation-delay: 1.5s;
     }
   }
 }

@@ -79,7 +79,7 @@ class Game:
 class GameProxy:
     def __init__(self, player_ids: List[str], on_game_finished: callable, autostart: bool, next_game_id: Optional[str] = None):
         self.game = Game((18, 27), len(player_ids)) if autostart else None
-        self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=7 if len(player_ids) > 1 else 0) if autostart else None
+        self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=9 if len(player_ids) > 1 else 0) if autostart else None
         self.player_id_mapping = dict(zip(player_ids, self.game.players.colors())) if autostart else None
         self.player_ids = player_ids
         self.end_timestamp = None
@@ -114,7 +114,7 @@ class GameProxy:
     @locked
     def start_game(self, dimensions: Dimensions):
         if not self.game:
-            self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=5)
+            self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=9)
             self.game = Game(dimensions, len(self.player_ids))
             self.player_id_mapping = dict(zip(self.player_ids, self.game.players.colors()))
 

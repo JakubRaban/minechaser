@@ -1,4 +1,4 @@
-@import "../../../styles/player-colors";
+@import "../../../styles/mixins";
 @import "@picocss/pico/scss/colors";
 
 :root {
@@ -17,6 +17,8 @@
   grid-template-columns: repeat(var(--board-cols), var(--cell-size));
   gap: var(--grid-gap);
   background-color: black;
+  @include simple-animation(appear);
+  animation-duration: .7s;
 
   .game-starting-overlay {
     background-color: $slate-900;
@@ -32,6 +34,9 @@
     container: game-starting-overlay / size;
     text-align: center;
     opacity: 85%;
+    @include simple-animation(appear);
+    animation-delay: .8s;
+    animation-duration: 1s;
 
     .player-info {
       font-size: 8cqh;

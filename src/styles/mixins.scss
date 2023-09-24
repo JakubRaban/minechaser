@@ -121,3 +121,9 @@
     }
   }
 }
+
+@mixin simple-animation($name) {
+  animation: $name 0.5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
+}

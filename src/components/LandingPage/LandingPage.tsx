@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
@@ -9,6 +9,12 @@ import './LandingPage.scss'
 export const LandingPage: FC = () => {
     const { error } = useLocation().state ?? {}
 
+    useEffect(() => {
+        Queue.preload()
+        PrivateGameLoading.preload()
+        HowToPlay.preload()
+    }, [])
+
     return (
         <div className="landing-page">
             <header>
@@ -17,9 +23,9 @@ export const LandingPage: FC = () => {
             </header>
             <main>
                 <section className="menu">
-                    <LandingPageButton text="Play Online" link="/queue" onHover={Queue.preload} />
-                    <LandingPageButton text="Play With Friends" link="/new-game" onHover={PrivateGameLoading.preload} />
-                    <LandingPageButton text="Single Player" link="/new-game/single-player" onHover={PrivateGameLoading.preload} />
+                    <LandingPageButton text="Play Online" link="/queue" tooltip="Join a game with other players on the web" />
+                    <LandingPageButton text="Play With Friends" link="/new-game" tooltip="Create a private game for you and your friends with a unique link to join" />
+                    <LandingPageButton text="Single Player" link="/new-game/single-player" tooltip="Practice the game on your own" />
                 </section>
                 <section className="rules">
                     <h2>Quick Rules</h2>

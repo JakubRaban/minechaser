@@ -50,7 +50,7 @@
       margin: auto 0;
 
       &.menu {
-        a + a {
+        a:not(:first-child) {
           margin-block-start: $spacing12;
 
           @media screen and (min-width: $md) {

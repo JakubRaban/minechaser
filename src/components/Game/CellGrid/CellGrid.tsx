@@ -6,6 +6,7 @@ import { PositionedEvents } from '../../../hooks/useGameState'
 import cn from 'classnames'
 import { ArrowIcon } from '../../../icons/Arrow/ArrowIcon'
 import { usePlayerColorToClassName } from '../../../hooks/usePlayerColorToClassName'
+import { useSettings } from '../../../hooks/useSettings'
 
 import './CellGrid.scss'
 
@@ -38,6 +39,7 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
     const interval = useRef<NodeJS.Timeout | null>(null)
     
     const playerColorToClassName = usePlayerColorToClassName()
+    const { colorBlindMode } = useSettings()
 
     useEffect(() => {
         if (!interval.current && secondsUntilStart > 0) {
@@ -75,10 +77,16 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
             ))}
             {!hasStarted && (
                 <div className="game-starting-overlay">
-                    <div className="player-info">
-                        <div>You play as <span className={cn('color', playerColorToClassName(playerColor))}>{playerColor}</span>,</div>
-                        <div>starting in the <span>{colorToCorner[playerColor]}</span> corner</div>
-                    </div>
+                    {colorBlindMode ? (
+                        <div className="player-info">
+                            <div>You start in the <span className={cn(playerColorToClassName(playerColor))}>{colorToCorner[playerColor]}</span> corner</div>
+                        </div>
+                    ) : (
+                        <div className="player-info">
+                            <div>You play as <span className={cn('color', playerColorToClassName(playerColor))}>{playerColor}</span>,</div>
+                            <div>starting in the <span>{colorToCorner[playerColor]}</span> corner</div>
+                        </div>
+                    )}
                     <div className="countdown">{secondsUntilStart}</div>
                     <ArrowIcon className={cn(colorToCorner[playerColor], playerColorToClassName(playerColor))} />
                 </div>

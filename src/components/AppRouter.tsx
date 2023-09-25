@@ -5,6 +5,7 @@ import { useSocket } from '../hooks/useSocket'
 import { AuthenticationGuard } from './AuthenticationGuard'
 import { GameWrapper, HowToPlay, PrivateGameLoading, Queue } from './lazy-components'
 import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
+import { ErrorBoundary } from './lib/ErrorBoundary/ErrorBoundary'
 
 const storage = process.env.NODE_ENV === 'development' ? sessionStorage : localStorage
 
@@ -27,45 +28,47 @@ export const AppRouter: FC = () => {
     }, [])
     
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/queue" element={
-                    <Suspense fallback={<LoadingScreen />}>
-                        <AuthenticationGuard authenticated={authenticated}>
-                            <Queue />
-                        </AuthenticationGuard>
-                    </Suspense>
+        <ErrorBoundary>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/queue" errorElement={<ErrorBoundary />} element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <AuthenticationGuard authenticated={authenticated}>
+                                <Queue />
+                            </AuthenticationGuard>
+                        </Suspense>
                     
-                } />
-                <Route path="/new-game" element={
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <AuthenticationGuard authenticated={authenticated}>
-                            <PrivateGameLoading singlePlayer={false} />
-                        </AuthenticationGuard>
-                    </Suspense>
-                } />
-                <Route path="/new-game/single-player" element={
-                    <Suspense fallback={<LoadingScreen />}>
-                        <AuthenticationGuard authenticated={authenticated}>
-                            <PrivateGameLoading singlePlayer={true} />
-                        </AuthenticationGuard>
-                    </Suspense>
-                } />
-                <Route path="/game/:gameId" element={
-                    <Suspense fallback={<LoadingScreen />}>
-                        <AuthenticationGuard authenticated={authenticated}>
-                            <GameWrapper />
-                        </AuthenticationGuard>
-                    </Suspense>
-                } />
-                <Route path="/how-to-play" element={
-                    <Suspense fallback={<LoadingScreen />}>
-                        <HowToPlay />
-                    </Suspense>
-                } />
-                <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-        </BrowserRouter>
+                    } />
+                    <Route path="/new-game" element={
+                        <Suspense fallback={<div>Loading...</div>}>
+                            <AuthenticationGuard authenticated={authenticated}>
+                                <PrivateGameLoading singlePlayer={false} />
+                            </AuthenticationGuard>
+                        </Suspense>
+                    } />
+                    <Route path="/new-game/single-player" element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <AuthenticationGuard authenticated={authenticated}>
+                                <PrivateGameLoading singlePlayer={true} />
+                            </AuthenticationGuard>
+                        </Suspense>
+                    } />
+                    <Route path="/game/:gameId" element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <AuthenticationGuard authenticated={authenticated}>
+                                <GameWrapper />
+                            </AuthenticationGuard>
+                        </Suspense>
+                    } />
+                    <Route path="/how-to-play" element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <HowToPlay />
+                        </Suspense>
+                    } />
+                    <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+            </BrowserRouter>
+        </ErrorBoundary>
     )
 }

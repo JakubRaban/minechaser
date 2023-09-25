@@ -47,8 +47,8 @@ $text144: 144px;
 
 // Custom Colors
 
-$cell-normal-color: oklch(52.5% 0 0);
-$cell-uncovered-color: oklch(82.5% 0 0);
+$cell-normal-color: $slate-650;
+$cell-uncovered-color: $slate-250;
 $cell-uncovered-mine-color: oklch(40% 0.164 29.23);
 
 $player-red: oklch(65% 0.163 29.233);

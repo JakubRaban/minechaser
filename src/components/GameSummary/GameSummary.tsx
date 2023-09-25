@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import { Cell, GameState, Player, PlayerColor, PlayerColorMapping } from '../../types/model'
 import { PlayerColor as PlayerColorComponent } from '../lib/PlayerColor/PlayerColor'
 import cn from 'classnames'
@@ -42,13 +42,21 @@ const firstPlaceDead = [
     'It\'s a pity you didn\'t stay alive',
 ]
 
+type RankedPlayer = Player & { ranking: number }
+
 const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColor, isPrivate, isSinglePlayer }) => {
     const { gameId } = useParams()
     const playAgainLink = isSinglePlayer ? '/new-game/single-player' : isPrivate ? '/new-game' : '/queue'
     const playAgainState = isPrivate ? { restartedGameId: gameId } : undefined
 
-    const players = Object.entries(gameState.game.players) as [PlayerColor, Player][]
+    const positions = useRef<Record<number, number>>({})
+    const players = Object.entries(gameState.game.players) as [PlayerColor, RankedPlayer][]
     players.sort(([, player1], [, player2]) => (player2.score - (player2.alive ? 0 : 10000)) - (player1.score - (player1.alive ? 0 : 10000)))
+    players.forEach(([, player], index) => {
+        const ranking = positions.current[player.score] ?? index + 1
+        player.ranking = ranking
+        positions.current[player.score] = ranking
+    })
 
     const currentPlayerName = colorMapping[playerColor]!
     const currentPlayerStanding = players.findIndex(([p]) => p === playerColor) + 1
@@ -85,7 +93,7 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
                     <tbody>
                         {players.map(([playerColor, player], i) => (
                             <tr key={playerColor} className={cn({ dead: !player.alive && players.some(([, p]) => p.alive) })}>
-                                <td>{standingsMapping[i + 1].emoji}</td>
+                                <td>{standingsMapping[player.ranking].emoji}</td>
                                 <td className="color-cell"><PlayerColorComponent color={playerColor} /></td>
                                 <td className={cn('name-cell', { current: colorMapping[playerColor] === currentPlayerName })}>{colorMapping[playerColor]}</td>
                                 {players.some(([, p]) => !p.alive) && (

@@ -2,6 +2,7 @@ import { FC, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSocket } from '../../hooks/useSocket'
 import { useLocation } from 'react-router'
+import { LoadingScreen } from '../lib/LoadingScreen/LoadingScreen'
 
 interface PrivateGameLoadingProps {
     singlePlayer?: boolean
@@ -34,7 +35,7 @@ const PrivateGameLoading: FC<PrivateGameLoadingProps> = ({ singlePlayer }) => {
         }
     }, [])
 
-    return <div>Loading...</div>
+    return <LoadingScreen />
 }
 
 export default PrivateGameLoading

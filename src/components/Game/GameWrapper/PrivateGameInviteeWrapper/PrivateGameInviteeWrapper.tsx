@@ -4,6 +4,7 @@ import { useSocket } from '../../../../hooks/useSocket'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { ErrorCode } from '../../../../helpers'
+import { LoadingScreen } from '../../../lib/LoadingScreen/LoadingScreen'
 
 interface PrivateGameInviteeWrapperProps {
     onGameStart: GameStartFn
@@ -29,6 +30,6 @@ export const PrivateGameInviteeWrapper: FC<PrivateGameInviteeWrapperProps> = ({ 
     if (players.length) {
         return <PrivateGameLobby players={players} onGameStart={onGameStart} className={className} />
     } else {
-        return <div>Joining game...</div>
+        return <LoadingScreen />
     }
 }

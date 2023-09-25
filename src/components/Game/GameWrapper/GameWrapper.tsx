@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { ErrorCode, errorCodeToMessage } from '../../../helpers'
 import { Game } from '../../lazy-components'
 import { useDelayedFlag } from '../../../hooks/useDelayedFlag'
+import { LoadingScreen } from '../../lib/LoadingScreen/LoadingScreen'
 
 export interface GameStateData {
     gameState: RawGameState
@@ -25,8 +26,6 @@ interface GameWrapperState extends GameStateData {
 }
 
 type GameStateResponse = { state: Partial<GameStateData>, error?: GameStateError }
-
-const Loading = () => <div>Loading...</div>
 
 const GameWrapper: FC = () => {
     const { socket } = useSocket()
@@ -68,7 +67,7 @@ const GameWrapper: FC = () => {
     const className = fadeOut ? 'disappearing' : undefined
 
     if (!gameStateChecked) {
-        return <Loading />
+        return <LoadingScreen />
     } else if (gameData && moveToGame) {
         return <Game isPrivate={isGamePrivate.current} {...gameData} />
     } else if (isGamePrivate.current) {
@@ -78,7 +77,7 @@ const GameWrapper: FC = () => {
             return <PrivateGameInviteeWrapper onGameStart={handleStart} className={className} />
         }
     } else {
-        return <Loading />
+        return <LoadingScreen />
     }
 }
 

@@ -2,7 +2,7 @@ import { FC, lazy } from 'react'
 
 export type Preloadable = ReturnType<typeof lazy> & { preload: () => void }
 
-export const lazyPreload = (factory: () => Promise<{ default: FC }>) => {
+const lazyPreload = (factory: () => Promise<{ default: FC }>) => {
     const Component = lazy(factory) as Preloadable
     Component.preload = factory
     return Component

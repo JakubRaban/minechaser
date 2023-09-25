@@ -1,0 +1,27 @@
+@import "../../../styles/constants";
+@import '@picocss/pico/scss/colors';
+
+.loading-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: $text60;
+  gap: 0.25em;
+
+  @media screen and (min-width: $sm) {
+    font-size: $text96;
+  }
+
+  .loading-icon {
+    height: 1em;
+    aspect-ratio: 1;
+    background: var(--pico-icon-loading) no-repeat center;
+    transform: scale(2);
+
+    @media screen and (min-width: $sm) {
+      transform: scale(3);
+    }
+  }
+}

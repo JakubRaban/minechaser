@@ -18,7 +18,7 @@ export const Stopwatch: FC<StopwatchProps> = ({ timestampAtZero, endScheduled, i
     useEffect(() => {
         if (isActive) {
             interval.current = setInterval(() => {
-                setStopwatchValue(dateDiff(new Date(), timestampAtZero).seconds)
+                setStopwatchValue(dateDiff(timestampAtZero, new Date(), true).seconds)
                 if (endScheduled) {
                     const timeToEnd = dateDiff(endScheduled, new Date()).seconds
                     setEndGameTimer(timeToEnd <= 30 ? timeToEnd : null)

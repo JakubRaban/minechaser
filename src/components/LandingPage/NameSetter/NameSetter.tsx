@@ -2,8 +2,8 @@ import { BaseSyntheticEvent, FC, FormEvent, useEffect, useRef, useState } from '
 import { useSocket } from '../../../hooks/useSocket'
 import { generateRandomUsername } from '../../../helpers'
 import cn from 'classnames'
-import { useSettings } from '../../../hooks/useSettings'
-import { UserSettings } from '../../../contexts/SettingsContext'
+import { usePreferences } from '../../../hooks/usePreferences'
+import { UserPreferences } from '../../../contexts/PreferencesContext'
 import { usePhysicalKeyboardDetector } from '../../../hooks/usePhysicalKeyboardDetector'
 
 import './NameSetter.scss'
@@ -26,7 +26,7 @@ const nameValidator = (name: string) => {
 
 export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
     const { socket } = useSocket()
-    const { setSettings, ...settings } = useSettings()
+    const { setSettings, ...settings } = usePreferences()
     const [nameError, setNameError] = useState('')
     const placeholderName = useRef(generateRandomUsername())
     const nameInputRef = useRef<HTMLInputElement>(null)
@@ -52,7 +52,7 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                 ...settings,
                 name: settings.name?.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current,
             },
-            (settings: UserSettings) => {
+            (settings: UserPreferences) => {
                 setSettings(currentSettings => ({ ...currentSettings, ...settings }))
                 onNameSet?.(settings.name!)
             },
@@ -86,25 +86,27 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                     <details>
                         <summary>Settings</summary>
                         <label>
-                            <input name="invertControls" checked={settings.invertControls} type="checkbox" role="switch" onChange={setFieldValue} />
-                            Invert Controls
-                            <aside className={cn({ active: settings.invertControls })}>(Use <kbd>WASD</kbd> to move and <kbd>Arrow Keys</kbd> to flag)</aside>
+                            <input name="showOnScreenControls" checked={settings.showOnScreenControls} type="checkbox" role="switch" onChange={setFieldValue} />
+                            Show on-screen controls
+                            <aside>(for touchscreen devices)</aside>
                         </label>
+
+                        {!settings.showOnScreenControls && (
+                            <label>
+                                <input name="invertControls" checked={settings.invertControls} type="checkbox" role="switch" onChange={setFieldValue} />
+                                Invert Keyboard Controls
+                                <aside className={cn({ active: settings.invertControls })}>(If checked, use <kbd>WASD</kbd> to move and <kbd>Arrow Keys</kbd> to flag)</aside>
+                            </label>
+                        )}
 
                         <label>
                             <input name="colorBlindMode" checked={settings.colorBlindMode} type="checkbox" role="switch" onChange={setFieldValue} />
-                            Enable Color Blind Mode
+                            Color Blind Mode
                         </label>
 
                         <label>
                             <input name="disableSoundEffects" checked={settings.disableSoundEffects} type="checkbox" role="switch" onChange={setFieldValue} />
                             Disable Sound Effects
-                        </label>
-
-                        <label>
-                            <input name="showOnScreenControls" checked={settings.showOnScreenControls} type="checkbox" role="switch" onChange={setFieldValue} />
-                            Show on-screen controls
-                            <aside>(for touchscreen devices)</aside>
                         </label>
                     </details>
                 </fieldset>

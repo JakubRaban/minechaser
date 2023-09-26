@@ -3,7 +3,7 @@ import { useSocket } from '../../hooks/useSocket'
 import { useParams } from 'react-router'
 import { GameStateData } from '../Game/GameWrapper/GameWrapper'
 import { PlayerList } from '../PlayerList/PlayerList'
-import { useSettings } from '../../hooks/useSettings'
+import { usePreferences } from '../../hooks/usePreferences'
 import { BoardSizeForm } from './BoardSizeForm/BoardSizeForm'
 import { Game } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
@@ -22,7 +22,7 @@ interface PrivateGameLobbyProps {
 export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersProp, onGameStart, className }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
-    const { name: currentPlayerName } = useSettings()
+    const { name: currentPlayerName } = usePreferences()
     usePreload(Game)
 
     const [players, setPlayers] = useState(playersProp)

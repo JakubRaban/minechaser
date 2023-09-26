@@ -3,11 +3,11 @@ import { SocketIOContext } from '../contexts/SocketIOContext'
 import { io } from 'socket.io-client'
 import config from '../config'
 import { AppRouter } from './AppRouter'
-import { SettingsContextProvider } from '../contexts/SettingsContext'
+import { PreferencesContextProvider } from '../contexts/PreferencesContext'
 
 export const App: FC = () =>
     <SocketIOContext.Provider value={{ socket: io(config.SERVER_URL, { autoConnect: false, closeOnBeforeunload: false }) }}>
-        <SettingsContextProvider>
+        <PreferencesContextProvider>
             <AppRouter />
-        </SettingsContextProvider>
+        </PreferencesContextProvider>
     </SocketIOContext.Provider>

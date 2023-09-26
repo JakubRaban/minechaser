@@ -1,6 +1,6 @@
 import { createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useState } from 'react'
 
-export interface UserSettings {
+export interface UserPreferences {
     name?: string,
     invertControls: boolean,
     colorBlindMode: boolean,
@@ -8,12 +8,12 @@ export interface UserSettings {
     showOnScreenControls: boolean,
 }
 
-interface UserSettingsContext extends UserSettings {
-    setSettings: Dispatch<SetStateAction<UserSettings>>
+interface UserPreferencesContext extends UserPreferences {
+    setSettings: Dispatch<SetStateAction<UserPreferences>>
 }
 
-export const SettingsContextProvider: FC<PropsWithChildren> = ({ children }) => {
-    const [settings, setSettings] = useState<UserSettings>({
+export const PreferencesContextProvider: FC<PropsWithChildren> = ({ children }) => {
+    const [settings, setSettings] = useState<UserPreferences>({
         invertControls: false,
         colorBlindMode: false,
         disableSoundEffects: false,
@@ -21,11 +21,11 @@ export const SettingsContextProvider: FC<PropsWithChildren> = ({ children }) => 
     })
 
     return (
-        <SettingsContext.Provider value={{ ...settings, setSettings }}>
+        <PreferencesContext.Provider value={{ ...settings, setSettings }}>
             {children}
-        </SettingsContext.Provider>
+        </PreferencesContext.Provider>
     )
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export const SettingsContext = createContext<UserSettingsContext>({ setSettings: () => {} } as any)
+export const PreferencesContext = createContext<UserPreferencesContext>({ setSettings: () => {} } as any)

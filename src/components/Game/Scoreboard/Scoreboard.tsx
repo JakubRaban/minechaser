@@ -4,7 +4,7 @@ import { Player, PlayerColor, PlayerColorMapping, Players } from '../../../types
 import { ScoreboardElement } from './ScoreboardElement/ScoreboardElement'
 import { Stopwatch } from './Stopwatch/Stopwatch'
 import { Link } from 'react-router-dom'
-import { useSettings } from '../../../hooks/useSettings'
+import { usePreferences } from '../../../hooks/usePreferences'
 
 import './Scoreboard.scss'
 
@@ -23,7 +23,7 @@ interface ScoreboardProps {
 export const Scoreboard = forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLeft, players, playerColor, isPrivate, isSinglePlayer, colorMapping, gameStart, endScheduled, isFinished }, ref) => {
     const playerEntries = Object.entries(players) as [PlayerColor, Player][]
     const [showDefeatedMessage, setShowDefeatedMessage] = useState(false)
-    const { colorBlindMode } = useSettings()
+    const { colorBlindMode } = usePreferences()
     
     useEffect(() => {
         let timeout: NodeJS.Timeout

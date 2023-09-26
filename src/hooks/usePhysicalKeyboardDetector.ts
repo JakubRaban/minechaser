@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useSettings } from './useSettings'
+import { usePreferences } from './usePreferences'
 
 export const usePhysicalKeyboardDetector = () => {
     const pressLog: { start: number, end?: number }[] = []
@@ -7,7 +7,7 @@ export const usePhysicalKeyboardDetector = () => {
     const registerPressStart = () => pressLog.push({ start: performance.now() })
     const registerPressEnd = () => pressLog[pressLog.length - 1].end = performance.now()
     
-    const { setSettings } = useSettings()
+    const { setSettings } = usePreferences()
     
     const recompute = () => {
         registerPressEnd()

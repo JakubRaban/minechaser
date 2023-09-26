@@ -8,7 +8,7 @@ import { SteeringBoard } from './SteeringBoard/SteeringBoard'
 import { useParams } from 'react-router'
 import { ActionResult, RawGameState } from '../../types/model'
 import { useCellSize } from './useCellSize'
-import { useSettings } from '../../hooks/useSettings'
+import { usePreferences } from '../../hooks/usePreferences'
 import cn from 'classnames'
 import { GameSummary } from '../lazy-components'
 import { useDelayedFlag } from '../../hooks/useDelayedFlag'
@@ -30,7 +30,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const [fadeOut, goToSummary, startFadingOut] = useDelayedFlag(700)
 
     const [cellSizePx, containerRef, scoreboardRef] = useCellSize(props.dims)
-    const { showOnScreenControls, invertControls } = useSettings()
+    const { showOnScreenControls, invertControls } = usePreferences()
 
     const isSinglePlayer = Object.entries(colorMapping).length === 1
 

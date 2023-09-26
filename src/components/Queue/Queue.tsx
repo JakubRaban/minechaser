@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useSocket } from '../../hooks/useSocket'
 import { useNavigate } from 'react-router-dom'
 import { PlayerList } from '../PlayerList/PlayerList'
-import { useSettings } from '../../hooks/useSettings'
+import { usePreferences } from '../../hooks/usePreferences'
 import { dateDiff, pickRandom } from '../../helpers'
 import { useLocation } from 'react-router'
 import { Game, GameWrapper } from '../lazy-components'
@@ -35,7 +35,7 @@ const tips = [
 
 const Queue: FC = () => {
     const { socket } = useSocket()
-    const { name: currentPlayerName } = useSettings()
+    const { name: currentPlayerName } = usePreferences()
     const navigate = useNavigate()
     const { pathname } = useLocation()
     usePreload(Game, GameWrapper)

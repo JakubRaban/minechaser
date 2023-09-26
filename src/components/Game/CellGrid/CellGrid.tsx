@@ -6,7 +6,7 @@ import { PositionedEvents } from '../../../hooks/useGameState'
 import cn from 'classnames'
 import { ArrowIcon } from '../../../icons/Arrow/ArrowIcon'
 import { usePlayerColorToClassName } from '../../../hooks/usePlayerColorToClassName'
-import { useSettings } from '../../../hooks/useSettings'
+import { usePreferences } from '../../../hooks/usePreferences'
 
 import './CellGrid.scss'
 
@@ -39,7 +39,7 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
     const interval = useRef<NodeJS.Timeout | null>(null)
     
     const playerColorToClassName = usePlayerColorToClassName()
-    const { colorBlindMode } = useSettings()
+    const { colorBlindMode } = usePreferences()
 
     useEffect(() => {
         if (!interval.current && secondsUntilStart > 0) {

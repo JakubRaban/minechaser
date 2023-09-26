@@ -1,6 +1,6 @@
 import { Position } from '../../types/model'
 import { useEffect, useState } from 'react'
-import { useSettings } from '../../hooks/useSettings'
+import { usePreferences } from '../../hooks/usePreferences'
 import { rootStyle } from '../../helpers'
 
 export const useCellSize = (boardDimensions: Position) => {
@@ -8,7 +8,7 @@ export const useCellSize = (boardDimensions: Position) => {
     const [container, setContainer] = useState<HTMLDivElement | null>(null)
     const [scoreboard, setScoreboard] = useState<HTMLDivElement | null>(null)
 
-    const { showOnScreenControls: isMobile } = useSettings()
+    const { showOnScreenControls: isMobile } = usePreferences()
 
     const onResize = () => {
         if (!container || !scoreboard) return

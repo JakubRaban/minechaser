@@ -1,8 +1,8 @@
 import { PlayerColor } from '../types/model'
-import { useSettings } from './useSettings'
+import { usePreferences } from './usePreferences'
 
 export const usePlayerColorToClassName = (prefix = '') => {
-    const settings = useSettings()
+    const settings = usePreferences()
     
     return (playerColor?: PlayerColor) => ({
         [prefix]: !!playerColor,

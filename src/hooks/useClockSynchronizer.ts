@@ -25,9 +25,7 @@ export const useClockSynchronizer = () => {
     
     useEffect(() => {
         if (observations.length) {
-            const newOffset = Math.floor(observations.reduce((acc, obs) => acc + obs) / observations.length)
-            console.log(observations, newOffset)
-            setTimeOffset(newOffset)
+            setTimeOffset(Math.floor(observations.reduce((acc, obs) => acc + obs) / observations.length))
         }
     }, [observations])
 }

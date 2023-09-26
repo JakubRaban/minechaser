@@ -1,15 +1,27 @@
-import { FC } from 'react'
+import { FC, lazy, Suspense, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
 import { HowToPlay, PrivateGameLoading, Queue } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
 
+const Toaster = lazy(() => import('react-hot-toast').then(module => ({ default: module.Toaster })))
+
 import './LandingPage.scss'
 
 export const LandingPage: FC = () => {
     const { error } = useLocation().state ?? {}
     usePreload(Queue, PrivateGameLoading, HowToPlay)
+    const toastId = useRef<string | undefined>()
+    
+    useEffect(() => {
+        const modulePromise = import('react-hot-toast')
+        if (error) {
+            modulePromise.then(({ toast }) => {
+                toastId.current = toast.error(error)
+            })
+        }
+    }, [error])
 
     return (
         <div className="landing-page">
@@ -49,6 +61,9 @@ export const LandingPage: FC = () => {
             <footer>
                 (C) Jakub Raban 2023. All rights reserved.
             </footer>
+            <Suspense>
+                <Toaster position="bottom-center" toastOptions={{ className: 'toast' }} />
+            </Suspense>
         </div>
     )
 }

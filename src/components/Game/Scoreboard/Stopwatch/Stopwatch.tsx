@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react'
-import { dateDiff } from '../../../../helpers'
+import { useDateDiff } from '../../../../hooks/useDateDiff'
 
 import './Stopwatch.scss'
 
@@ -13,6 +13,7 @@ export const Stopwatch: FC<StopwatchProps> = ({ timestampAtZero, endScheduled, i
     const [stopwatchValue, setStopwatchValue] = useState(0)
     const [endGameTimer, setEndGameTimer] = useState<number | null>(null)
     const interval = useRef<NodeJS.Timeout | null>(null)
+    const dateDiff = useDateDiff()
 
     useEffect(() => {
         if (isActive) {

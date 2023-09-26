@@ -1,6 +1,6 @@
 import { GameStartFn, PrivateGameLobby } from '../../../PrivateGameLobby/PrivateGameLobby'
 import { FC, useEffect, useState } from 'react'
-import { useSocket } from '../../../../hooks/useSocket'
+import { useSocket } from '../../../../hooks/context/useSocket'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { ErrorCode } from '../../../../helpers'

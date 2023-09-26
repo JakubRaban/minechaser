@@ -1,6 +1,6 @@
 import { Position } from '../../types/model'
 import { useEffect, useState } from 'react'
-import { usePreferences } from '../../hooks/usePreferences'
+import { usePreferences } from '../../hooks/context/usePreferences'
 import { rootStyle } from '../../helpers'
 
 export const useCellSize = (boardDimensions: Position) => {

@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useSocket } from '../../hooks/useSocket'
+import { useSocket } from '../../hooks/context/useSocket'
 import { useLocation } from 'react-router'
 import { LoadingScreen } from '../lib/LoadingScreen/LoadingScreen'
 

@@ -3,12 +3,13 @@ import { useLocation, useParams } from 'react-router'
 import { RawGameState, PlayerColor, PlayerColorMapping } from '../../../types/model'
 import { PrivateGameInviteeWrapper } from './PrivateGameInviteeWrapper/PrivateGameInviteeWrapper'
 import { PrivateGameLobby } from '../../PrivateGameLobby/PrivateGameLobby'
-import { useSocket } from '../../../hooks/useSocket'
+import { useSocket } from '../../../hooks/context/useSocket'
 import { useNavigate } from 'react-router-dom'
 import { ErrorCode, errorCodeToMessage } from '../../../helpers'
 import { Game } from '../../lazy-components'
 import { useDelayedFlag } from '../../../hooks/useDelayedFlag'
 import { LoadingScreen } from '../../lib/LoadingScreen/LoadingScreen'
+import { TimeOffsetContextProvider } from '../../../contexts/TimeOffsetContext'
 
 export interface GameStateData {
     gameState: RawGameState

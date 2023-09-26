@@ -4,7 +4,7 @@ import { Player, PlayerColor, PlayerColorMapping, Players } from '../../../types
 import { ScoreboardElement } from './ScoreboardElement/ScoreboardElement'
 import { Stopwatch } from './Stopwatch/Stopwatch'
 import { Link } from 'react-router-dom'
-import { usePreferences } from '../../../hooks/usePreferences'
+import { usePreferences } from '../../../hooks/context/usePreferences'
 
 import './Scoreboard.scss'
 

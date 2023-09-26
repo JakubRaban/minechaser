@@ -1,12 +1,13 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { Cells, PlayerColor, Players, Position } from '../../../types/model'
-import { dateDiff, toPositionString } from '../../../helpers'
+import { toPositionString } from '../../../helpers'
 import { Cell } from '../Cell/Cell'
 import { PositionedEvents } from '../../../hooks/useGameState'
 import cn from 'classnames'
 import { ArrowIcon } from '../../../icons/Arrow/ArrowIcon'
 import { usePlayerColorToClassName } from '../../../hooks/usePlayerColorToClassName'
-import { usePreferences } from '../../../hooks/usePreferences'
+import { usePreferences } from '../../../hooks/context/usePreferences'
+import { useDateDiff } from '../../../hooks/useDateDiff'
 
 import './CellGrid.scss'
 
@@ -28,6 +29,8 @@ const colorToCorner: Record<PlayerColor, string> = {
 }
 
 export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor, gameStart, cellSizePx, events }) => {
+    const dateDiff = useDateDiff()
+    
     const [height, width] = dims
     const [secondsUntilStart, setSecondsUntilStart] = useState(dateDiff(gameStart, new Date()).seconds)
     const hasStarted = secondsUntilStart <= 0

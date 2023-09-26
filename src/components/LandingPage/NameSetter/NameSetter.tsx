@@ -1,8 +1,8 @@
 import { BaseSyntheticEvent, FC, FormEvent, useEffect, useRef, useState } from 'react'
-import { useSocket } from '../../../hooks/useSocket'
+import { useSocket } from '../../../hooks/context/useSocket'
 import { generateRandomUsername } from '../../../helpers'
 import cn from 'classnames'
-import { usePreferences } from '../../../hooks/usePreferences'
+import { usePreferences } from '../../../hooks/context/usePreferences'
 import { UserPreferences } from '../../../contexts/PreferencesContext'
 import { usePhysicalKeyboardDetector } from '../../../hooks/usePhysicalKeyboardDetector'
 

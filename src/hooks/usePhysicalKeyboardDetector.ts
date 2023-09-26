@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { usePreferences } from './usePreferences'
+import { usePreferences } from './context/usePreferences'
 
 export const usePhysicalKeyboardDetector = () => {
     const pressLog: { start: number, end?: number }[] = []

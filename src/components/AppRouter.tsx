@@ -1,17 +1,19 @@
 import { FC, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { LandingPage } from './LandingPage/LandingPage'
-import { useSocket } from '../hooks/useSocket'
+import { useSocket } from '../hooks/context/useSocket'
 import { AuthenticationGuard } from './AuthenticationGuard'
 import { GameWrapper, HowToPlay, PrivateGameLoading, Queue } from './lazy-components'
 import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
 import { ErrorBoundary } from './lib/ErrorBoundary/ErrorBoundary'
+import { useClockSynchronizer } from '../hooks/useClockSynchronizer'
 
 const storage = process.env.NODE_ENV === 'development' ? sessionStorage : localStorage
 
 export const AppRouter: FC = () => {
     const { socket } = useSocket()
     const [authenticated, setAuthenticated] = useState(false)
+    useClockSynchronizer()
     
     useEffect(() => {
         socket.connect()

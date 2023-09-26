@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, useEffect, useState } from 'react'
-import { useSocket } from '../hooks/useSocket'
+import { useSocket } from '../hooks/context/useSocket'
 import { NameSetter } from './LandingPage/NameSetter/NameSetter'
 
 export const AuthenticationGuard: FC<PropsWithChildren<{ authenticated: boolean }>> = ({ children, authenticated }) => {

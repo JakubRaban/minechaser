@@ -1,5 +1,6 @@
 import random
 import string
+from datetime import datetime, timezone
 from functools import wraps
 
 import socketio
@@ -42,6 +43,12 @@ def authenticate(sid, data):
     socket_id_to_player_id.forceput(sid, token)
     print(f"Authenticated {sid} as {token}")
     return {'token': token}
+
+
+@sio.event
+def clock_sync(_, data: dict):
+    request_time = data.pop('clientRequestTime')
+    return {'clientRequestTime': request_time, 'serverResponseTime': int(datetime.now(timezone.utc).timestamp() * 1000)}
 
 
 @sio.event

@@ -7,6 +7,7 @@ export default defineConfig(() => {
     base: process.env.NODE_ENV === 'development' ? '/' : '/dist/',
     build: {
       outDir: 'api/dist',
+      sourcemap: true,
     },
     server: {
       port: 3000,

@@ -1,8 +1,11 @@
 import React from 'react'
+import { SocketIOContext } from '../../../contexts/SocketIOContext'
 
 import './ErrorBoundary.scss'
 
 export class ErrorBoundary extends React.Component {
+    static contextType = SocketIOContext
+    context!: React.ContextType<typeof SocketIOContext>
     state: { hasError: boolean }
 
     constructor(props: any) {
@@ -14,8 +17,8 @@ export class ErrorBoundary extends React.Component {
         return { hasError: true }
     }
 
-    componentDidCatch(error: any, errorInfo: any) {
-        // Do something with the observed error
+    componentDidCatch(error: any, info: any) {
+        this.context.socket.emit('log_error', { error, info })
     }
 
     render() {

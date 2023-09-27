@@ -51,6 +51,15 @@ def clock_sync(_, data: dict):
 
 
 @sio.event
+def log_error(_, data: dict):
+    error = data.pop('error')
+    info = data.pop('info')
+    with open('error.log', 'a') as f:
+        f.write(f'{datetime.now(timezone.utc)}\n{error}\n{info}\n\n===================\n\n')
+
+
+
+@sio.event
 def set_name(sid, data: dict):
     name = data.pop('name', None)
     if isinstance(name, str) and sid in socket_id_to_player_id:

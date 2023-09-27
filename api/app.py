@@ -8,6 +8,11 @@ from geventwebsocket.handler import WebSocketHandler
 from socketsetup import sio
 
 
+@bottle.route('/robots.txt')
+def robots():
+    return bottle.static_file('robots.txt', 'dist')
+
+
 @bottle.route('/dist/<mypath:path>')
 def static_files_route(mypath):
     return bottle.static_file(mypath, 'dist')

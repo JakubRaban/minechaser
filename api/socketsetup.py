@@ -47,8 +47,7 @@ def authenticate(sid, data):
 
 @sio.event
 def clock_sync(_, data: dict):
-    request_time = data.pop('clientRequestTime')
-    return {'clientRequestTime': request_time, 'serverResponseTime': int(datetime.now(timezone.utc).timestamp() * 1000)}
+    return {**data, 'serverResponseTime': int(datetime.now(timezone.utc).timestamp() * 1000)}
 
 
 @sio.event

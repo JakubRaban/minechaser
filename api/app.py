@@ -8,13 +8,13 @@ from geventwebsocket.handler import WebSocketHandler
 from socketsetup import sio
 
 
-@bottle.route('/dist/<path:path>')
-def static_files_route(path):
-    return bottle.static_file(path, 'dist')
+@bottle.route('/dist/<mypath:path>')
+def static_files_route(mypath):
+    return bottle.static_file(mypath, 'dist')
 
 
-@bottle.route('<path:path>')
-def route():
+@bottle.route('<mypath:path>')
+def route(mypath):
     return bottle.template('dist/index.html')
 
 

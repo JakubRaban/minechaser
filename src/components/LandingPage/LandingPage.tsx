@@ -4,6 +4,7 @@ import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
 import { HowToPlay, PrivateGameLoading, Queue } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
+import { ErrorCode, errorCodeToMessage } from '../../helpers'
 
 const Toaster = lazy(() => import('react-hot-toast').then(module => ({ default: module.Toaster })))
 
@@ -18,7 +19,7 @@ export const LandingPage: FC = () => {
         const modulePromise = import('react-hot-toast')
         if (error) {
             modulePromise.then(({ toast }) => {
-                toastId.current = toast.error(error)
+                toastId.current = toast.error(errorCodeToMessage(error as ErrorCode) ?? error)
             })
         }
     }, [error])

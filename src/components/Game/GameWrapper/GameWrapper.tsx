@@ -55,7 +55,7 @@ const GameWrapper: FC = () => {
                         if (state?.gameState) {
                             handleStart(state as GameStateData)
                         } else if (error) {
-                            navigate('/', { replace: true, state: { error: errorCodeToMessage(error.code) } })
+                            navigate('/', { replace: true, state: { error: error.code } })
                         }
                         resolve()
                     })

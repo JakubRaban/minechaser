@@ -1,0 +1,15 @@
+@import "../../styles/constants";
+
+.share-buttons {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(4, min-content);
+  grid-auto-flow: row;
+  gap: $spacing12;
+  margin-block-start: $spacing12;
+}
+//
+//footer button {
+//  display: flex;
+//  justify-content: center;
+//}

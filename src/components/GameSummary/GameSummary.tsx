@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { Cell, GameState, Player, PlayerColor, PlayerColorMapping } from '../../types/model'
 import { PlayerColor as PlayerColorComponent } from '../lib/PlayerColor/PlayerColor'
 import cn from 'classnames'
@@ -6,7 +6,8 @@ import { MineIcon } from '../../icons/Mine/MineIcon'
 import { dateDiff, pickRandom, readableTime } from '../../helpers'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
-import { PrivateGameLoading } from '../lazy-components'
+import { PrivateGameLoading, ShareDialog } from '../lazy-components'
+import { usePreload } from '../../hooks/usePreload'
 
 import './GameSummary.scss'
 
@@ -67,6 +68,9 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
     const uncoveredCells = Object.values(gameState.game.board.cells).reduce((acc: number, cell: Cell) => cell.isUncovered ? acc + 1 : acc, 0)
     const totalCells = dims[0] * dims[1]
     
+    const [shareDialogOpen, setShareDialogOpen] = useState(false)
+    usePreload(ShareDialog)
+    
     useEffect(() => {
         if (isPrivate) {
             PrivateGameLoading.preload()
@@ -86,12 +90,12 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
             <div className="action-buttons">
                 <Link to={playAgainLink} state={playAgainState}><button>Play Again{isPrivate && <> (with same players)</>}</button></Link>
                 <Link to="/"><button className="outline">Back to Main Menu</button></Link>
-                <button className="outline">Share</button>
+                <button className="outline" onClick={() => setShareDialogOpen(true)}>Share</button>
             </div>
             <div className="stats">
                 <table>
                     <tbody>
-                        {players.map(([playerColor, player], i) => (
+                        {players.map(([playerColor, player]) => (
                             <tr key={playerColor} className={cn({ dead: !player.alive && players.some(([, p]) => p.alive) })}>
                                 <td>{standingsMapping[player.ranking].emoji}</td>
                                 <td className="color-cell"><PlayerColorComponent color={playerColor} /></td>
@@ -127,6 +131,7 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
                     </tr>
                 </tbody>
             </table>
+            <ShareDialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)} />
         </div>
     )
 }

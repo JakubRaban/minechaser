@@ -14,3 +14,4 @@ export const PrivateGameLoading = lazyPreload(() => import('./PrivateGameLoading
 export const GameWrapper = lazyPreload(() => import('./Game/GameWrapper/GameWrapper'))
 export const HowToPlay = lazyPreload(() => import('./HowToPlay/HowToPlay'))
 export const GameSummary = lazyPreload(() => import('./GameSummary/GameSummary'))
+export const ShareDialog = lazyPreload(() => import('./ShareDialog/ShareDialog'))

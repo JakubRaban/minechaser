@@ -6,12 +6,18 @@ import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
 export const AuthenticationGuard: FC<PropsWithChildren<{ authenticated: boolean }>> = ({ children, authenticated }) => {
     const { socket } = useSocket()
     const [isNameSet, setIsNameSet] = useState(false)
+    const [isNameSetCallExecuted, setIsNameSetCallExecuted] = useState(false)
     
     useEffect(() => {
-        socket.emit('is_name_set', {}, ({ name }: { name: string }) => setIsNameSet(!!name))
-    }, [])
+        if (authenticated) {
+            socket.emit('is_name_set', {}, ({ name }: { name: string }) => {
+                setIsNameSet(!!name)
+                setIsNameSetCallExecuted(true)
+            })
+        }
+    }, [authenticated])
     
-    if (!authenticated) {
+    if (!authenticated || !isNameSetCallExecuted) {
         return <LoadingScreen />
     } else if (!isNameSet) {
         return <NameSetter onNameSet={() => setIsNameSet(true)} />

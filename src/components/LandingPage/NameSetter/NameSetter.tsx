@@ -84,7 +84,7 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                     </label>
 
                     <details>
-                        <summary>Settings</summary>
+                        <summary>Adjust Your Experience</summary>
                         <label>
                             <input name="showOnScreenControls" checked={settings.showOnScreenControls} type="checkbox" role="switch" onChange={setFieldValue} />
                             Show on-screen controls

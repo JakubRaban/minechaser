@@ -58,7 +58,6 @@ def log_error(_, data: dict):
         f.write(f'{datetime.now(timezone.utc)}\n{error}\n{info}\n\n===================\n\n')
 
 
-
 @sio.event
 def set_name(sid, data: dict):
     name = data.pop('name', None)

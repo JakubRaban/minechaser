@@ -12,7 +12,6 @@ class LobbyResponses:
         print(f"Response: Creating public game {game_id}")
         for player_id in player_ids:
             socket_id = socket_id_to_player_id.inverse[player_id]
-            sio.enter_room(socket_id, game_id)
             sio.emit(
                 'public_game_started',
                 {'gameId': game_id, **game_state(game, player_id)},
@@ -20,18 +19,19 @@ class LobbyResponses:
             )
 
     @staticmethod
-    def private_game_lobby_update(game: GameProxy, game_id: str, player_id: str):
+    def private_game_lobby_update(game: GameProxy, game_id: str, player_id: str, created=False):
         print(f"Response: Player {player_id} entered private game {game_id}")
         socket_id = socket_id_to_player_id.inverse[player_id]
-        sio.enter_room(socket_id, game_id)
         response = {
             'gameId': game_id,
             'players': [player_id_to_player_name[player_id] for player_id in game.player_ids],
         }
+        if not created:
+            sio.enter_room(socket_id, game_id)
         sio.emit(
             'private_game_lobby_update',
             response,
-            room=game_id
+            room=socket_id if created else game_id
         )
         return response
 
@@ -63,7 +63,6 @@ class LobbyResponses:
     def start_single_player_game(game: GameProxy, game_id: str, player_id: str):
         print(f"Response: Starting single player game {game_id}")
         socket_id = socket_id_to_player_id.inverse[player_id]
-        sio.enter_room(socket_id, game_id)
         sio.emit(
             'single_player_game_started',
             {'gameId': game_id, **game_state(game, player_id)},

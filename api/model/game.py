@@ -107,6 +107,10 @@ class GameProxy:
         if player_id in self.player_ids and not self.created():
             self.player_ids.remove(player_id)
 
+    @locked
+    def has_player(self, player_id: str):
+        return player_id in self.player_id_mapping.keys() if self.player_id_mapping else player_id in self.player_ids
+
     @property
     def full(self):
         return len(self.player_ids) == 4

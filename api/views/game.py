@@ -1,8 +1,19 @@
 from model import Direction
 from model.game import ActionType, GameProxy
 from services.game import GameService
-from socketsetup import sio
+from socketsetup import sio, socket_id_to_player_id
 from views.helpers import game_state
+
+
+def game_connect(player_id: str, data: dict):
+    game_id = data.pop('gameId', None)
+    if game_id and GameService.can_connect_to_game(game_id, player_id):
+        sio.enter_room(socket_id_to_player_id.inverse[player_id], game_id)
+
+
+def game_disconnect(player_id, data: dict):
+    game_id = data.pop('gameId', None)
+    sio.leave_room(socket_id_to_player_id.inverse[player_id], game_id)
 
 
 def player_action(player_id: str, data: dict):

@@ -40,7 +40,7 @@ class GameService:
         if single_player:
             LobbyResponses.start_single_player_game(GameService.games[game_id], game_id, player_id)
         else:
-            LobbyResponses.private_game_lobby_update(GameService.games[game_id], game_id, player_id)
+            LobbyResponses.private_game_lobby_update(GameService.games[game_id], game_id, player_id, created=True)
 
     @staticmethod
     def join_private_game(game_id: str, player_id: str):
@@ -74,6 +74,10 @@ class GameService:
                 GameService.join_private_game(new_game_id, player_id)
             else:
                 GameService.create_private_game(player_id, restarted_game_id=new_game_id)
+
+    @staticmethod
+    def can_connect_to_game(game_id: str, player_id: str):
+        return game_id in GameService.games and GameService.games[game_id].has_player(player_id)
 
     @staticmethod
     def add_player_to_queue(player_id: str):

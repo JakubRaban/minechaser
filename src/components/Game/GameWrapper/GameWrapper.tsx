@@ -5,11 +5,10 @@ import { PrivateGameInviteeWrapper } from './PrivateGameInviteeWrapper/PrivateGa
 import { PrivateGameLobby } from '../../PrivateGameLobby/PrivateGameLobby'
 import { useSocket } from '../../../hooks/context/useSocket'
 import { useNavigate } from 'react-router-dom'
-import { ErrorCode, errorCodeToMessage } from '../../../helpers'
+import { ErrorCode } from '../../../helpers'
 import { Game } from '../../lazy-components'
 import { useDelayedFlag } from '../../../hooks/useDelayedFlag'
 import { LoadingScreen } from '../../lib/LoadingScreen/LoadingScreen'
-import { TimeOffsetContextProvider } from '../../../contexts/TimeOffsetContext'
 
 export interface GameStateData {
     gameState: RawGameState
@@ -46,6 +45,16 @@ const GameWrapper: FC = () => {
         setGameData(data)
         startFadingOut()
     }
+
+    useEffect(() => {
+        socket.emit('game_connect', { gameId })
+        const gameDisconnect = () => socket.emit('game_disconnect', { gameId })
+        window.addEventListener('beforeunload', gameDisconnect)
+        return () => {
+            gameDisconnect()
+            window.removeEventListener('beforeunload', gameDisconnect)
+        }
+    }, [])
     
     useEffect(() => {
         if (!gameData) {

@@ -103,13 +103,11 @@ class GameService:
             if not game.created():
                 if not game.full or player_id in game.player_ids:
                     return game
-                else:
-                    return {'error': {'code': 'full'}}
-            if player_id in game.player_id_mapping:
+                return {'error': {'code': 'full'}}
+            if game.has_player(player_id):
                 return game
             return {'error': {'code': 'alien'}}
-        else:
-            return {'error': {'code': 'notFound'}}
+        return {'error': {'code': 'notFound'}}
 
 
 def _generate_game_id():

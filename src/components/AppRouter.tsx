@@ -8,7 +8,8 @@ import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
 import { ErrorBoundary } from './lib/ErrorBoundary/ErrorBoundary'
 import { useClockSynchronizer } from '../hooks/useClockSynchronizer'
 
-const storage = process.env.NODE_ENV === 'development' ? sessionStorage : localStorage
+// const storage = process.env.NODE_ENV === 'development' ? sessionStorage : localStorage
+const storage = localStorage
 
 export const AppRouter: FC = () => {
     const { socket } = useSocket()

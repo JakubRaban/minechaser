@@ -80,7 +80,7 @@ const GameWrapper: FC = () => {
         return <LoadingScreen />
     } else if (gameData && moveToGame) {
         return <Game isPrivate={isGamePrivate.current} {...gameData} />
-    } else if (isGamePrivate.current) {
+    } else if (isGamePrivate.current && !fadeOut) {
         if (players) {
             return <PrivateGameLobby players={players} onGameStart={handleStart} className={className} />
         } else {

@@ -1,4 +1,5 @@
-import { createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useState } from 'react'
+import { createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useState, useEffect } from 'react'
+import config from '../config'
 
 export interface UserPreferences {
     name?: string,
@@ -9,19 +10,38 @@ export interface UserPreferences {
 }
 
 interface UserPreferencesContext extends UserPreferences {
+    setName: Dispatch<SetStateAction<string>>
     setSettings: Dispatch<SetStateAction<UserPreferences>>
 }
 
 export const PreferencesContextProvider: FC<PropsWithChildren> = ({ children }) => {
-    const [settings, setSettings] = useState<UserPreferences>({
+    const [name, setName] = useState('')
+    const [settings, setSettingsState] = useState<UserPreferences>({
         invertControls: false,
         colorBlindMode: false,
         disableSoundEffects: false,
         showOnScreenControls: ('ontouchstart' in window) || (navigator.maxTouchPoints > 0),
     })
 
+    const { STORAGE: storage } = config
+
+    const setSettings = (func: SetStateAction<UserPreferences>) => {
+        setSettingsState(func)
+    }
+
+    useEffect(() => {
+        const savedPreferences = storage.getItem('rmPreferences')
+        if (savedPreferences) {
+            setSettingsState(JSON.parse(savedPreferences))
+        }
+    }, [])
+
+    useEffect(() => {
+        storage.setItem('rmPreferences', JSON.stringify(settings))
+    }, [settings])
+
     return (
-        <PreferencesContext.Provider value={{ ...settings, setSettings }}>
+        <PreferencesContext.Provider value={{ name, ...settings, setName, setSettings }}>
             {children}
         </PreferencesContext.Provider>
     )

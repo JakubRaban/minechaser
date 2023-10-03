@@ -2,25 +2,28 @@ import { FC, PropsWithChildren, useEffect, useState } from 'react'
 import { useSocket } from '../hooks/context/useSocket'
 import { NameSetter } from './LandingPage/NameSetter/NameSetter'
 import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
+import { usePreferences } from '../hooks/context/usePreferences'
 
 export const AuthenticationGuard: FC<PropsWithChildren<{ authenticated: boolean }>> = ({ children, authenticated }) => {
     const { socket } = useSocket()
-    const [isNameSet, setIsNameSet] = useState(false)
+    const { name, setName } = usePreferences()
     const [isNameSetCallExecuted, setIsNameSetCallExecuted] = useState(false)
     
     useEffect(() => {
         if (authenticated) {
             socket.emit('is_name_set', {}, ({ name }: { name: string }) => {
-                setIsNameSet(!!name)
                 setIsNameSetCallExecuted(true)
+                if (name) {
+                    setName(name)
+                }
             })
         }
     }, [authenticated])
     
     if (!authenticated || !isNameSetCallExecuted) {
         return <LoadingScreen />
-    } else if (!isNameSet) {
-        return <NameSetter onNameSet={() => setIsNameSet(true)} />
+    } else if (!name) {
+        return <NameSetter />
     } else {
         return <>{children}</>
     }

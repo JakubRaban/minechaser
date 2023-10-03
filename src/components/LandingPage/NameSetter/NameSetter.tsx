@@ -3,14 +3,9 @@ import { useSocket } from '../../../hooks/context/useSocket'
 import { generateRandomUsername } from '../../../helpers'
 import cn from 'classnames'
 import { usePreferences } from '../../../hooks/context/usePreferences'
-import { UserPreferences } from '../../../contexts/PreferencesContext'
 import { usePhysicalKeyboardDetector } from '../../../hooks/usePhysicalKeyboardDetector'
 
 import './NameSetter.scss'
-
-interface NameSetterProps {
-    onNameSet?: (name: string) => void
-}
 
 const nameValidator = (name: string) => {
     if (name.length) {
@@ -24,9 +19,10 @@ const nameValidator = (name: string) => {
     return ''
 }
 
-export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
+export const NameSetter: FC = () => {
     const { socket } = useSocket()
-    const { setSettings, ...settings } = usePreferences()
+    const { setSettings, setName, ...settings } = usePreferences()
+    const [nameState, setNameState] = useState('')
     const [nameError, setNameError] = useState('')
     const placeholderName = useRef(generateRandomUsername())
     const nameInputRef = useRef<HTMLInputElement>(null)
@@ -48,14 +44,8 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
         event.preventDefault()
         socket.emit(
             'set_name',
-            {
-                ...settings,
-                name: settings.name?.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current,
-            },
-            (settings: UserPreferences) => {
-                setSettings(currentSettings => ({ ...currentSettings, ...settings }))
-                onNameSet?.(settings.name!)
-            },
+            { name: settings.name?.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current },
+            (name: Record<'name', string>) => setName(name.name),
         )
     }
 
@@ -74,8 +64,8 @@ export const NameSetter: FC<NameSetterProps> = ({ onNameSet }) => {
                             name="name"
                             placeholder={placeholderName.current}
                             type="text"
-                            value={settings.name || ''}
-                            onChange={setFieldValue}
+                            value={nameState}
+                            onChange={e => setNameState(e.target.value)}
                             onBlur={handleNameBlur}
                             aria-invalid={!!nameError || undefined}
                             aria-describedby="name-error"

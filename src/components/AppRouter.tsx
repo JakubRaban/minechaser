@@ -7,13 +7,12 @@ import { GameWrapper, HowToPlay, PrivateGameLoading, Queue } from './lazy-compon
 import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
 import { ErrorBoundary } from './lib/ErrorBoundary/ErrorBoundary'
 import { useClockSynchronizer } from '../hooks/useClockSynchronizer'
-
-// const storage = process.env.NODE_ENV === 'development' ? sessionStorage : localStorage
-const storage = localStorage
+import config from '../config'
 
 export const AppRouter: FC = () => {
     const { socket } = useSocket()
     const [authenticated, setAuthenticated] = useState(false)
+    const { STORAGE: storage } = config
     useClockSynchronizer()
     
     useEffect(() => {

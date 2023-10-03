@@ -60,10 +60,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
         socket.emit('start_private_game', { gameId, size })
     }
 
-    const copyGameLink = () => {
-        setLinkCopied(true)
-        navigator.clipboard.writeText(window.location.href)
-    }
+    const copyGameLink = () => navigator.clipboard.writeText(window.location.href).then(() => setLinkCopied(true))
 
     return (
         <div className={cn('private-game-lobby-wrapper', className)}>

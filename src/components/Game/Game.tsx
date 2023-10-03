@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import { useSocket } from '../../hooks/context/useSocket'
 import { GameStateData } from './GameWrapper/GameWrapper'
 import { useGameState } from '../../hooks/useGameState'
@@ -26,6 +26,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const { socket } = useSocket()
     const { gameId } = useParams()
     const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState)
+    const locked = useRef(false)
 
     const [fadeOut, goToSummary, startFadingOut] = useDelayedFlag(700)
 
@@ -35,7 +36,10 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const isSinglePlayer = Object.entries(colorMapping).length === 1
 
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
-        socket.emit('player_action', { gameId, actionType, direction })
+        if (!locked.current) {
+            socket.emit('player_action', { gameId, actionType, direction })
+            locked.current = true
+        }
     }
 
     useEffect(() => {
@@ -65,13 +69,14 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
         }
         document.addEventListener('keyup', actionListener)
         return () => document.removeEventListener('keyup', actionListener)
-    }, [])
+    }, [props.players])
 
     useEffect(() => {
         let timeout: NodeJS.Timeout
         socket.on('action_result', (actionResult?: ActionResult) => {
             if (actionResult) {
                 resolveAction(actionResult)
+                setTimeout(() => locked.current = false, 50)
             }
         })
         socket.on('game_finished', (finalGameState: RawGameState) => {

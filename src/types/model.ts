@@ -68,4 +68,5 @@ export interface GameDef {
     minesLeft: number
     cells: Cells
     isFinished: boolean
+    actionCounter: number
 }

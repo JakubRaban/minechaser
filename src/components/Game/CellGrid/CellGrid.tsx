@@ -16,6 +16,7 @@ interface CellGridProps {
     cells: Cells
     players: Players
     playerColor: PlayerColor
+    optimisticPosition: Position
     gameStart: Date
     cellSizePx: number
     events: PositionedEvents | null
@@ -28,7 +29,7 @@ const colorToCorner: Record<PlayerColor, string> = {
     'YELLOW': 'bottom-right',
 }
 
-export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor, gameStart, cellSizePx, events }) => {
+export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor, optimisticPosition, gameStart, cellSizePx, events }) => {
     const dateDiff = useDateDiff()
     
     const [height, width] = dims
@@ -37,7 +38,7 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
     const positionToPlayerColor = Object.fromEntries(
         Object.entries(players)
             .filter(([, player]) => player.alive)
-            .map(([color, player]) => [toPositionString(player.position), color]),
+            .map(([color, player]) => [toPositionString((color === playerColor && optimisticPosition) || player.position), color]),
     ) as Record<string, PlayerColor>
     const interval = useRef<NodeJS.Timeout | null>(null)
     

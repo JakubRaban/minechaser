@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react'
+import { FC, useEffect, useState, useCallback } from 'react'
 import { useSocket } from '../../hooks/context/useSocket'
 import { GameStateData } from './GameWrapper/GameWrapper'
 import { useGameState } from '../../hooks/useGameState'
@@ -12,6 +12,9 @@ import { usePreferences } from '../../hooks/context/usePreferences'
 import cn from 'classnames'
 import { GameSummary } from '../lazy-components'
 import { useDelayedFlag } from '../../hooks/useDelayedFlag'
+import { calculatePosition } from '../../helpers'
+import { useDateDiff } from '../../hooks/useDateDiff'
+import { useStateRef } from '../../hooks/useStateRef'
 
 import './Game.scss'
 
@@ -22,61 +25,74 @@ interface GameProps extends GameStateData {
     isPrivate: boolean
 }
 
+const keyToDirection: Record<string, Direction> = {
+    ArrowUp: 'UP',
+    ArrowDown: 'DOWN',
+    ArrowLeft: 'LEFT',
+    ArrowRight: 'RIGHT',
+    KeyW: 'UP',
+    KeyA: 'LEFT',
+    KeyS: 'DOWN',
+    KeyD: 'RIGHT',
+}
+
 const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMapping, isPrivate }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
-    const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState)
-    const locked = useRef(false)
+    const dateDiff = useDateDiff()
+
+    const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState, playerColor)
+    const isSinglePlayer = Object.entries(colorMapping).length === 1
+    const { position, alive } = props.players[playerColor]!
+    const [optimisticPositionState, optimisticPositionRef, setOptimisticPosition] = useStateRef(position)
+    const [localActionCounter, setLocalActionCounter] = useState(0)
 
     const [fadeOut, goToSummary, startFadingOut] = useDelayedFlag(700)
 
     const [cellSizePx, containerRef, scoreboardRef] = useCellSize(props.dims)
     const { showOnScreenControls, invertControls } = usePreferences()
 
-    const isSinglePlayer = Object.entries(colorMapping).length === 1
-
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
-        if (!locked.current) {
-            socket.emit('player_action', { gameId, actionType, direction })
-            locked.current = true
-        }
+        socket.emit('player_action', { gameId, actionType, direction })
     }
 
-    useEffect(() => {
-        const actionListener = (e: KeyboardEvent) => {
-            const arrowAction: ActionType = invertControls ? 'FLAG' : 'STEP'
-            const wasdAction: ActionType = invertControls ? 'STEP' : 'FLAG'
-            switch (e.code) {
-            case 'ArrowUp':
-                return handlePlayerAction(arrowAction, 'UP')
-            case 'ArrowDown':
-                return handlePlayerAction(arrowAction, 'DOWN')
-            case 'ArrowLeft':
-                return handlePlayerAction(arrowAction, 'LEFT')
-            case 'ArrowRight':
-                return handlePlayerAction(arrowAction, 'RIGHT')
-            case 'KeyW':
-                return handlePlayerAction(wasdAction, 'UP')
-            case 'KeyS':
-                return handlePlayerAction(wasdAction, 'DOWN')
-            case 'KeyA':
-                return handlePlayerAction(wasdAction, 'LEFT')
-            case 'KeyD':
-                return handlePlayerAction(wasdAction, 'RIGHT')
-            default:
-                return
-            }
+    const actionListener = useCallback((e: any) => {
+        if (dateDiff(props.start, new Date()).millis > 0 || !alive) return
+        const arrowAction: ActionType = invertControls ? 'FLAG' : 'STEP'
+        const wasdAction: ActionType = invertControls ? 'STEP' : 'FLAG'
+        const direction = keyToDirection[e.code]
+        switch (e.code) {
+        case 'ArrowUp':
+        case 'ArrowDown':
+        case 'ArrowLeft':
+        case 'ArrowRight':
+            handlePlayerAction(arrowAction, direction)
+            if (arrowAction === 'STEP') setOptimisticPosition(calculatePosition(optimisticPositionRef.current, props, direction, playerColor))
+            break
+        case 'KeyW':
+        case 'KeyS':
+        case 'KeyA':
+        case 'KeyD':
+            handlePlayerAction(wasdAction, direction)
+            if (wasdAction === 'STEP') setOptimisticPosition(calculatePosition(optimisticPositionRef.current, props, direction, playerColor))
+            break
+        default:
+            break
         }
-        document.addEventListener('keyup', actionListener)
-        return () => document.removeEventListener('keyup', actionListener)
-    }, [props.players])
+        setLocalActionCounter(c => c + 1)
+    }, [position])
+
+    useEffect(() => {
+        if (localActionCounter === props.actionCounter) {
+            setOptimisticPosition(position)
+        }
+    }, [props.actionCounter, localActionCounter])
 
     useEffect(() => {
         let timeout: NodeJS.Timeout
         socket.on('action_result', (actionResult?: ActionResult) => {
             if (actionResult) {
                 resolveAction(actionResult)
-                setTimeout(() => locked.current = false, 50)
             }
         })
         socket.on('game_finished', (finalGameState: RawGameState) => {
@@ -108,7 +124,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     }
     
     return (
-        <div className={cn('game-page', { disappearing: fadeOut })}>
+        <div className={cn('game-page', { disappearing: fadeOut })} tabIndex={0} onKeyUp={actionListener}>
             {/* Ads could go here */}
             <div className="game-container" ref={containerRef}>
                 <div className={cn('game-layout', { keyboard: !showOnScreenControls })}>
@@ -129,6 +145,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
                         cells={props.cells}
                         players={props.players}
                         playerColor={playerColor}
+                        optimisticPosition={optimisticPositionState}
                         gameStart={props.start}
                         cellSizePx={cellSizePx}
                         events={events}

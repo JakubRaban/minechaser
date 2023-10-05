@@ -15,6 +15,7 @@ from types_ import Dimensions, Position
 class ActionType(Enum):
     STEP = 'step'
     FLAG = 'flag'
+    NOOP = 'noop'
 
 
 class ActionResult:
@@ -65,15 +66,17 @@ class Game:
                 player.position = new_position
                 player.process_outcome(outcome)
                 return ActionResult(player, player_color, ActionType.STEP, new_position, outcome, self.board.mines_left)
+            return ActionResult(player, player_color, ActionType.NOOP, player.position, ActionOutcome(), self.board.mines_left)
 
     def flag(self, player_color: PlayerColor, direction: Direction) -> ActionResult:
         player = self.players[player_color]
         if player.alive:
             new_position = player.calculate_new_position(direction)
             if new_position not in self.players.positions and new_position in self.board.cells:
-                events = self.board.flag(new_position, player_color)
-                player.process_outcome(events)
-                return ActionResult(player, player_color, ActionType.FLAG, new_position, events, self.board.mines_left)
+                outcome = self.board.flag(new_position, player_color)
+                player.process_outcome(outcome)
+                return ActionResult(player, player_color, ActionType.FLAG, new_position, outcome, self.board.mines_left)
+            return ActionResult(player, player_color, ActionType.NOOP, new_position, ActionOutcome(), self.board.mines_left)
 
 
 class GameProxy:

@@ -3,6 +3,7 @@
 .game-page {
   width: 100vw;
   height: 100vh;
+  outline: none;
   @include simple-animation(appear);
 
   &.disappearing {

@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { is } from '../../../helpers'
 
 interface BoardSizeFormProps {
     size: [number, number]
@@ -10,7 +11,6 @@ interface SizeDef {
     size: [number, number]
 }
 
-const is = (size1: [number, number], size2: [number, number]) => size1[0] === size2[0] && size1[1] === size2[1]
 const sizeDefs: SizeDef[] = [
     { name: 'Small (10 x 15)', size: [10, 15] },
     { name: 'Medium (14 x 21)', size: [14, 21] },

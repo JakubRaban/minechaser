@@ -22,7 +22,7 @@ const parseRawGameState = (rawGameState: RawGameState): GameState => {
     }
 }
 
-export const useGameState = (initialState: RawGameState) => {
+export const useGameState = (initialState: RawGameState, playerColor: PlayerColor) => {
     const [rawGameState, setRawGameState] = useState(initialState)
     const gameState = parseRawGameState(rawGameState)
     const {
@@ -35,6 +35,8 @@ export const useGameState = (initialState: RawGameState) => {
 
     const [events, setEvents] = useState<PositionedEvents | null>(null)
     const eventId = useRef(0)
+
+    const [playerActionCounter, setPlayerActionCounter] = useState(0)
 
     const resolveActionResult = (result: ActionResult) => {
         const { players, cells, endGameScheduledTimestamp, originatorColor, events, pointsChange } = result
@@ -61,8 +63,9 @@ export const useGameState = (initialState: RawGameState) => {
                 [toPositionString(cells[0].position)]: { originatorColor, type, pointsChange, id: eventId.current++ },
             }))
         }
+        setPlayerActionCounter(c => originatorColor === playerColor ? c + 1 : c)
     }
 
-    const props: GameDef = { start, end, endScheduled, players, dims, minesLeft, cells, isFinished }
+    const props: GameDef = { start, end, endScheduled, players, dims, minesLeft, cells, isFinished, actionCounter: playerActionCounter }
     return [props, gameState, events, resolveActionResult, setRawGameState] as const
 }

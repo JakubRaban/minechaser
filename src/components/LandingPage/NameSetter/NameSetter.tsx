@@ -44,8 +44,8 @@ export const NameSetter: FC = () => {
         event.preventDefault()
         socket.emit(
             'set_name',
-            { name: settings.name?.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current },
-            (name: Record<'name', string>) => setName(name.name),
+            { name: nameState.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current },
+            (nameResponse: Record<'name', string>) => setName(nameResponse.name),
         )
     }
 

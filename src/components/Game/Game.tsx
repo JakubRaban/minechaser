@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useCallback } from 'react'
+import { FC, useEffect, useState, useCallback, useRef } from 'react'
 import { useSocket } from '../../hooks/context/useSocket'
 import { GameStateData } from './GameWrapper/GameWrapper'
 import { useGameState } from '../../hooks/useGameState'
@@ -41,6 +41,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const { socket } = useSocket()
     const { gameId } = useParams()
     const dateDiff = useDateDiff()
+    const gamePageRef = useRef<HTMLDivElement>(null)
 
     const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState, playerColor)
     const isSinglePlayer = Object.entries(colorMapping).length === 1
@@ -90,6 +91,8 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     }, [props.actionCounter, localActionCounter])
 
     useEffect(() => {
+        gamePageRef.current?.focus()
+
         let timeout: NodeJS.Timeout
         socket.on('action_result', (actionResult?: ActionResult) => {
             if (actionResult) {
@@ -127,7 +130,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     }
     
     return (
-        <div className={cn('game-page', { disappearing: fadeOut })} tabIndex={0} onKeyUp={actionListener}>
+        <div className={cn('game-page', { disappearing: fadeOut })} tabIndex={0} onKeyUp={actionListener} ref={gamePageRef}>
             {showOnScreenControls && (
                 <div className="device-orientation-prompt">
                     <RotateDeviceIcon />

@@ -29,15 +29,27 @@ class Board:
             for cell in sample(cells_with_possible_mine, self.mines_left):
                 cell.has_mine = True
 
-        def assign_number_of_mines_around_and_check_board_correct() -> bool:
+        def assign_number_of_mines_around():
             for coords, cell in self.cells.items():
                 cell.mines_around = reduce(operator.add, [c.has_mine for c in self.get_adjacent_cells(coords).values()])
-                if cell.mines_around == 8:
-                    return False
-            return True
+
+        def check_board_correct():
+            stack = self.corners
+            marked = set(self.corners)
+            target = len(self.cells) - self.initial_mines
+            while stack:
+                position = stack.pop()
+                reachable_cells = [pos for pos, cell in self.get_adjacent_cells(position, walkable=True).items() if not cell.has_mine and pos not in marked]
+                marked.update(reachable_cells)
+                stack.extend(reachable_cells)
+                if len(marked) == target:
+                    return True
+            return False
 
         place_mines()
-        if not assign_number_of_mines_around_and_check_board_correct():
+        if check_board_correct():
+            assign_number_of_mines_around()
+        else:
             self.__init__(dims)
 
     def step(self, position: Position) -> ActionOutcome:
@@ -90,12 +102,12 @@ class Board:
         col_end_indices = list(range(self.dims[1] - mine_free_area_size, self.dims[1]))
         return set(product(start_indices + row_end_indices, start_indices + col_end_indices))
 
-    def get_adjacent_cells(self, position: Position):
+    def get_adjacent_cells(self, position: Position, walkable=False):
         adjacent_coords = [
             sum_positions(position, relative_pos)
             for relative_pos
             in product([-1, 0, 1], [-1, 0, 1])
-            if relative_pos != (0, 0)
+            if relative_pos not in ([(0, 0)] if not walkable else [(-1, -1), (-1, 1), (1, -1), (1, 1), (0, 0)])
         ]
         return {coords: self.cells[coords] for coords in adjacent_coords if coords in self.cells}
 

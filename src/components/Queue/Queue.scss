@@ -7,7 +7,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   max-width: min(calc(100% - 20px), $lg);
   margin: 0 auto;
 
@@ -44,11 +44,12 @@
       }
     }
 
-    aside {
-      text-align: center;
-      padding: $spacing16 $spacing32;
-      border: 2px solid $zinc-150;
-      border-radius: $spacing8;
+    .tips-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing12;
+
+      @include message-aside;
     }
   }
 }

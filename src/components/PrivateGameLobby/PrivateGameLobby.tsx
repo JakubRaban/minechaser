@@ -8,6 +8,7 @@ import { BoardSizeForm } from './BoardSizeForm/BoardSizeForm'
 import { Game } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
 import cn from 'classnames'
+import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/ScreenOrientationWarning'
 
 import './PrivateGameLobby.scss'
 
@@ -22,7 +23,7 @@ interface PrivateGameLobbyProps {
 export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersProp, onGameStart, className }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
-    const { name: currentPlayerName } = usePreferences()
+    const { name: currentPlayerName, showOnScreenControls } = usePreferences()
     usePreload(Game)
 
     const [players, setPlayers] = useState(playersProp)
@@ -76,6 +77,8 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
                         </button>
                     </div>
                 </label>
+
+                <ScreenOrientationWarning />
 
                 <div className="players">
                     Players in the game:

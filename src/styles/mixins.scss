@@ -127,3 +127,16 @@
   animation-iteration-count: 1;
   animation-fill-mode: both;
 }
+
+@mixin message-aside {
+  aside {
+    text-align: center;
+    padding: $spacing16 $spacing32;
+    border: 2px solid $zinc-150;
+    border-radius: $spacing8;
+
+    &.warning {
+      border-color: $pumpkin-250;
+    }
+  }
+}

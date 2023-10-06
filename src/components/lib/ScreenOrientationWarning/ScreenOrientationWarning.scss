@@ -1,0 +1,16 @@
+@import "../../../styles/constants";
+@import "@picocss/pico/scss/colors";
+
+.device-orientation-warning {
+  border-color: $pumpkin-250;
+  color: $pumpkin-250;
+
+  @media screen and (orientation: landscape) {
+    display: none;
+  }
+
+  svg {
+    vertical-align: -0.5em;
+    padding-inline-end: $spacing4;
+  }
+}

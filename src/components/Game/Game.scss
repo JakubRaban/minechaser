@@ -1,13 +1,37 @@
 @import "../../styles/mixins";
+@import "../../styles/constants";
+@import "@picocss/pico/scss/colors";
 
 .game-page {
   width: 100vw;
   height: 100vh;
   outline: none;
+  position: relative;
   @include simple-animation(appear);
 
   &.disappearing {
     @include simple-animation(disappear)
+  }
+
+  .device-orientation-prompt {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    z-index: 1;
+    background-color: $slate-950;
+    align-items: center;
+
+    @media screen and (orientation: landscape) {
+      display: none;
+    }
+
+    div {
+      text-align: center;
+      font-size: $text60;
+    }
   }
 
   .game-container {

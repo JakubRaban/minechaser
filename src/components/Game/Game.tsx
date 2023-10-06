@@ -15,6 +15,7 @@ import { useDelayedFlag } from '../../hooks/useDelayedFlag'
 import { calculatePosition } from '../../helpers'
 import { useDateDiff } from '../../hooks/useDateDiff'
 import { useStateRef } from '../../hooks/useStateRef'
+import { RotateDeviceIcon } from '../../icons/RotateDevice/RotateDeviceIcon'
 
 import './Game.scss'
 
@@ -114,17 +115,25 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     }, [props.end])
 
     if (goToSummary) {
-        return <GameSummary
-            isPrivate={isPrivate}
-            isSinglePlayer={isSinglePlayer}
-            gameState={gameState}
-            colorMapping={colorMapping}
-            playerColor={playerColor}
-        />
+        return (
+            <GameSummary
+                isPrivate={isPrivate}
+                isSinglePlayer={isSinglePlayer}
+                gameState={gameState}
+                colorMapping={colorMapping}
+                playerColor={playerColor}
+            />
+        )
     }
     
     return (
         <div className={cn('game-page', { disappearing: fadeOut })} tabIndex={0} onKeyUp={actionListener}>
+            {showOnScreenControls && (
+                <div className="device-orientation-prompt">
+                    <RotateDeviceIcon />
+                    <div>Rotate your device to play</div>
+                </div>
+            )}
             {/* Ads could go here */}
             <div className="game-container" ref={containerRef}>
                 <div className={cn('game-layout', { keyboard: !showOnScreenControls })}>

@@ -10,8 +10,10 @@ import { useDelayedFlag } from '../../hooks/useDelayedFlag'
 import { GameStateData } from '../Game/GameWrapper/GameWrapper'
 import cn from 'classnames'
 import { usePreload } from '../../hooks/usePreload'
+import { WarningIcon } from '../../icons/Warning/WarningIcon'
 
 import './Queue.scss'
+import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/ScreenOrientationWarning'
 
 const progressUpdaterFactory = (waitingStart: Date) => {
     const start = waitingStart
@@ -103,10 +105,13 @@ const Queue: FC = () => {
                     />
                     <button className="outline secondary" onClick={() => navigate('/', { replace: true })}>Leave the queue</button>
                 </main>
-                <aside>
-                    <h3>Tip</h3>
-                    {tip.current}
-                </aside>
+                <div className="tips-wrapper">
+                    <ScreenOrientationWarning />
+                    <aside>
+                        <h3>Tip</h3>
+                        {tip.current}
+                    </aside>
+                </div>
             </div>
         </div>
     )

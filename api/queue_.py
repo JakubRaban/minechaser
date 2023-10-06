@@ -3,8 +3,8 @@ from functools import wraps
 from threading import RLock
 from typing import List, Callable
 
+from scheduler import scheduler
 from apscheduler.jobstores.base import JobLookupError
-from apscheduler.schedulers.background import BackgroundScheduler
 
 max_waiting_time = 15
 
@@ -21,8 +21,6 @@ class Queue:
         self.queue: List[QueueEntry] = []
         self.players_picked = players_picked
         self.queue_updated = queue_updated
-        self.scheduler = BackgroundScheduler()
-        self.scheduler.start()
         self.lock = RLock()
 
     def locked(func):
@@ -42,7 +40,7 @@ class Queue:
             if self.highest_waiting_time > timedelta(seconds=max_waiting_time):
                 self.deque_players()
             else:
-                self.pick_players_job = self.scheduler.add_job(
+                self.pick_players_job = scheduler.add_job(
                     self.deque_players, "date", run_date=self.queue[0].time_added + timedelta(seconds=max_waiting_time)
                 )
         elif len(self) >= 4:
@@ -59,7 +57,7 @@ class Queue:
     @locked
     def cancel_auto_pick(self):
         try:
-            self.scheduler.remove_job(self.pick_players_job.id)
+            scheduler.remove_job(self.pick_players_job.id)
         except (JobLookupError, AttributeError):
             pass
 

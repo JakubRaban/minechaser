@@ -1,11 +1,11 @@
+import uuid
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from functools import wraps
 from threading import RLock
 from typing import List, Optional
 
-from apscheduler.schedulers.background import BackgroundScheduler
-
+from scheduler import scheduler
 from model.events import MineCellFlagged, NoMinesLeft, MineCellStepped, ActionOutcome
 from model.player import Players, PlayerColor, Direction, Player
 from model.board import Board
@@ -183,23 +183,19 @@ class GameProxy:
 
 class EndGameScheduler:
     def __init__(self, on_game_finished: callable):
-        self.scheduler = BackgroundScheduler()
-        self.scheduler.start()
         self.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(hours=1)
-        self.finish_game_job = self.scheduler.add_job(
-            on_game_finished, 'date', id='end_game', run_date=self.end_game_scheduled_timestamp, args=[]
+        self.random_id = f'end_game-{str(uuid.uuid4())}'
+        self.finish_game_job = scheduler.add_job(
+            on_game_finished, 'date', id=self.random_id, run_date=self.end_game_scheduled_timestamp, args=[]
         )
 
     def postpone_end(self, end_game_scheduled_timestamp: datetime):
         self.end_game_scheduled_timestamp = end_game_scheduled_timestamp
-        self.finish_game_job = self.scheduler.reschedule_job(
-            'end_game', trigger='date', run_date=end_game_scheduled_timestamp
+        self.finish_game_job = scheduler.reschedule_job(
+            self.random_id, trigger='date', run_date=end_game_scheduled_timestamp
         )
 
     def finish_now(self):
-        self.finish_game_job = self.scheduler.reschedule_job(
-            'end_game', trigger='date', run_date=datetime.now(timezone.utc)
+        self.finish_game_job = scheduler.reschedule_job(
+            self.random_id, trigger='date', run_date=datetime.now(timezone.utc)
         )
-
-    def __del__(self):
-        self.scheduler.shutdown()

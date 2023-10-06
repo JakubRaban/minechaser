@@ -2,8 +2,7 @@ import random
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Optional
 
-from apscheduler.schedulers.background import BackgroundScheduler
-
+from scheduler import scheduler
 from model import Direction
 from model.game import GameProxy, ActionType
 from queue_ import Queue
@@ -124,6 +123,4 @@ def delete_finished_games():
         del GameService.games[game_id]
 
 
-game_deleting_scheduler = BackgroundScheduler()
-game_deleting_scheduler.start()
-game_deleting_scheduler.add_job(delete_finished_games, 'interval', minutes=15)
+scheduler.add_job(delete_finished_games, 'interval', minutes=15)

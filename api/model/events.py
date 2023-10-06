@@ -56,9 +56,9 @@ class ActionOutcome:
         self.kill: bool = False
 
     def add_action(self, action: CellAction | List[CellAction]):
-        for action in ([action] if isinstance(action, CellAction) else action):
-            self.event_types.add(type(action.event))
-            self.cells.add(action.cell)
-            self.points_change = action.event.points_change
-            self.kill = self.kill or action.event.kill
+        for act in ([action] if isinstance(action, CellAction) else action):
+            self.event_types.add(type(act.event))
+            self.cells.add(act.cell)
+            self.points_change = act.event.points_change
+            self.kill = self.kill or act.event.kill
         return self

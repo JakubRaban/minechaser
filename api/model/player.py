@@ -51,6 +51,9 @@ class Player:
         if outcome.kill:
             self.alive = False
 
+    def __getstate__(self):
+        return {k: v for k, v in self.__dict__.items() if k not in ['bonus', 'inventory', 'effects'] or v}
+
 
 class Players:
     def __init__(self, starting_positions: List[Position]):

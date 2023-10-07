@@ -38,7 +38,7 @@ class ActionResult:
         self.end_game_scheduled_timestamp = None
 
     def __getstate__(self):
-        return {
+        full_result = {
             'originatorColor': self.originator_color.name,
             'players': {color.name: player for color, player in self.players.items()},
             'cells': [cell for cell in self.outcome.cells],
@@ -47,6 +47,7 @@ class ActionResult:
             'minesLeft': self.mines_left,
             'endGameScheduledTimestamp': self.end_game_scheduled_timestamp
         }
+        return {k: v for k, v in full_result.items() if v or (k == 'minesLeft' and v == 0)}
 
 
 class Game:
@@ -66,7 +67,7 @@ class Game:
                 player.position = new_position
                 player.process_outcome(outcome)
                 return ActionResult(player, player_color, ActionType.STEP, new_position, outcome, self.board.mines_left)
-            return ActionResult(player, player_color, ActionType.NOOP, player.position, ActionOutcome(), self.board.mines_left)
+            return ActionResult(player, player_color, ActionType.NOOP, player.position, ActionOutcome())
 
     def flag(self, player_color: PlayerColor, direction: Direction) -> ActionResult:
         player = self.players[player_color]
@@ -76,7 +77,7 @@ class Game:
                 outcome = self.board.flag(new_position, player_color)
                 player.process_outcome(outcome)
                 return ActionResult(player, player_color, ActionType.FLAG, new_position, outcome, self.board.mines_left)
-            return ActionResult(player, player_color, ActionType.NOOP, new_position, ActionOutcome(), self.board.mines_left)
+            return ActionResult(player, player_color, ActionType.NOOP, new_position, ActionOutcome())
 
 
 class GameProxy:

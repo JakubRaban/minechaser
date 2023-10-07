@@ -50,17 +50,17 @@ export const useGameState = (initialState: RawGameState, playerColor: PlayerColo
                     minesLeft: result.minesLeft ?? prev.game.board.minesLeft,
                     cells: {
                         ...prev.game.board.cells,
-                        ...Object.fromEntries(cells.map(cell => [toPositionString(cell.position), cell])),
+                        ...(cells ? Object.fromEntries(cells.map(cell => [toPositionString(cell.position), cell])) : {}),
                     },
                 },
             },
             endGameScheduledTimestamp: endGameScheduledTimestamp ?? prev.endGameScheduledTimestamp,
         }))
-        if (events.includes('MineFreeCellFlagged') || events.includes('MineCellFlagged')) {
+        if ((events?.includes('MineFreeCellFlagged') || events?.includes('MineCellFlagged')) && cells) {
             const type = events.find(e => ['MineFreeCellFlagged', 'MineCellFlagged'].includes(e))!
             setEvents(e => ({
                 ...(e ?? {}),
-                [toPositionString(cells[0].position)]: { originatorColor, type, pointsChange, id: eventId.current++ },
+                [toPositionString(cells[0].position)]: { originatorColor, type, pointsChange: pointsChange || 0, id: eventId.current++ },
             }))
         }
         setPlayerActionCounter(c => originatorColor === playerColor ? c + 1 : c)

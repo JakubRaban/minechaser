@@ -52,11 +52,11 @@ export interface Player {
 export interface ActionResult {
     originatorColor: PlayerColor
     players: Players
-    cells: Cell[],
-    events: EventType[]
-    minesLeft: number | null
-    pointsChange: number
-    endGameScheduledTimestamp: string | null
+    cells?: Cell[],
+    events?: EventType[]
+    minesLeft?: number | null
+    pointsChange?: number
+    endGameScheduledTimestamp?: string | null
 }
 
 export interface GameDef {

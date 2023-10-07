@@ -10,10 +10,9 @@ import { useDelayedFlag } from '../../hooks/useDelayedFlag'
 import { GameStateData } from '../Game/GameWrapper/GameWrapper'
 import cn from 'classnames'
 import { usePreload } from '../../hooks/usePreload'
-import { WarningIcon } from '../../icons/Warning/WarningIcon'
+import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/ScreenOrientationWarning'
 
 import './Queue.scss'
-import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/ScreenOrientationWarning'
 
 const progressUpdaterFactory = (waitingStart: Date) => {
     const start = waitingStart
@@ -51,7 +50,6 @@ const Queue: FC = () => {
     const tip = useRef(pickRandom(tips))
     
     useEffect(() => {
-        let timeout: NodeJS.Timeout
         socket.emit('join_queue')
         socket.on('queue_updated', ({ players }) => {
             setPlayers(players)
@@ -67,7 +65,6 @@ const Queue: FC = () => {
             socket.off('queue_update')
             socket.off('public_game_started')
             clearInterval(interval.current!)
-            clearTimeout(timeout)
         }
     }, [])
 
@@ -91,7 +88,8 @@ const Queue: FC = () => {
     }, [])
 
     const header = dequeuedSuccessfully ? 'Let\'s play!' : progress <= 13250 ? 'Finding your opponents...' : 'This is taking a bit longer than expected...'
-    
+    const LeaveQueueButton = () => <button className="outline secondary" onClick={() => navigate('/', { replace: true })}>Leave the queue</button>
+
     return (
         <div className={cn('queue', { disappearing: fadingOut })}>
             <div className="wrapper">
@@ -103,7 +101,7 @@ const Queue: FC = () => {
                         highlight={!!dequeuedSuccessfully}
                         progressComponent={<progress value={dequeuedSuccessfully ? 15000 : progress} max="15000" />}
                     />
-                    <button className="outline secondary" onClick={() => navigate('/', { replace: true })}>Leave the queue</button>
+                    <LeaveQueueButton />
                 </main>
                 <div className="tips-wrapper">
                     <ScreenOrientationWarning />
@@ -111,6 +109,7 @@ const Queue: FC = () => {
                         <h3>Tip</h3>
                         {tip.current}
                     </aside>
+                    <LeaveQueueButton />
                 </div>
             </div>
         </div>

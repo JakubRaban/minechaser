@@ -17,12 +17,33 @@
   }
 
   h1 {
-    margin-block-end: $spacing48;
+    margin-block-end: $spacing16;
     text-align: center;
+    font-size: 1.5em;
+
+    @media screen and ((orientation: portrait) or (min-height: $sm)) {
+      margin-block-end: $spacing48;
+      font-size: revert;
+    }
   }
 
   .private-game-lobby {
-    width: min(calc(100% - 20px), $sm);;
+    display: flex;
+    gap: $spacing16;
+    width: calc(100% - 20px);
+
+    > div.board-size-container {
+      flex-grow: 2;
+    }
+
+    @media screen and ((orientation: portrait) or (min-height: $sm)) {
+      display: block;
+      width: min(calc(100% - 20px), $sm);
+
+      > div {
+        display: contents;
+      }
+    }
 
     .players {
       width: 100%;

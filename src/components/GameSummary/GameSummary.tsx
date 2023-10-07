@@ -60,7 +60,7 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
     })
 
     const currentPlayerName = colorMapping[playerColor]!
-    const currentPlayerStanding = players.findIndex(([p]) => p === playerColor) + 1
+    const currentPlayerStanding = players.find(([color]) => color === playerColor)![1].ranking
 
     const { initialMines, minesLeft, dims } = gameState.game.board
     const minesFlagged = initialMines - minesLeft - players.reduce((acc, [, player]) => !player.alive ? acc + 1 : acc, 0)
@@ -92,45 +92,47 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
                 <Link to="/"><button className="outline">Back to Main Menu</button></Link>
                 <button className="outline" onClick={() => setShareDialogOpen(true)}>Share</button>
             </div>
-            <div className="stats">
-                <table>
+            <div className="mobile-horizontal-container">
+                <div className="stats">
+                    <table>
+                        <tbody>
+                            {players.map(([playerColor, player]) => (
+                                <tr key={playerColor} className={cn({ dead: !player.alive && players.some(([, p]) => p.alive) })}>
+                                    <td>{standingsMapping[player.ranking].emoji}</td>
+                                    <td className="color-cell"><PlayerColorComponent color={playerColor} /></td>
+                                    <td className={cn('name-cell', { current: colorMapping[playerColor] === currentPlayerName })}>{colorMapping[playerColor]}</td>
+                                    {players.some(([, p]) => !p.alive) && (
+                                        <td className="dead-cell">
+                                            <div className={cn('dead-indicator', { alive: player.alive })}>
+                                                <MineIcon />
+                                            </div>
+                                        </td>
+                                    )}
+                                    <td className="score-cell">{player.score}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <table className="general-stats">
                     <tbody>
-                        {players.map(([playerColor, player]) => (
-                            <tr key={playerColor} className={cn({ dead: !player.alive && players.some(([, p]) => p.alive) })}>
-                                <td>{standingsMapping[player.ranking].emoji}</td>
-                                <td className="color-cell"><PlayerColorComponent color={playerColor} /></td>
-                                <td className={cn('name-cell', { current: colorMapping[playerColor] === currentPlayerName })}>{colorMapping[playerColor]}</td>
-                                {players.some(([, p]) => !p.alive) && (
-                                    <td className="dead-cell">
-                                        <div className={cn('dead-indicator', { alive: player.alive })}>
-                                            <MineIcon />
-                                        </div>
-                                    </td>
-                                )}
-                                <td className="score-cell">{player.score}</td>
-                            </tr>
-                        ))}
+                        <tr>
+                            <td>Game Time</td>
+                            <td>{readableTime(dateDiff(gameState.end!, gameState.start!).seconds)}</td>
+                        </tr>
+                        <tr>
+                            <td>Mines Flagged</td>
+                            <td>{minesFlagged}/{initialMines} <span className="percent">({Math.floor(minesFlagged / initialMines * 100)}%)</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cells Uncovered</td>
+                            <td>
+                                {uncoveredCells}/{totalCells - initialMines} <span className="percent">({Math.floor(uncoveredCells / (totalCells - initialMines) * 100)}%)</span>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-            <table className="general-stats">
-                <tbody>
-                    <tr>
-                        <td>Game Time</td>
-                        <td>{readableTime(dateDiff(gameState.end!, gameState.start!).seconds)}</td>
-                    </tr>
-                    <tr>
-                        <td>Mines Flagged</td>
-                        <td>{minesFlagged}/{initialMines} <span className="percent">({Math.floor(minesFlagged / initialMines * 100)}%)</span></td>
-                    </tr>
-                    <tr>
-                        <td>Cells Uncovered</td>
-                        <td>
-                            {uncoveredCells}/{totalCells - initialMines} <span className="percent">({Math.floor(uncoveredCells / (totalCells - initialMines) * 100)}%)</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
             <ShareDialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)} />
         </div>
     )

@@ -56,6 +56,9 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
 
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
         socket.emit('player_action', { gameId, actionType, direction })
+        if (actionType === 'STEP') setOptimisticPosition(calculatePosition(optimisticPositionRef.current, props, direction, playerColor))
+        setLocalActionCounter(c => c + 1)
+
     }
 
     const actionListener = useCallback((e: any) => {
@@ -69,19 +72,16 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
         case 'ArrowLeft':
         case 'ArrowRight':
             handlePlayerAction(arrowAction, direction)
-            if (arrowAction === 'STEP') setOptimisticPosition(calculatePosition(optimisticPositionRef.current, props, direction, playerColor))
             break
         case 'KeyW':
         case 'KeyS':
         case 'KeyA':
         case 'KeyD':
             handlePlayerAction(wasdAction, direction)
-            if (wasdAction === 'STEP') setOptimisticPosition(calculatePosition(optimisticPositionRef.current, props, direction, playerColor))
             break
         default:
             break
         }
-        setLocalActionCounter(c => c + 1)
     }, [position])
 
     useEffect(() => {

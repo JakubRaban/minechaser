@@ -1,6 +1,8 @@
 import { FC } from 'react'
 import { is } from '../../../helpers'
 
+import './BoardSizeForm.scss'
+
 interface BoardSizeFormProps {
     size: [number, number]
     onChange: (size: [number, number]) => void
@@ -22,7 +24,7 @@ export const BoardSizeForm: FC<BoardSizeFormProps> = ({ size, onChange }) => {
     const sizeDef = sizeDefs.find(d => is(d.size, size))!
 
     return (
-        <details className="dropdown">
+        <details className="dropdown board-size-form">
             <summary>{sizeDef.name}</summary>
             <ul>
                 {sizeDefs.map(d => (

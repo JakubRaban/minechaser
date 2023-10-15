@@ -37,7 +37,7 @@
       h1 {
         text-align: center;
 
-        @media screen and ((min-height: $sm) or (min-width: $sm)) {
+        @include media($sm) {
           font-size: 1.5em;
         }
       }
@@ -59,7 +59,6 @@
       display: flex;
       flex-direction: column;
       gap: $spacing12;
-      @include message-aside;
 
       button {
         align-self: center;

@@ -4,7 +4,7 @@
 .cell {
   --icon-size: 70%;
 
-  @media screen and (min-width: $sm) and (min-height: $sm) {
+  @include media($sm) {
     --icon-size: 80%;
   }
 
@@ -48,7 +48,7 @@
     font-size: 100cqh;
     margin-inline-start: 0.0625em;
 
-    @media screen and (min-width: $sm) and (min-height: $sm) {
+    @include media($sm) {
       font-size: 85cqh;
     }
   }
@@ -64,7 +64,7 @@
     &.player {
       border: 15cqh solid;
 
-      @media screen and (min-width: $sm) and (min-height: $sm) {
+      @include media($sm) {
         border: 10cqh solid;
       }
 

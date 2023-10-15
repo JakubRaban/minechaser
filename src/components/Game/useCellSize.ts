@@ -10,13 +10,16 @@ export const useCellSize = (boardDimensions: Position) => {
 
     const { showOnScreenControls: isMobile } = usePreferences()
 
+    const verticalSpace = isMobile ? 6 : 15
+    const horizontalSpace = isMobile ? 4 : 10
+
     const onResize = () => {
         if (!container || !scoreboard) return
         const { width, height } = container.getBoundingClientRect()
         const { height: scoreboardHeight, width: scoreboardWidth } = scoreboard.getBoundingClientRect()
         const gridGap = Number(rootStyle.getPropertyValue('--grid-gap')[0])
-        const cellWidth = Math.floor((width - (isMobile ? scoreboardWidth : 0) - 15 - gridGap * boardDimensions[1]) / boardDimensions[1])
-        const cellHeight = Math.floor((height - (isMobile ? 0 : scoreboardHeight) - 10 - gridGap * boardDimensions[0]) / boardDimensions[0])
+        const cellWidth = Math.floor((width - (isMobile ? scoreboardWidth : 0) - horizontalSpace - gridGap * boardDimensions[1]) / boardDimensions[1])
+        const cellHeight = Math.floor((height - (isMobile ? 0 : scoreboardHeight) - verticalSpace - gridGap * boardDimensions[0]) / boardDimensions[0])
         const cellSize = Math.min(cellWidth, cellHeight)
         setCellSize(cellSize)
     }

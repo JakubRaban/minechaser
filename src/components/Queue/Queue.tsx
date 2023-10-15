@@ -13,6 +13,7 @@ import { usePreload } from '../../hooks/usePreload'
 import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/ScreenOrientationWarning'
 
 import './Queue.scss'
+import { MessageBox } from '../lib/MessageBox/MessageBox'
 
 const progressUpdaterFactory = (waitingStart: Date) => {
     const start = waitingStart
@@ -105,10 +106,10 @@ const Queue: FC = () => {
                 </main>
                 <div className="tips-wrapper">
                     <ScreenOrientationWarning />
-                    <aside>
+                    <MessageBox>
                         <h3>Tip</h3>
                         {tip.current}
-                    </aside>
+                    </MessageBox>
                     <LeaveQueueButton />
                 </div>
             </div>

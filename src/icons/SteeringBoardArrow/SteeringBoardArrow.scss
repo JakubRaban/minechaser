@@ -1,0 +1,13 @@
+.steering-board-arrow {
+  &.down {
+    transform: rotate(90deg);
+  }
+
+  &.left {
+    transform: rotate(180deg);
+  }
+
+  &.up {
+    transform: rotate(270deg);
+  }
+}

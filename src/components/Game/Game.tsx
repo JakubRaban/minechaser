@@ -162,7 +162,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
                         cellSizePx={cellSizePx}
                         events={events}
                     />
-                    <SteeringBoard onAction={handlePlayerAction} />
+                    <SteeringBoard onAction={handlePlayerAction} playerColor={playerColor} />
                 </div>
             </div>
         </div>

@@ -47,7 +47,7 @@ class ActionResult:
             'minesLeft': self.mines_left,
             'endGameScheduledTimestamp': self.end_game_scheduled_timestamp
         }
-        return {k: v for k, v in full_result.items() if v or (k == 'minesLeft' and v == 0)}
+        return {k: v for k, v in full_result.items() if v or k == 'minesLeft'}
 
 
 class Game:

@@ -5,6 +5,14 @@
     @include player-color("fill")
   }
 
+  .pole {
+    fill: black;
+
+    &.light {
+      fill: $cell-uncovered-color
+    }
+  }
+
   display: none;
   &.mobile {
     display: revert;

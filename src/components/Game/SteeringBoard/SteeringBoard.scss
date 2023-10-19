@@ -22,22 +22,21 @@
       width: 30%;
       aspect-ratio: 1;
       padding: $spacing2;
-      border: none;
+      border: 1px solid var(--pico-primary-background);
       outline: none;
-      background-color: var(--pico-primary-background);
+      background-color: transparent;
+      color: $slate-200;
       transition-duration: 0s;
 
       &.vertical {
         flex-direction: column;
-
-        svg.flag-icon {
-          margin-inline-end: 10%;
-        }
       }
 
       &.activate-flag-button {
+        background-color: $violet;
+
         &.inactive {
-          background-color: $slate-300;
+          background-color: $slate-200;
         }
       }
 

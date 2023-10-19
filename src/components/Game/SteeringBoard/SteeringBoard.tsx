@@ -22,7 +22,7 @@ export const SteeringBoard: FC<SteeringBoardProps> = ({ onAction, playerColor })
         setIsFlagging(false)
     }
 
-    const PlayerFlag: FC<{ standalone?: boolean }> = ({ standalone }) => standalone || isFlagging ? <FlagIcon className={cn({ standalone })} fillClassName={cn(toClassName(playerColor))} /> : null
+    const PlayerFlag: FC<{ standalone?: boolean; light?: boolean }> = ({ standalone, light }) => standalone || isFlagging ? <FlagIcon className={cn({ standalone })} fillClassName={cn(toClassName(playerColor))} light={light} /> : null
 
     return (
         <div className="steering-board">
@@ -30,19 +30,19 @@ export const SteeringBoard: FC<SteeringBoardProps> = ({ onAction, playerColor })
                 <button className="dummy" />
                 <button className="vertical" onClick={handleAction('UP')}>
                     <SteeringBoardArrow direction="UP" />
-                    <PlayerFlag />
+                    <PlayerFlag light />
                 </button>
                 <button onClick={() => setIsFlagging(c => !c)} className={cn('activate-flag-button', { inactive: !isFlagging })}><PlayerFlag standalone /></button>
                 <button onClick={handleAction('LEFT')}>
                     <SteeringBoardArrow direction="LEFT" />
-                    <PlayerFlag />
+                    <PlayerFlag light />
                 </button>
                 <button className="vertical" onClick={handleAction('DOWN')}>
-                    <PlayerFlag />
+                    <PlayerFlag light />
                     <SteeringBoardArrow direction="DOWN" />
                 </button>
                 <button onClick={handleAction('RIGHT')}>
-                    <PlayerFlag />
+                    <PlayerFlag light />
                     <SteeringBoardArrow direction="RIGHT" />
                 </button>
             </div>

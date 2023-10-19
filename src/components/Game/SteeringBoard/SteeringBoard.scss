@@ -16,24 +16,42 @@
     justify-content: center;
 
     button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 30%;
       aspect-ratio: 1;
-      padding: 0;
+      padding: $spacing2;
       border: none;
       outline: none;
       background-color: var(--pico-primary-background);
       transition-duration: 0s;
 
-      &.inactive {
-        background-color: $violet-300;
+      &.vertical {
+        flex-direction: column;
+
+        svg.flag-icon {
+          margin-inline-end: 10%;
+        }
+      }
+
+      &.activate-flag-button {
+        &.inactive {
+          background-color: $slate-300;
+        }
+      }
+
+      &.dummy {
+        visibility: hidden;
       }
 
       svg {
-        height: 80%;
-        width: 80%;
+        height: 50%;
+        width: 50%;
 
-        &.flag-icon {
-          margin-inline-end: 10%;
+        &.flag-icon.standalone {
+          height: 70%;
+          width: 70%;
         }
       }
     }

@@ -22,15 +22,29 @@ export const SteeringBoard: FC<SteeringBoardProps> = ({ onAction, playerColor })
         setIsFlagging(false)
     }
 
+    const PlayerFlag: FC<{ standalone?: boolean }> = ({ standalone }) => standalone || isFlagging ? <FlagIcon className={cn({ standalone })} fillClassName={cn(toClassName(playerColor))} /> : null
+
     return (
         <div className="steering-board">
             <div className="buttons">
-                <button style={{ visibility: 'hidden' }} />
-                <button onClick={handleAction('UP')}><SteeringBoardArrow direction="UP" /></button>
-                <button onClick={() => setIsFlagging(c => !c)} className={cn({ inactive: !isFlagging })}><FlagIcon fillClassName={toClassName(playerColor)} /></button>
-                <button onClick={handleAction('LEFT')}><SteeringBoardArrow direction="LEFT" /></button>
-                <button onClick={handleAction('DOWN')}><SteeringBoardArrow direction="DOWN" /></button>
-                <button onClick={handleAction('RIGHT')}><SteeringBoardArrow direction="RIGHT" /></button>
+                <button className="dummy" />
+                <button className="vertical" onClick={handleAction('UP')}>
+                    <SteeringBoardArrow direction="UP" />
+                    <PlayerFlag />
+                </button>
+                <button onClick={() => setIsFlagging(c => !c)} className={cn('activate-flag-button', { inactive: !isFlagging })}><PlayerFlag standalone /></button>
+                <button onClick={handleAction('LEFT')}>
+                    <SteeringBoardArrow direction="LEFT" />
+                    <PlayerFlag />
+                </button>
+                <button className="vertical" onClick={handleAction('DOWN')}>
+                    <PlayerFlag />
+                    <SteeringBoardArrow direction="DOWN" />
+                </button>
+                <button onClick={handleAction('RIGHT')}>
+                    <PlayerFlag />
+                    <SteeringBoardArrow direction="RIGHT" />
+                </button>
             </div>
         </div>
     )

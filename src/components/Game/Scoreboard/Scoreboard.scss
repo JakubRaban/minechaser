@@ -27,16 +27,6 @@
       grid-column: 1 / 3;
     }
   }
-
-  .defeated-player-message {
-    margin-block: $spacing2;
-    text-align: center;
-    background-color: $slate-850;
-
-    a {
-      margin-inline-start: $spacing12;
-    }
-  }
 }
 
 .keyboard .scoreboard-wrapper .scoreboard {

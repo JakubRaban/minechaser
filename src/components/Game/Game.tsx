@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useCallback, useRef } from 'react'
+import { FC, useEffect, useState, useCallback, useRef, useLayoutEffect } from 'react'
 import { useSocket } from '../../hooks/context/useSocket'
 import { GameStateData } from './GameWrapper/GameWrapper'
 import { useGameState } from '../../hooks/useGameState'
@@ -16,6 +16,7 @@ import { calculatePosition } from '../../helpers'
 import { useDateDiff } from '../../hooks/useDateDiff'
 import { useStateRef } from '../../hooks/useStateRef'
 import { RotateDeviceIcon } from '../../icons/RotateDevice/RotateDeviceIcon'
+import { Link } from 'react-router-dom'
 
 import './Game.scss'
 
@@ -49,16 +50,16 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const [optimisticPositionState, optimisticPositionRef, setOptimisticPosition] = useStateRef(position)
     const [localActionCounter, setLocalActionCounter] = useState(0)
 
+    const [showDefeatedMessage, setShowDefeatedMessage] = useState(false)
     const [fadeOut, goToSummary, startFadingOut] = useDelayedFlag(700)
 
-    const [cellSizePx, containerRef, scoreboardRef] = useCellSize(props.dims)
+    const [cellSizePx, containerRef, scoreboardRef, defeatedMessageRef] = useCellSize(props.dims)
     const { showOnScreenControls, invertControls } = usePreferences()
 
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
         socket.emit('player_action', { gameId, actionType, direction })
         if (actionType === 'STEP') setOptimisticPosition(calculatePosition(optimisticPositionRef.current, props, direction, playerColor))
         setLocalActionCounter(c => c + 1)
-
     }
 
     const actionListener = useCallback((e: any) => {
@@ -117,6 +118,20 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
         }
     }, [props.end])
 
+    useEffect(() => {
+        let timeout: NodeJS.Timeout
+        if (!props.players[playerColor]!.alive && Object.values(props.players).some(p => p.alive)) {
+            timeout = setTimeout(() => setShowDefeatedMessage(true), 1000)
+        }
+        return () => clearTimeout(timeout)
+    }, [props.players])
+
+    useLayoutEffect(() => {
+        if (showDefeatedMessage) {
+            window.dispatchEvent(new Event('resize'))
+        }
+    }, [showDefeatedMessage])
+
     if (goToSummary) {
         return (
             <GameSummary
@@ -144,14 +159,17 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
                         ref={scoreboardRef}
                         players={props.players}
                         playerColor={playerColor}
-                        isPrivate={isPrivate}
-                        isSinglePlayer={isSinglePlayer}
                         colorMapping={colorMapping}
                         minesLeft={props.minesLeft}
                         gameStart={props.start}
                         endScheduled={props.endScheduled}
                         isFinished={props.isFinished}
                     />
+                    <div className={cn('defeated-player-message', { hidden: !showDefeatedMessage })} ref={defeatedMessageRef}>
+                        You&apos;re spectating.&nbsp;
+                        {!isPrivate && !isSinglePlayer && <Link to="/queue">Play again</Link>}
+                        <Link to="/">Main Menu</Link>
+                    </div>
                     <CellGrid
                         dims={props.dims}
                         cells={props.cells}

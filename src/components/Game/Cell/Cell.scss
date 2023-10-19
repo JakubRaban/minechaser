@@ -79,11 +79,11 @@
     offset-path: path("M 0 0 C 6 -45 24.5 -25.5 23.875 -16");
     offset-rotate: 0deg;
 
-    @media screen and ((min-width: $lg) or (min-height: $lg)) {
+    @include media($lg) {
       offset-path: path("M 0 0 C 9 -67.5 36.75 -38.25 35.8125 -24");
     }
 
-    @media screen and ((min-width: $xxl) or (min-height: $xxl)) {
+    @include media($xxl) {
       offset-path: path("M 0 0 C 12 -90 49 -51 47.75 -32");
     }
   }

@@ -46,11 +46,27 @@
       grid-template-rows: min-content 1fr;
       grid-template-columns: max-content 150px;
       grid-template-areas:
+        "defeated-message defeated-message"
         "board scoreboard"
         "board controls";
 
       &.keyboard {
         display: block;
+      }
+
+      .defeated-player-message {
+        grid-area: defeated-message;
+        margin-block: $spacing2;
+        text-align: center;
+        background-color: $slate-850;
+
+        &.hidden {
+          display: none;
+        }
+
+        a {
+          margin-inline-start: $spacing12;
+        }
       }
     }
   }

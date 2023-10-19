@@ -4,4 +4,17 @@
   .color-triangle {
     @include player-color("fill")
   }
+
+  display: none;
+  &.mobile {
+    display: revert;
+  }
+
+  @include media($md) {
+    display: revert;
+
+    &.mobile {
+      display: none;
+    }
+  }
 }

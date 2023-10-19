@@ -27,7 +27,7 @@ export const SteeringBoard: FC<SteeringBoardProps> = ({ onAction, playerColor })
             <div className="buttons">
                 <button style={{ visibility: 'hidden' }} />
                 <button onClick={handleAction('UP')}><SteeringBoardArrow direction="UP" /></button>
-                <button onClick={() => setIsFlagging(true)} className={cn({ inactive: !isFlagging })}><FlagIcon fillClassName={toClassName(playerColor)} /></button>
+                <button onClick={() => setIsFlagging(c => !c)} className={cn({ inactive: !isFlagging })}><FlagIcon fillClassName={toClassName(playerColor)} /></button>
                 <button onClick={handleAction('LEFT')}><SteeringBoardArrow direction="LEFT" /></button>
                 <button onClick={handleAction('DOWN')}><SteeringBoardArrow direction="DOWN" /></button>
                 <button onClick={handleAction('RIGHT')}><SteeringBoardArrow direction="RIGHT" /></button>

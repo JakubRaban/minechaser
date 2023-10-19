@@ -3,17 +3,23 @@
 
 .scoreboard-element {
   position: relative;
-  padding-block: $spacing2;
 
   @include player-color("text");
 
   .scoreboard-element-label {
     font-size: $text12;
     padding-block: 0.125em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.highlight {
+      text-decoration: underline;
+    }
   }
 
   .scoreboard-element-content {
-    font-size: $text24;
+    font-size: $text20;
   }
 
   .scoreboard-element-backdrop {
@@ -26,6 +32,8 @@
 }
 
 .keyboard .scoreboard-element {
+  padding-block: $spacing2;
+
   .scoreboard-element-label {
     font-size: $text16;
   }

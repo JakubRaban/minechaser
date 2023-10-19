@@ -48,7 +48,7 @@ export const Scoreboard = forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLe
                 <div className="separator" />
                 {playerEntries.map(([color, player]) => (
                     <Fragment key={color}>
-                        <ScoreboardElement label={colorMapping[color]!} color={color} backdrop={!colorBlindMode && !player.alive} className="player-scoreboard">
+                        <ScoreboardElement highlight={color === playerColor} label={colorMapping[color]!} color={color} backdrop={!colorBlindMode && !player.alive} className="player-scoreboard">
                             <PlayerScoreboard key={color} player={player} />
                         </ScoreboardElement>
                         <div className="separator" />

@@ -59,15 +59,28 @@
       th, td {
         border: 1px solid $slate-900;
         border-inline-width: 0;
-        padding-block: $spacing12;
-        padding-inline: $spacing24;
+        padding-block: $spacing8;
+        padding-inline: $spacing12;
+
+        @include media($md) {
+          padding-block: $spacing12;
+          padding-inline: $spacing24;
+        }
 
         &:first-child {
-          padding-inline-start: $spacing32;
+          padding-inline-start: $spacing16;
+
+          @include media($md) {
+            padding-inline-start: $spacing32;
+          }
         }
 
         &:last-child {
-          padding-inline-end: $spacing32;
+          padding-inline-end: $spacing16;
+
+          @include media($md) {
+            padding-inline-end: $spacing32;
+          }
         }
       }
 
@@ -86,11 +99,24 @@
           td {
             &.color-cell {
               padding-inline: 0;
+
+              .player-color {
+                height: $spacing24;
+                aspect-ratio: 1;
+
+                @include media($md) {
+                  height: $spacing32;
+                }
+              }
             }
 
             &.name-cell {
               text-align: left;
-              padding-inline-end: $spacing48;
+              padding-inline-end: $spacing24;
+
+              @include media($md) {
+                padding-inline-end: $spacing48;
+              }
 
               &.current {
                 font-weight: bold;
@@ -104,9 +130,13 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                height: $spacing32;
+                height: $spacing24;
                 aspect-ratio: 1;
                 background-color: $cell-uncovered-mine-color;
+
+                @include media($md) {
+                  height: $spacing32;
+                }
 
                 &.alive {
                   visibility: hidden;
@@ -120,7 +150,11 @@
             }
 
             &.score-cell {
-              padding-inline-start: $spacing12;
+              padding-inline-start: $spacing8;
+
+              @include media($md) {
+                padding-inline-start: $spacing12;
+              }
             }
 
             span.percent {

@@ -6,6 +6,7 @@
   aspect-ratio: 1;
   background-color: $grey-500;
   border-radius: 4px;
+  transition: background-color .5s;
 
   @include player-color("background");
 }

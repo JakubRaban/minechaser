@@ -7,8 +7,7 @@ import { usePreload } from '../../hooks/usePreload'
 import { usePreferences } from '../../hooks/context/usePreferences'
 import { ErrorCode, errorCodeToMessage } from '../../helpers'
 import { ExternalPageIcon } from '../../icons/ExternalPage/ExternalPageIcon'
-
-const Toaster = lazy(() => import('react-hot-toast').then(module => ({ default: module.Toaster })))
+import { Toaster, toast } from 'react-hot-toast'
 
 import './LandingPage.scss'
 
@@ -19,11 +18,8 @@ export const LandingPage: FC = () => {
     const toastId = useRef<string | undefined>()
     
     useEffect(() => {
-        const modulePromise = import('react-hot-toast')
         if (error) {
-            modulePromise.then(({ toast }) => {
-                toastId.current = toast.error(errorCodeToMessage(error as ErrorCode) ?? error)
-            })
+            toastId.current = toast.error(errorCodeToMessage(error as ErrorCode) ?? error)
         }
     }, [error])
 
@@ -67,9 +63,7 @@ export const LandingPage: FC = () => {
             <footer>
                 (C) Jakub Raban 2023. All rights reserved.
             </footer>
-            <Suspense>
-                <Toaster position="bottom-center" toastOptions={{ className: 'toast' }} />
-            </Suspense>
+            <Toaster position="bottom-center" toastOptions={{ className: 'toast' }} />
         </div>
     )
 }

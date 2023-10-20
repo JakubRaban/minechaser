@@ -19,7 +19,7 @@ export const PlayerList: FC<PlayerListProps> = ({ players, currentPlayerName, hi
         {progressComponent}
         <div className={cn('player-list', { pad: !!progressComponent })}>
             {[...Array(4)].map((_, index) => (
-                <div key={players[index] || index} className="entry">
+                <div key={index} className="entry">
                     <PlayerColorComponent color={players[index] ? colors[index] : undefined} />
                     <div className={cn('name', { 'has-name': !!players[index], own: players[index] === currentPlayerName })}>{players[index] ?? ''}</div>
                 </div>

@@ -4,6 +4,7 @@ import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
 import { HowToPlay, PrivateGameLoading, Queue } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
+import { useKeyMap } from '../../hooks/useKeyMap'
 import { usePreferences } from '../../hooks/context/usePreferences'
 import { ErrorCode, errorCodeToMessage } from '../../helpers'
 import { ExternalPageIcon } from '../../icons/ExternalPage/ExternalPageIcon'
@@ -15,6 +16,7 @@ export const LandingPage: FC = () => {
     const { error } = useLocation().state ?? {}
     usePreload(Queue, PrivateGameLoading, HowToPlay)
     const { showOnScreenControls: isMobile } = usePreferences()
+    const keyMap = useKeyMap()
     const toastId = useRef<string | undefined>()
     
     useEffect(() => {
@@ -44,12 +46,12 @@ export const LandingPage: FC = () => {
                             <ExternalPageIcon />
                         </li>
                         <li>
-                            Instead of clicking on the board, you start in one of the corners and move around using the {isMobile ? 'on-screen arrow keys' : 'arrow keys'}.
+                            Instead of clicking on the board, you start in one of the corners and move around using the {isMobile ? 'on-screen arrow buttons' : 'arrow keys'}.
                             Stepping on a cell is like left-clicking it in Minesweeper.
                             If you step on a mine, you&apos;re eliminated!
                         </li>
                         <li>
-                            {isMobile ? <>You can only flag adjacent cells using the &quot;flag&quot; key followed by an arrow key. </> : <>You can only flag adjacent cells using <kbd>WASD</kbd> keys. </>}
+                            {isMobile ? <>You can only flag adjacent cells using the &quot;flag&quot; button followed by an arrow button. </> : <>You can only flag adjacent cells using <kbd>{`${keyMap.KeyW}${keyMap.KeyA}${keyMap.KeyS}${keyMap.KeyD}`}</kbd> keys. </>}
                             You get points for flagging a cell with a mine.
                             You also get penalty points for flagging a safe cell.
                         </li>

@@ -13,7 +13,7 @@
   font-size: $text30;
   text-align: center;
 
-  & > * {
+  & > h1, & > h3, .action-buttons, .stats, .general-stats {
     @include simple-animation(appear)
   }
 

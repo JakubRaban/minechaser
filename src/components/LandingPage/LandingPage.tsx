@@ -4,7 +4,9 @@ import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
 import { HowToPlay, PrivateGameLoading, Queue } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
+import { usePreferences } from '../../hooks/context/usePreferences'
 import { ErrorCode, errorCodeToMessage } from '../../helpers'
+import { ExternalPageIcon } from '../../icons/ExternalPage/ExternalPageIcon'
 
 const Toaster = lazy(() => import('react-hot-toast').then(module => ({ default: module.Toaster })))
 
@@ -13,6 +15,7 @@ import './LandingPage.scss'
 export const LandingPage: FC = () => {
     const { error } = useLocation().state ?? {}
     usePreload(Queue, PrivateGameLoading, HowToPlay)
+    const { showOnScreenControls: isMobile } = usePreferences()
     const toastId = useRef<string | undefined>()
     
     useEffect(() => {
@@ -41,15 +44,17 @@ export const LandingPage: FC = () => {
                     <ul>
                         <li>
                             Basic mechanics are the same as in the&nbsp;
-                            <a href="https://minesweepergame.com/strategy/how-to-play-minesweeper.php">traditional Minesweeper</a>
+                            <a href="https://minesweepergame.com/strategy/how-to-play-minesweeper.php" target="_blank" rel="noreferrer">traditional Minesweeper</a>
+                            <ExternalPageIcon />
                         </li>
                         <li>
-                            Instead of clicking on the board, move around it using the arrow keys.
+                            Instead of clicking on the board, you start in one of the corners and move around using the {isMobile ? 'on-screen arrow keys' : 'arrow keys'}.
                             Stepping on a cell is like left-clicking it in Minesweeper.
                             If you step on a mine, you&apos;re eliminated!
                         </li>
                         <li>
-                            You can only flag adjacent cells using <kbd>WASD</kbd> keys. You get points for flagging a cell with a mine.
+                            {isMobile ? <>You can only flag adjacent cells using the &quot;flag&quot; key followed by an arrow key. </> : <>You can only flag adjacent cells using <kbd>WASD</kbd> keys. </>}
+                            You get points for flagging a cell with a mine.
                             You also get penalty points for flagging a safe cell.
                         </li>
                         <li>

@@ -59,11 +59,13 @@
       }
 
       &.menu {
+        padding-block: $spacing4;
+
         a:not(:first-child) {
-          margin-block-start: $spacing12;
+          padding-block-start: $spacing8;
 
           @media screen and (min-width: $md) {
-            margin-block-start: $spacing16;
+            padding-block-start: $spacing12;
           }
         }
 
@@ -85,6 +87,19 @@
           padding: $spacing16 $spacing32;
           border: 3px solid $violet-500;
           border-radius: 20px;
+        }
+
+        h2 {
+          margin-block-end: $spacing4;
+
+          @include media($md) {
+            margin-block-end: revert;
+          }
+        }
+
+        svg {
+          height: 1em;
+          margin-inline-start: $spacing4;
         }
       }
     }

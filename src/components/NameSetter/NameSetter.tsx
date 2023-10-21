@@ -1,9 +1,9 @@
 import { BaseSyntheticEvent, FC, FormEvent, useEffect, useRef, useState } from 'react'
-import { useSocket } from '../../../hooks/context/useSocket'
-import { generateRandomUsername } from '../../../helpers'
+import { useSocket } from '../../hooks/context/useSocket'
+import { generateRandomUsername } from '../../helpers'
 import cn from 'classnames'
-import { usePreferences } from '../../../hooks/context/usePreferences'
-import { usePhysicalKeyboardDetector } from '../../../hooks/usePhysicalKeyboardDetector'
+import { usePreferences } from '../../hooks/context/usePreferences'
+import { usePhysicalKeyboardDetector } from '../../hooks/usePhysicalKeyboardDetector'
 
 import './NameSetter.scss'
 

@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react'
+import { FC, lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
@@ -6,24 +6,17 @@ import { HowToPlay, PrivateGameLoading, Queue } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
 import { useKeyMap } from '../../hooks/useKeyMap'
 import { usePreferences } from '../../hooks/context/usePreferences'
-import { ErrorCode, errorCodeToMessage } from '../../helpers'
 import { ExternalPageIcon } from '../../icons/ExternalPage/ExternalPageIcon'
-import { Toaster, toast } from 'react-hot-toast'
 
 import './LandingPage.scss'
+
+const ErrorToast = lazy(() => import('./ErrorToast/ErrorToast'))
 
 export const LandingPage: FC = () => {
     const { error } = useLocation().state ?? {}
     usePreload(Queue, PrivateGameLoading, HowToPlay)
     const { showOnScreenControls: isMobile } = usePreferences()
     const keyMap = useKeyMap()
-    const toastId = useRef<string | undefined>()
-    
-    useEffect(() => {
-        if (error) {
-            toastId.current = toast.error(errorCodeToMessage(error as ErrorCode) ?? error)
-        }
-    }, [error])
 
     return (
         <div className="landing-page">
@@ -67,7 +60,7 @@ export const LandingPage: FC = () => {
             <footer>
                 (C) Jakub Raban 2023. All rights reserved.
             </footer>
-            <Toaster position="bottom-center" toastOptions={{ className: 'toast' }} />
+            {error && <Suspense><ErrorToast error={error} /></Suspense>}
         </div>
     )
 }

@@ -8,6 +8,7 @@ import { ArrowIcon } from '../../../icons/Arrow/ArrowIcon'
 import { usePlayerColorToClassName } from '../../../hooks/usePlayerColorToClassName'
 import { usePreferences } from '../../../hooks/context/usePreferences'
 import { useDateDiff } from '../../../hooks/useDateDiff'
+import { ControlsInstructions } from './ControlsInstructions/ControlsInstructions'
 
 import './CellGrid.scss'
 
@@ -91,6 +92,7 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
                             <div>starting in the <span>{colorToCorner[playerColor]}</span> corner</div>
                         </div>
                     )}
+                    <ControlsInstructions playerColor={playerColor} />
                     <div className="countdown">{secondsUntilStart}</div>
                     <ArrowIcon className={cn(colorToCorner[playerColor], playerColorToClassName(playerColor))} />
                 </div>

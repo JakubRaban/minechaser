@@ -39,6 +39,9 @@
 
     @media screen and ((orientation: portrait) or (min-height: $sm)) {
       display: contents;
+    }
+
+    @include media($sm) {
       font-size: revert;
     }
 

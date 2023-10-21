@@ -1,4 +1,4 @@
-import { FC, lazy, Suspense, useEffect, useRef } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
@@ -47,6 +47,8 @@ export const LandingPage: FC = () => {
                         </li>
                         <li>
                             Instead of clicking on the board, you start in one of the corners and move around using the {isMobile ? 'on-screen arrow buttons' : 'arrow keys'}.
+                        </li>
+                        <li>
                             Stepping on a cell is like left-clicking it in Minesweeper.
                             If you step on a mine, you&apos;re eliminated!
                         </li>

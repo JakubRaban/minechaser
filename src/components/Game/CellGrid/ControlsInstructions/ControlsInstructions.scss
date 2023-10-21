@@ -1,0 +1,58 @@
+@import "../../../../styles/constants";
+@import "../../../../styles/mixins";
+@import "@picocss/pico/scss/colors";
+
+.controls-instructions {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+
+  .instructions {
+    display: flex;
+    align-items: center;
+    gap: $spacing4;
+
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      grid-auto-flow: row;
+      gap: $spacing4;
+      font-size: 1.5em;
+    }
+
+    .key {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: $spacing24;
+      border-radius: $spacing4;
+      aspect-ratio: 1;
+      border: 1px solid $slate-200;
+      color: $slate-200;
+
+      @include media($md) {
+        height: $spacing48;
+        border-radius: $spacing8;
+      }
+
+      &.dummy {
+        visibility: hidden;
+      }
+
+      svg {
+        height: 60%;
+      }
+    }
+
+    .action {
+      margin-inline-start: $spacing8;
+
+      @include media($md) {
+        margin-inline-start: $spacing16;
+        font-size: 2em;
+      }
+    }
+  }
+}

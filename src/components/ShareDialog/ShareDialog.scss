@@ -1,10 +1,35 @@
 @import "../../styles/constants";
+@import "../../styles/mixins";
 
-.share-buttons {
-  display: grid;
-  justify-content: center;
-  grid-template-columns: repeat(4, min-content);
-  grid-auto-flow: row;
-  gap: $spacing12;
-  margin-block-start: $spacing12;
+.share-dialog {
+  h1 {
+    font-size: $text36;
+
+    @include media($md) {
+      font-size: $text60;
+    }
+  }
+
+  .share-buttons {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(4, min-content);
+    grid-auto-flow: row;
+    gap: $spacing8;
+    margin-block-start: $spacing12;
+
+    svg {
+      height: $spacing48;
+      width: $spacing48;
+    }
+
+    @include media($md) {
+      gap: $spacing12;
+
+      svg {
+        height: $spacing96;
+        width: $spacing96;
+      }
+    }
+  }
 }

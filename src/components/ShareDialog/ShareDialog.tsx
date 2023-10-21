@@ -25,14 +25,14 @@ interface ShareDialogProps {
 
 const url = `${location.protocol}//${location.host}`
 const subject = 'Check out MineChaser'
-const body = 'I recently played this game and I\'d like to share it with you'
+const body = 'I recently played this game and I\'d like to show it with you'
 
 const props = { url, subject, body, title: subject }
 const size = 100
 
 const ShareDialog: FC<ShareDialogProps> = ({ open, onClose }) => {
     return (
-        <dialog open={open}>
+        <dialog className="share-dialog" open={open}>
             <article>
                 <h1>Share MineChaser</h1>
                 <div className="share-buttons">

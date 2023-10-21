@@ -4,7 +4,6 @@ import { SocketIOContext } from '../../../contexts/SocketIOContext'
 import './ErrorBoundary.scss'
 
 export class ErrorBoundary extends React.Component {
-    static contextType = SocketIOContext
     context!: React.ContextType<typeof SocketIOContext>
     state: { hasError: boolean }
 

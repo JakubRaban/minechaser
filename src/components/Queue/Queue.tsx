@@ -11,9 +11,9 @@ import { GameStateData } from '../Game/GameWrapper/GameWrapper'
 import cn from 'classnames'
 import { usePreload } from '../../hooks/usePreload'
 import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/ScreenOrientationWarning'
+import { MessageBox } from '../lib/MessageBox/MessageBox'
 
 import './Queue.scss'
-import { MessageBox } from '../lib/MessageBox/MessageBox'
 
 const progressUpdaterFactory = (waitingStart: Date) => {
     const start = waitingStart

@@ -5,12 +5,33 @@ import config from '../config'
 import { AppRouter } from './AppRouter'
 import { PreferencesContextProvider } from '../contexts/PreferencesContext'
 import { TimeOffsetContextProvider } from '../contexts/TimeOffsetContext'
+import { ErrorBoundary, Provider } from '@rollbar/react'
+
+import './App.scss'
+
+const rollbarConfig = {
+    accessToken: '97b196c2fd9b4b13b17836918499b34f',
+    environment: import.meta.env.MODE,
+}
+
+const ErrorUI: FC = () => (
+    <div className="error-screen">
+        Something went wrong :(
+        <a href="/">
+            <button className="primary">Back to Main Menu</button>
+        </a>
+    </div>
+)
 
 export const App: FC = () =>
-    <SocketIOContext.Provider value={{ socket: io(config.SERVER_URL, { autoConnect: false, closeOnBeforeunload: false }) }}>
-        <PreferencesContextProvider>
-            <TimeOffsetContextProvider>
-                <AppRouter />
-            </TimeOffsetContextProvider>
-        </PreferencesContextProvider>
-    </SocketIOContext.Provider>
+    <Provider config={rollbarConfig}>
+        <ErrorBoundary fallbackUI={ErrorUI}>
+            <SocketIOContext.Provider value={{ socket: io(config.SERVER_URL, { autoConnect: false, closeOnBeforeunload: false }) }}>
+                <PreferencesContextProvider>
+                    <TimeOffsetContextProvider>
+                        <AppRouter />
+                    </TimeOffsetContextProvider>
+                </PreferencesContextProvider>
+            </SocketIOContext.Provider>
+        </ErrorBoundary>
+    </Provider>

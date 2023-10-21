@@ -4,12 +4,8 @@
 .cell {
   --icon-size: 90%;
 
-  @include media($sm) {
-    --icon-size: 80%;
-  }
-
   @include media($md) {
-    --icon-size: 70%;
+    --icon-size: 80%;
   }
 
   position: relative;

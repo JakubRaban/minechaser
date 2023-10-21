@@ -24,6 +24,7 @@ export const NameSetter: FC = () => {
     const { setSettings, setName, ...settings } = usePreferences()
     const [nameState, setNameState] = useState('')
     const [nameError, setNameError] = useState('')
+    const [canSubmit, setCanSubmit] = useState(true)
     const placeholderName = useRef(generateRandomUsername())
     const nameInputRef = useRef<HTMLInputElement>(null)
     
@@ -36,7 +37,13 @@ export const NameSetter: FC = () => {
         }))
     }
 
+    const handleNameChange = (event: BaseSyntheticEvent) => {
+        setNameState(event.target.value)
+        setCanSubmit(!nameValidator(event.target.value))
+    }
+
     const handleNameBlur = (event: BaseSyntheticEvent) => {
+        handleNameChange(event)
         setNameError(nameValidator(event.target.value))
     }
 
@@ -65,7 +72,7 @@ export const NameSetter: FC = () => {
                             placeholder={placeholderName.current}
                             type="text"
                             value={nameState}
-                            onChange={e => setNameState(e.target.value)}
+                            onChange={handleNameChange}
                             onBlur={handleNameBlur}
                             aria-invalid={!!nameError || undefined}
                             aria-describedby="name-error"
@@ -101,7 +108,7 @@ export const NameSetter: FC = () => {
                     </details>
                 </fieldset>
 
-                <button type="submit" disabled={!!nameError}>Join the Game</button>
+                <button type="submit" disabled={!canSubmit}>Join the Game</button>
             </form>
         </div>
     )

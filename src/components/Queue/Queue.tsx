@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState, useCallback } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useSocket } from '../../hooks/context/useSocket'
 import { Link, useNavigate } from 'react-router-dom'
 import { PlayerList } from '../PlayerList/PlayerList'

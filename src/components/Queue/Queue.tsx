@@ -1,6 +1,6 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState, useCallback } from 'react'
 import { useSocket } from '../../hooks/context/useSocket'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { PlayerList } from '../PlayerList/PlayerList'
 import { usePreferences } from '../../hooks/context/usePreferences'
 import { dateDiff, pickRandom } from '../../helpers'
@@ -49,6 +49,7 @@ const Queue: FC = () => {
     const interval = useRef<NodeJS.Timeout | null>(null)
 
     const tip = useRef(pickRandom(tips))
+    const minWaitingTimePromise = useRef(new Promise(resolve => setTimeout(resolve, 1000)))
     
     useEffect(() => {
         socket.emit('join_queue')
@@ -60,7 +61,7 @@ const Queue: FC = () => {
             }
         })
         socket.on('public_game_started', ({ gameId, gameState, playerColor, colorMapping }) => {
-            setDequeuedSuccessfully({ gameId, gameState, playerColor, colorMapping })
+            minWaitingTimePromise.current.then(() => setDequeuedSuccessfully({ gameId, gameState, playerColor, colorMapping }))
         })
         return () => {
             socket.off('queue_update')
@@ -89,7 +90,7 @@ const Queue: FC = () => {
     }, [])
 
     const header = dequeuedSuccessfully ? 'Let\'s play!' : progress <= 13250 ? 'Finding your opponents...' : 'This is taking a bit longer than expected...'
-    const LeaveQueueButton = () => <button className="outline secondary" onClick={() => navigate('/', { replace: true })}>Leave the queue</button>
+    const LeaveQueueButton = useCallback(() => <Link className="leave-queue-link" to="/" replace><button className="outline secondary">Leave the queue</button></Link>, [])
 
     return (
         <div className={cn('queue', { disappearing: fadingOut })}>

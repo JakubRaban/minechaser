@@ -40,13 +40,18 @@
         @include media($sm) {
           font-size: 1.5em;
         }
+
+        @include media($md) {
+          font-size: 2em;
+        }
       }
 
       progress {
+        display: block;
         line-height: 0;
       }
 
-      button {
+      .leave-queue-link {
         display: none;
 
         @media screen and ((orientation: portrait) or (min-height: $sm)) {
@@ -60,13 +65,17 @@
       flex-direction: column;
       gap: $spacing12;
 
-      button {
+      .leave-queue-link {
         align-self: center;
 
         @media screen and ((orientation: portrait) or (min-height: $sm)) {
           display: none;
         }
       }
+    }
+
+    .leave-queue-link {
+      text-decoration: none;
     }
   }
 

@@ -52,6 +52,11 @@
       }
     }
 
+    .controls-instructions {
+      @include simple-animation(appear);
+      animation-delay: 1.5s;
+    }
+
     .countdown {
       font-size: 20cqh;
     }

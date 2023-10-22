@@ -35,6 +35,8 @@ const tips = [
     'If no player flags any cell for 2 minutes, the game will end.',
 ]
 
+const LeaveQueueButton = () => <Link className="leave-queue-link" to="/" replace><button className="outline secondary">Leave the queue</button></Link>
+
 const Queue: FC = () => {
     const { socket } = useSocket()
     const { name: currentPlayerName } = usePreferences()
@@ -90,7 +92,6 @@ const Queue: FC = () => {
     }, [])
 
     const header = dequeuedSuccessfully ? 'Let\'s play!' : progress <= 13250 ? 'Finding your opponents...' : 'This is taking a bit longer than expected...'
-    const LeaveQueueButton = useCallback(() => <Link className="leave-queue-link" to="/" replace><button className="outline secondary">Leave the queue</button></Link>, [])
 
     return (
         <div className={cn('queue', { disappearing: fadingOut })}>

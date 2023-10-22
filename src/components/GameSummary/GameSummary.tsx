@@ -64,7 +64,6 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
 
     const { initialMines, minesLeft, dims } = gameState.game.board
     const minesFlagged = initialMines - minesLeft - players.reduce((acc, [, player]) => !player.alive ? acc + 1 : acc, 0)
-
     const uncoveredCells = Object.values(gameState.game.board.cells).reduce((acc: number, cell: Cell) => cell.isUncovered ? acc + 1 : acc, 0)
     const totalCells = dims[0] * dims[1]
     
@@ -81,16 +80,22 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
     const pickedGreetings = useRef(pickRandom(greetings))
     const pickedFirstPlaceDead = useRef(pickRandom(firstPlaceDead))
 
+    const gameTimeout = gameState.end! >= gameState!.endScheduled!
+
     return (
         <div className={cn('game-summary', { 'single-player': isSinglePlayer, 'no-animation': animationStopped })} onClick={() => setAnimationStopped(true)}>
             <h1>Game Summary</h1>
-            <h3>
-                {!isSinglePlayer ? <>You finished in the <span>{standingsMapping[currentPlayerStanding].text}</span> place </> : <>You finished the game </>}
-                with <span>{gameState.game.players[playerColor]!.score} points</span>.
-                {!isSinglePlayer && currentPlayerStanding === 1 && (
-                    <>&nbsp;{gameState.game.players[playerColor]!.alive ? `${pickedGreetings.current}!`: `${pickedFirstPlaceDead.current}...`}</>
-                )}
-            </h3>
+            {gameTimeout ? (
+                <h3>The game finished due to inactivity</h3>
+            ) : (
+                <h3>
+                    {!isSinglePlayer ? <>You finished in the <span>{standingsMapping[currentPlayerStanding].text}</span> place </> : <>You finished the game </>}
+                    with <span>{gameState.game.players[playerColor]!.score} points</span>.
+                    {!isSinglePlayer && currentPlayerStanding === 1 && (
+                        <>&nbsp;{gameState.game.players[playerColor]!.alive ? `${pickedGreetings.current}!`: `${pickedFirstPlaceDead.current}...`}</>
+                    )}
+                </h3>
+            )}
             <div className="action-buttons">
                 <Link to={playAgainLink} state={playAgainState}><button>Play Again{isPrivate && <> (with same players)</>}</button></Link>
                 <Link to="/"><button className="outline">Back to Main Menu</button></Link>
@@ -102,7 +107,7 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
                         <tbody>
                             {players.map(([playerColor, player]) => (
                                 <tr key={playerColor} className={cn({ dead: !player.alive && players.some(([, p]) => p.alive) })}>
-                                    <td>{standingsMapping[player.ranking].emoji}</td>
+                                    <td>{!gameTimeout ? standingsMapping[player.ranking].emoji : ''}</td>
                                     <td className="color-cell"><PlayerColorComponent color={playerColor} /></td>
                                     <td className={cn('name-cell', { current: colorMapping[playerColor] === currentPlayerName })}>{colorMapping[playerColor]}</td>
                                     {players.some(([, p]) => !p.alive) && (

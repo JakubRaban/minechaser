@@ -19,7 +19,11 @@
       content="The only minesweeper which you can play with your friends!"
     />
     <title>MineChaser</title>
-    <style>body{background-color:#13171f}noscript{display:flex;align-items:center;justify-content:center;color:#eeeeee;font-size:5vh;font-family:sans-serif}</style>
+    <style>
+      @keyframes appear{from{opacity:0}to{opacity:1}}
+      body{background-color:#13171f}noscript{display:flex;align-items:center;justify-content:center;color:#eeeeee;font-size:5vh;font-family:sans-serif}
+      .landing-page{animation:appear 0.5s;animation-fill-mode:both;animation-iteration-count:1}
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

@@ -17,6 +17,12 @@
     @include simple-animation(appear)
   }
 
+  &.no-animation {
+    > h1, > h3, .action-buttons, .stats, .general-stats {
+      animation: none;
+    }
+  }
+
   h1 {
     font-size: $text60;
     line-height: 1;

@@ -77,14 +77,18 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
         }
     }, [isPrivate])
 
+    const [animationStopped, setAnimationStopped] = useState(false)
+    const pickedGreetings = useRef(pickRandom(greetings))
+    const pickedFirstPlaceDead = useRef(pickRandom(firstPlaceDead))
+
     return (
-        <div className={cn('game-summary', { 'single-player': isSinglePlayer })}>
+        <div className={cn('game-summary', { 'single-player': isSinglePlayer, 'no-animation': animationStopped })} onClick={() => setAnimationStopped(true)}>
             <h1>Game Summary</h1>
             <h3>
                 {!isSinglePlayer ? <>You finished in the <span>{standingsMapping[currentPlayerStanding].text}</span> place </> : <>You finished the game </>}
                 with <span>{gameState.game.players[playerColor]!.score} points</span>.
                 {!isSinglePlayer && currentPlayerStanding === 1 && (
-                    <>&nbsp;{gameState.game.players[playerColor]!.alive ? `${pickRandom(greetings) }!`: `${pickRandom(firstPlaceDead)}...`}</>
+                    <>&nbsp;{gameState.game.players[playerColor]!.alive ? `${pickedGreetings.current}!`: `${pickedFirstPlaceDead.current}...`}</>
                 )}
             </h3>
             <div className="action-buttons">

@@ -98,7 +98,7 @@ export const calculatePosition = (currentPosition: Position, props: GameDef, dir
     }) as Position
     const newPositionString = toPositionString(newPosition)
     const newCell = props.cells[newPositionString]
-    return Object.entries(props.players).some(([color, player]) => color !== playerColor && ((is(player.position, newPosition)) || (newCell?.hasMine && !newCell?.flaggingPlayer)))
+    return Object.entries(props.players).some(([color, player]) => (color !== playerColor && is(player.position, newPosition))) || newCell?.hasMine || newCell?.flaggingPlayer
         ? currentPosition
         : newPosition
 }

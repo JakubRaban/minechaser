@@ -6,11 +6,11 @@ def game_state(game: GameProxy, player_id: str):
     return {
         'state': {
             'gameState': game,
-            'playerColor': game.player_id_mapping[player_id],
+            'playerColor': game.players[player_id],
             'colorMapping': {
                 color.name: player_id_to_player_name[player_id]
                 for player_id, color
-                in game.player_id_mapping.items()
+                in game.players.items()
             }
         }
-    } if game.player_id_mapping else {'state': {}}
+    } if game.created else {'state': {}}

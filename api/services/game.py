@@ -99,7 +99,7 @@ class GameService:
     def get_state(game_id: str, player_id: str):
         if game_id in GameService.games:
             game = GameService.games[game_id]
-            if not game.created():
+            if not game.created:
                 if not game.full or player_id in game.player_ids:
                     return game
                 return {'error': {'code': 'full'}}

@@ -83,9 +83,8 @@ class Game:
 class GameProxy:
     def __init__(self, player_ids: List[str], on_game_finished: callable, autostart: bool, next_game_id: Optional[str] = None):
         self.game = Game((18, 27), len(player_ids)) if autostart else None
-        self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=9 if len(player_ids) > 1 else 0) if autostart else None
-        self.player_id_mapping = dict(zip(player_ids, self.game.players.colors())) if autostart else None
-        self.player_ids = player_ids
+        self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=9 if len(player_ids) > 1 else 1) if autostart else None
+        self.players = dict(zip(player_ids, self.game.players.colors() if autostart else [None] * 4))
         self.end_timestamp = None
         self.on_game_finished = on_game_finished
         self.end_game_scheduler = EndGameScheduler(self._finish_game)
@@ -101,31 +100,33 @@ class GameProxy:
 
     @locked
     def add_player(self, player_id: str):
-        if not self.full and player_id not in self.player_ids and not self.created():
-            self.player_ids.append(player_id)
+        if not self.full and player_id not in self.players and not self.created:
+            self.players[player_id] = None
             return True
         return False
 
     @locked
     def remove_player(self, player_id: str):
-        if player_id in self.player_ids and not self.created():
-            self.player_ids.remove(player_id)
+        if player_id in self.players and not self.created:
+            self.players.pop(player_id)
 
     @locked
     def has_player(self, player_id: str):
-        return player_id in self.player_id_mapping.keys() if self.player_id_mapping else player_id in self.player_ids
+        return player_id in self.player_ids if self.players else player_id in self.players
 
     @property
     def full(self):
-        return len(self.player_ids) == 4
+        return len(self.players) == 4
 
     @locked
     def start_game(self, dimensions: Dimensions):
         if not self.game:
             self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=9)
-            self.game = Game(dimensions, len(self.player_ids))
-            self.player_id_mapping = dict(zip(self.player_ids, self.game.players.colors()))
+            self.game = Game(dimensions, len(self.players))
+            for player, color in zip(self.player_ids, self.game.players.colors()):
+                self.players[player] = color
 
+    @property
     def created(self):
         return self.game is not None
 
@@ -138,7 +139,7 @@ class GameProxy:
     @locked
     def step(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):
-            player_color = self.player_id_mapping[player_id]
+            player_color = self.players[player_id]
             result = self.game.step(player_color, direction)
             if result:
                 for event_type in result.outcome.event_types:
@@ -149,20 +150,24 @@ class GameProxy:
     @locked
     def flag(self, player_id: str, direction: Direction):
         if self._allow_action(player_id):
-            player_color = self.player_id_mapping[player_id]
+            player_color = self.players[player_id]
             result = self.game.flag(player_color, direction)
             if result:
                 for event_type in result.outcome.event_types:
                     if event_type == NoMinesLeft:
                         self._finish_game()
                         return
-                    if event_type == MineCellFlagged and len(self.player_id_mapping) > 1:
+                    if event_type == MineCellFlagged and len(self.players) > 1:
                         result.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(minutes=2)
                         self.end_game_scheduler.postpone_end(result.end_game_scheduled_timestamp)
                 return result
 
+    @property
+    def player_ids(self):
+        return self.players.keys()
+
     def _allow_action(self, player_id: str):
-        return player_id in self.player_id_mapping and self.is_started() and not self.is_finished()
+        return player_id in self.players and self.is_started() and not self.is_finished()
 
     def _all_players_dead(self):
         return all(not player.alive for player in self.game.players.values())

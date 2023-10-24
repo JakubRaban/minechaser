@@ -34,8 +34,13 @@ export const useCellSize = (boardDimensions: Position) => {
     }, [container, scoreboard])
 
     useEffect(() => {
-        screen.orientation.addEventListener('change', onResize)
-        return () => screen.orientation.removeEventListener('change', onResize)
+        if (screen.orientation) {
+            screen.orientation.addEventListener('change', onResize)
+            return () => screen.orientation.removeEventListener('change', onResize)
+        } else {
+            window.addEventListener('orientationchange', onResize)
+            return () => window.addEventListener('orientationchange', onResize)
+        }
     }, [container, scoreboard])
     
     return [cellSize, setContainer, setScoreboard, setDefeatedPlayerMessage] as const

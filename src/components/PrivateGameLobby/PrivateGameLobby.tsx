@@ -89,7 +89,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
                     <ScreenOrientationWarning />
                 </div>
 
-                <div className="board-size-container">
+                <div>
                     <label className="board-size-label">
                         Board size:
                         <BoardSizeForm size={size} onChange={setSize} />

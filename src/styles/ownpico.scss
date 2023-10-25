@@ -71,6 +71,10 @@ ul {
   padding-inline-start: 20px;
 }
 
+button > a {
+  text-decoration: none;
+}
+
 @keyframes appear {
   from {
     opacity: 0;

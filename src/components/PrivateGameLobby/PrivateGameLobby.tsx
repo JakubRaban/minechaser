@@ -12,6 +12,7 @@ import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/Screen
 import { Tooltip } from 'react-tooltip'
 
 import './PrivateGameLobby.scss'
+import { Link } from 'react-router-dom'
 
 export type GameStartFn = (data: GameStateData) => void
 
@@ -82,7 +83,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
                     </label>
 
                     <div className="players">
-                        Players in the game:
+                        Players in the Game:
                         <PlayerList players={players} currentPlayerName={currentPlayerName!} highlight={players.length === 4} />
                     </div>
 
@@ -91,19 +92,24 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
 
                 <div>
                     <label className="board-size-label">
-                        Board size:
+                        Board Size:
                         <BoardSizeForm size={size} onChange={setSize} />
                     </label>
 
-                    <button
-                        className="game-start-button"
-                        disabled={joiningDisabled}
-                        onClick={handleStart}
-                        data-tooltip-id={joiningDisabled ? 'cannot-join-tooltip' : undefined}
-                        data-tooltip-content="Wait for at least one more player to start"
-                    >
-                        Start the game
-                    </button>
+                    <div className="start-game-container">
+                        <button
+                            className="start-game-button"
+                            disabled={joiningDisabled}
+                            onClick={handleStart}
+                            data-tooltip-id="cannot-join-tooltip"
+                            data-tooltip-content={joiningDisabled ? 'Wait for at least one more player to start' : undefined}
+                        >
+                            Start the Game
+                        </button>
+                        <button className="leave-game-button outline">
+                            <Link to="/">Leave the Game</Link>
+                        </button>
+                    </div>
                     <Tooltip id="cannot-join-tooltip" />
                 </div>
             </div>

@@ -13,27 +13,6 @@
     @include simple-animation(disappear)
   }
 
-  .device-orientation-prompt {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    z-index: 1;
-    background-color: $slate-950;
-    align-items: center;
-
-    @media screen and (orientation: landscape) {
-      display: none;
-    }
-
-    div {
-      text-align: center;
-      font-size: $text60;
-    }
-  }
-
   .game-container {
     width: 100%;
     height: 100%;
@@ -50,8 +29,16 @@
         "board scoreboard"
         "board controls";
 
+      @media screen and (orientation: portrait) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
       &.keyboard {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
       .defeated-player-message {

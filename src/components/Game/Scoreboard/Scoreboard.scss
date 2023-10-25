@@ -1,8 +1,44 @@
 @import "../../../styles/constants";
 @import "@picocss/pico/scss/colors";
+@import "../../../styles/mixins";
+
+@mixin flex-scoreboard {
+  display: flex;
+  align-items: center;
+  min-height: 2.5rem;
+
+  @include media($md) {
+    min-height: 3.5rem;
+  }
+
+  .stopwatch, .mines-counter {
+    flex-basis: 3.5em;
+
+    @include media($md) {
+      flex-basis: 5em;
+    }
+  }
+
+  .player-scoreboards {
+    flex-grow: 1;
+    flex-wrap: nowrap;
+  }
+
+  .separator {
+    display: none;
+
+    @media screen and (min-width: $md) {
+      display: block;
+      width: 1px;
+      height: 2.5rem;
+      background-color: $cell-uncovered-color;
+    }
+  }
+}
 
 .scoreboard-wrapper {
   grid-area: scoreboard;
+  width: 100%;
 
   .scoreboard {
     display: grid;
@@ -11,9 +47,12 @@
     grid-template-areas:
       "stopwatch mines-counter";
     grid-auto-flow: row;
-
     text-align: center;
     background-color: black;
+
+    @media screen and (orientation: portrait) {
+      @include flex-scoreboard;
+    }
 
     .stopwatch {
       grid-area: stopwatch;
@@ -23,29 +62,15 @@
       grid-area: mines-counter;
     }
 
-    .player-scoreboard {
+    .player-scoreboards {
       grid-column: 1 / 3;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
     }
   }
 }
 
 .keyboard .scoreboard-wrapper .scoreboard {
-  display: flex;
-  align-items: center;
-  height: 3.5rem;
-
-  .stopwatch, .mines-counter {
-    flex-basis: 5em;
-  }
-
-  .player-scoreboard {
-    flex-grow: 1;
-  }
-
-  .separator {
-    display: block;
-    width: 1px;
-    height: 70%;
-    background-color: $cell-uncovered-color;
-  }
+  @include flex-scoreboard;
 }

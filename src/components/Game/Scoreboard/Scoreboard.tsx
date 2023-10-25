@@ -22,20 +22,23 @@ export const Scoreboard = forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLe
     const { colorBlindMode } = usePreferences()
 
     return (
-        <div className="scoreboard-wrapper" ref={ref}>
-            <div className="scoreboard">
+        <div className="scoreboard-wrapper">
+            <div className="scoreboard" ref={ref}>
                 <ScoreboardElement label="time" className="stopwatch">
                     <Stopwatch timestampAtZero={gameStart} isActive={!isFinished} endScheduled={endScheduled} />
                 </ScoreboardElement>
                 <div className="separator" />
-                {playerEntries.map(([color, player]) => (
-                    <Fragment key={color}>
-                        <ScoreboardElement highlight={color === playerColor} label={colorMapping[color]!} color={color} backdrop={!colorBlindMode && !player.alive} className="player-scoreboard">
-                            <PlayerScoreboard key={color} player={player} />
-                        </ScoreboardElement>
-                        <div className="separator" />
-                    </Fragment>
-                ))}
+                <div className="player-scoreboards">
+                    {playerEntries.map(([color, player], i) => (
+                        <Fragment key={color}>
+                            {i > 0 && i < playerEntries.length && <div className="separator" />}
+                            <ScoreboardElement highlight={color === playerColor} label={colorMapping[color]!} color={color} backdrop={!colorBlindMode && !player.alive} className="player-scoreboard">
+                                <PlayerScoreboard key={color} player={player} />
+                            </ScoreboardElement>
+                        </Fragment>
+                    ))}
+                </div>
+                <div className="separator" />
                 <ScoreboardElement label="mines" className="mines-counter">
                     {minesLeft}
                 </ScoreboardElement>

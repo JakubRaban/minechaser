@@ -10,7 +10,7 @@ export const ScreenOrientationWarning = () => {
     return showOnScreenControls ? (
         <MessageBox warning={true} className="device-orientation-warning">
             <WarningIcon />
-            You will be prompted to rotate the device horizontally once the game starts.
+            You may find playing easier with device rotated horizontally
         </MessageBox>
     ) : null
 }

@@ -31,6 +31,14 @@
   }
 }
 
+.player-scoreboards .scoreboard-element {
+  flex-grow: 1;
+
+  @media screen and (orientation: portrait) and (max-width: $md) {
+    min-width: 40%;
+  }
+}
+
 .keyboard .scoreboard-element {
   padding-block: $spacing2;
 

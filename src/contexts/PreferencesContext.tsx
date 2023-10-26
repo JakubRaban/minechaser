@@ -7,6 +7,7 @@ export interface UserPreferences {
     colorBlindMode: boolean,
     disableSoundEffects: boolean,
     showOnScreenControls: boolean,
+    controlsOnLeft: boolean
 }
 
 interface UserPreferencesContext extends UserPreferences {
@@ -21,6 +22,7 @@ export const PreferencesContextProvider: FC<PropsWithChildren> = ({ children }) 
         colorBlindMode: false,
         disableSoundEffects: false,
         showOnScreenControls: ('ontouchstart' in window) || (navigator.maxTouchPoints > 0),
+        controlsOnLeft: false,
     })
 
     const { STORAGE: storage } = config

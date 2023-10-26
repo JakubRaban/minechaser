@@ -22,12 +22,24 @@
 
     .game-layout {
       display: grid;
-      grid-template-rows: min-content 1fr;
+      grid-template-rows: min-content min-content 1fr 1fr;
       grid-template-columns: max-content 150px;
       grid-template-areas:
         "defeated-message defeated-message"
+        "board controls-on-left-panel"
         "board scoreboard"
         "board controls";
+      justify-items: center;
+      align-items: start;
+
+      &.controls-on-left {
+        grid-template-areas:
+          "defeated-message defeated-message"
+          "controls-on-left-panel board"
+          "scoreboard board"
+          "controls board";
+        grid-template-columns: 150px max-content;
+      }
 
       @media screen and (orientation: portrait) {
         display: flex;
@@ -53,6 +65,19 @@
 
         a {
           margin-inline-start: $spacing12;
+        }
+      }
+
+      .controls-on-left-panel {
+        grid-area: controls-on-left-panel;
+
+        @media screen and (orientation: portrait) {
+          display: none;
+        }
+
+        label, label > input {
+          font-size: 0.75em;
+          margin-block: 0;
         }
       }
     }

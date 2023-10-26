@@ -53,7 +53,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const [fadeOut, goToSummary, startFadingOut] = useDelayedFlag(700)
 
     const [cellSizePx, containerRef, scoreboardRef, defeatedMessageRef] = useCellSize(props.dims)
-    const { showOnScreenControls, invertControls } = usePreferences()
+    const { showOnScreenControls, invertControls, controlsOnLeft, setSettings } = usePreferences()
 
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
         socket.emit('player_action', { gameId, actionType, direction })
@@ -93,7 +93,6 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     useEffect(() => {
         gamePageRef.current?.focus()
 
-        let timeout: NodeJS.Timeout
         socket.on('action_result', (actionResult?: ActionResult) => {
             if (actionResult) {
                 resolveAction(actionResult)
@@ -105,7 +104,6 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
         return () => {
             socket.off('action_result')
             socket.off('game_finished')
-            clearTimeout(timeout)
         }
     }, [])
 
@@ -119,11 +117,11 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
 
     useEffect(() => {
         let timeout: NodeJS.Timeout
-        if (!props.players[playerColor]!.alive && Object.values(props.players).some(p => p.alive)) {
+        if (!alive && Object.values(props.players).some(p => p.alive)) {
             timeout = setTimeout(() => setShowDefeatedMessage(true), 1000)
         }
         return () => clearTimeout(timeout)
-    }, [props.players])
+    }, [alive])
 
     useLayoutEffect(() => {
         if (showDefeatedMessage) {
@@ -147,7 +145,15 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
         <div className={cn('game-page', { disappearing: fadeOut })} tabIndex={0} onKeyUp={actionListener} ref={gamePageRef}>
             {/* Ads could go here */}
             <div className="game-container" ref={containerRef}>
-                <div className={cn('game-layout', { keyboard: !showOnScreenControls })}>
+                <div className={cn('game-layout', { keyboard: !showOnScreenControls, 'controls-on-left': controlsOnLeft })}>
+                    {showOnScreenControls && (
+                        <div className="controls-on-left-panel">
+                            <label>
+                                <input type="checkbox" role="switch" checked={controlsOnLeft} onChange={e => setSettings(s => ({ ...s, controlsOnLeft: e.target.checked }))} />
+                                Show on the left
+                            </label>
+                        </div>
+                    )}
                     <Scoreboard
                         ref={scoreboardRef}
                         players={props.players}

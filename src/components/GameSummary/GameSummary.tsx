@@ -64,7 +64,7 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
 
     const { initialMines, minesLeft, dims } = gameState.game.board
     const minesFlagged = initialMines - minesLeft - players.reduce((acc, [, player]) => !player.alive ? acc + 1 : acc, 0)
-    const uncoveredCells = Object.values(gameState.game.board.cells).reduce((acc: number, cell: Cell) => cell.isUncovered ? acc + 1 : acc, 0)
+    const uncoveredCells = Object.values(gameState.game.board.cells).reduce((acc: number, cell: Cell) => cell.isUncovered && !cell.hasMine ? acc + 1 : acc, 0)
     const totalCells = dims[0] * dims[1]
     
     const [shareDialogOpen, setShareDialogOpen] = useState(false)

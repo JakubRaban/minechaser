@@ -21,9 +21,13 @@ export const AppRouter: FC = () => {
                 setAuthenticated(true)
             })
         })
+        socket.on('disconnect', () => {
+            window.location.href = '/'
+        })
         socket.connect()
         return () => {
             socket.off('connect')
+            socket.off('disconnect')
             socket.disconnect()
         }
     }, [])

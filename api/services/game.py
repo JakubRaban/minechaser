@@ -8,6 +8,7 @@ from model.game import GameProxy, ActionType
 from queue_ import Queue
 from responses.game import GameResponses
 from responses.lobby import LobbyResponses
+from socketsetup import sio
 from types_ import Dimensions
 
 
@@ -121,6 +122,7 @@ def delete_finished_games():
             games_to_delete.append(game_id)
     for game_id in games_to_delete:
         del GameService.games[game_id]
+        sio.close_room(game_id)
 
 
 scheduler.add_job(delete_finished_games, 'interval', minutes=15)

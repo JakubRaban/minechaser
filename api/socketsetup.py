@@ -2,18 +2,12 @@ import random
 import string
 from datetime import datetime, timezone
 from functools import wraps
-
 import socketio
 from bidict import bidict
-import jsonpickle
+import ownjson
 
 
-def jsonpickle_dumps(value, *args, **kwargs):
-    return jsonpickle.encode(value, unpicklable=False, *args, **kwargs)
-
-
-jsonpickle.dumps = jsonpickle_dumps
-sio = socketio.Server(async_mode='gevent', cors_allowed_origins='*', json=jsonpickle)
+sio = socketio.Server(async_mode='gevent', cors_allowed_origins=['http://localhost:3000'], json=ownjson)
 socket_id_to_player_id = bidict()
 player_id_to_player_name = dict()
 
@@ -48,14 +42,6 @@ def authenticate(sid, data):
 @sio.event
 def clock_sync(_, data: dict):
     return {**data, 'serverResponseTime': int(datetime.now(timezone.utc).timestamp() * 1000)}
-
-
-@sio.event
-def log_error(_, data: dict):
-    error = data.pop('error')
-    info = data.pop('info')
-    with open('error.log', 'a') as f:
-        f.write(f'{datetime.now(timezone.utc)}\n{error}\n{info}\n\n===================\n\n')
 
 
 @sio.event

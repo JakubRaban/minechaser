@@ -4,8 +4,29 @@ monkey.patch_all()
 import bottle
 import socketio
 from geventwebsocket.handler import WebSocketHandler
+import os
+import jsonpickle
+import atexit
+from socketsetup import sio, socket_id_to_player_id, player_id_to_player_name
 
-from socketsetup import sio
+
+if os.path.isfile('store/playerids.txt'):
+    with open('store/playerids.txt', 'r') as f:
+        socket_id_to_player_id = jsonpickle.loads(f.read())
+
+if os.path.isfile('store/playernames.txt'):
+    with open('store/playernames.txt', 'r') as f:
+        player_id_to_player_name = jsonpickle.loads(f.read())
+
+
+def dump_state():
+    with open('store/playerids.txt', 'w') as f:
+        f.write(jsonpickle.dumps(socket_id_to_player_id))
+    with open('store/playernames.txt', 'w') as f:
+        f.write(jsonpickle.dumps(player_id_to_player_name))
+
+
+atexit.register(dump_state)
 
 
 @bottle.route('/robots.txt')

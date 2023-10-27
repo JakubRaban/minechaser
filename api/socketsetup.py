@@ -7,7 +7,15 @@ from bidict import bidict
 import ownjson
 
 
-sio = socketio.Server(async_mode='gevent', cors_allowed_origins=['http://localhost:3000'], json=ownjson)
+sio = socketio.Server(
+    async_mode='gevent',
+    cors_allowed_origins=[
+        'http://localhost:3000',
+        'https://plankton-app-tgr3d.ondigitalocean.app',
+        'https://minechaser.com'
+    ],
+    json=ownjson
+)
 socket_id_to_player_id = bidict()
 player_id_to_player_name = dict()
 

@@ -30,17 +30,25 @@ const colorToCorner: Record<PlayerColor, string> = {
     'YELLOW': 'bottom-right',
 }
 
+const playersToPositions = (players: Players, playerColor: PlayerColor, optimisticPosition: Position) => {
+    const result: Record<string, PlayerColor[]> = {}
+    const playerPositions = Object.entries(players).map(([color, player]) => [color === playerColor ? optimisticPosition : player.position, color as PlayerColor] as const)
+    playerPositions.forEach(([position, color]) => {
+        const positionString = toPositionString(position)
+        result[positionString] ? result[positionString].push(color) : result[positionString] = [color]
+    })
+    return result
+}
+
 export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor, optimisticPosition, gameStart, cellSizePx, events }) => {
     const dateDiff = useDateDiff()
     
     const [height, width] = dims
     const [secondsUntilStart, setSecondsUntilStart] = useState(dateDiff(gameStart, new Date()).seconds)
     const hasStarted = secondsUntilStart <= 0
-    const positionToPlayerColor = Object.fromEntries(
-        Object.entries(players)
-            .filter(([, player]) => player.alive)
-            .map(([color, player]) => [toPositionString((color === playerColor && optimisticPosition) || player.position), color]),
-    ) as Record<string, PlayerColor>
+
+
+    const positionToPlayersColors = playersToPositions(players, playerColor, optimisticPosition)
     const interval = useRef<NodeJS.Timeout | null>(null)
     
     const playerColorToClassName = usePlayerColorToClassName()
@@ -74,7 +82,7 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
                         <Cell
                             key={positionString}
                             cell={hasStarted ? cells[positionString] : undefined}
-                            steppingPlayerColor={positionToPlayerColor[positionString]}
+                            steppingPlayersColors={positionToPlayersColors[positionString]}
                             event={events?.[positionString]}
                         />
                     )

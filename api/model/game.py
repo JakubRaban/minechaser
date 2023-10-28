@@ -62,7 +62,7 @@ class Game:
         player = self.players[player_color]
         if player.alive:
             new_position = self.board.normalize_position(player.calculate_new_position(direction))
-            if new_position not in self.players.positions and not self.board.cells[new_position].flagging_player:
+            if not self.board.cells[new_position].flagging_player:
                 outcome = self.board.step(new_position)
                 player.position = new_position
                 player.process_outcome(outcome)

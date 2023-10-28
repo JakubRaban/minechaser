@@ -57,7 +57,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
 
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
         socket.emit('player_action', { gameId, actionType, direction })
-        if (actionType === 'STEP') setOptimisticPosition(calculatePosition(optimisticPositionRef.current, props, direction, playerColor))
+        if (actionType === 'STEP') setOptimisticPosition(calculatePosition(optimisticPositionRef.current, props, direction))
         setLocalActionCounter(c => c + 1)
     }
 

@@ -45,6 +45,7 @@
 @import "fonts.css";
 @import "@picocss/pico/scss/colors";
 @import "./mixins";
+@import "./constants";
 
 :root {
   --pico-font-family: 'kanit';
@@ -56,8 +57,19 @@
   --pico-primary-hover-background: #8352c5;
   --pico-primary-focus: rgba(178, 144, 217, 0.25);
   --pico-primary-inverse: #fff;
-
   --pico-line-height: 1.25;
+
+  --player-red: #{$player-red};
+  --player-green: #{$player-green};
+  --player-blue: #{$player-blue};
+  --player-yellow: #{$player-yellow};
+
+  &.colorblind {
+    --player-red: #{$player-red-colorblind};
+    --player-green: #{$player-green-colorblind};
+    --player-blue: #{$player-blue-colorblind};
+    --player-yellow: #{$player-yellow-colorblind};
+  }
 }
 
 kbd {

@@ -10,19 +10,21 @@ import './Cell.scss'
 
 interface CellProps {
     cell?: CellType
-    steppingPlayerColor?: PlayerColor
+    steppingPlayersColors?: PlayerColor[]
     event?: EventDef
 }
 
-export const Cell = memo<CellProps>(({ cell, steppingPlayerColor, event }) => {
+export const Cell = memo<CellProps>(({ cell, steppingPlayersColors, event }) => {
     const { hasMine, minesAround, flaggingPlayer, isUncovered, hidePristine } = cell ?? {}
     const uncoveredMine = hasMine && isUncovered
 
     const toClassName = usePlayerColorToClassName()
     const toClassNameFlag = usePlayerColorToClassName('flag')
     const toClassNamePlayer = usePlayerColorToClassName('player')
+    const cellClassName = `cell-${cell?.position[0]}-${cell?.position[1]}`
     const className = cn(
         'cell',
+        { [cellClassName]: !!cell },
         { ...toClassNameFlag(flaggingPlayer), [`mines-${minesAround}`]: !!minesAround && !hasMine, uncovered: isUncovered, mine: uncoveredMine },
     )
 
@@ -48,6 +50,17 @@ export const Cell = memo<CellProps>(({ cell, steppingPlayerColor, event }) => {
         }
     }, [event])
 
+    useEffect(() => {
+        if ((steppingPlayersColors?.length || 0) > 1) {
+            steppingPlayersColors!.forEach((color, index) => {
+                (document.querySelector(`.${cellClassName}`) as HTMLElement).style.setProperty(
+                    `--player-${index + 1}-color`,
+                    getComputedStyle(document.documentElement).getPropertyValue(`--player-${color.toLowerCase()}`),
+                )
+            })
+        }
+    }, [steppingPlayersColors])
+
     if (!hidePristine && hasMine && !flaggingPlayer && !isUncovered) {
         return (
             <div className={className}>
@@ -68,7 +81,11 @@ export const Cell = memo<CellProps>(({ cell, steppingPlayerColor, event }) => {
                         {pointsChange > 0 ? `+${pointsChange}` : pointsChange}
                     </div>
                 )}
-                <div className={cn('cell-player-overlay', toClassNamePlayer(steppingPlayerColor))} />
+                <div className={cn(
+                    'cell-player-overlay',
+                    { [`players-${steppingPlayersColors?.length}`]: steppingPlayersColors?.length },
+                    ...(steppingPlayersColors?.map(toClassNamePlayer) || []))}
+                />
             </div>
         </div>
     )

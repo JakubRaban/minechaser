@@ -60,15 +60,39 @@
     width: 100%;
     height: 100%;
     background-color: transparent;
+    --cell-overlay-width: 15cqh;
 
-    &.player {
-      border: 15cqh solid;
+    @include media($sm) {
+      --cell-overlay-width: 10cqh;
+    }
 
-      @include media($sm) {
-        border: 10cqh solid;
-      }
-
+    &.players-1 {
+      border: var(--cell-overlay-width) solid;
       @include player-color("border");
+    }
+
+    &.players-2 {
+      background:
+        linear-gradient(to right, var(--player-1-color) 50%, var(--player-2-color) 50%) 0 0/100% var(--cell-overlay-width) no-repeat,
+        linear-gradient(to right, var(--player-1-color) 50%, var(--player-2-color) 50%) 0 100%/100% var(--cell-overlay-width) no-repeat,
+        linear-gradient(to bottom, var(--player-1-color) 0%, var(--player-1-color) 100%) 0px/var(--cell-overlay-width) 100% no-repeat,
+        linear-gradient(to bottom, var(--player-2-color) 0%, var(--player-2-color) 100%) 100%/var(--cell-overlay-width) 100% no-repeat;
+    }
+
+    &.players-3 {
+      background:
+        linear-gradient(to right, var(--player-1-color) 25%, var(--player-3-color) 25%, var(--player-3-color) 75%, var(--player-2-color) 75%, var(--player-2-color) 100%) 0 0/100% var(--cell-overlay-width) no-repeat,
+        linear-gradient(to right, var(--player-1-color) 25%, var(--player-3-color) 25%, var(--player-3-color) 75%, var(--player-2-color) 75%, var(--player-2-color) 100%) 0 100%/100% var(--cell-overlay-width) no-repeat,
+        linear-gradient(to bottom, var(--player-1-color) 0, var(--player-1-color) 100%) 0/var(--cell-overlay-width) 100% no-repeat,
+        linear-gradient(to bottom, var(--player-2-color) 0, var(--player-2-color) 100%) 100%/var(--cell-overlay-width) 100% no-repeat;
+    }
+
+    &.players-4 {
+      background:
+        linear-gradient(to right, var(--player-1-color) 50%, var(--player-2-color) 50%) 0 0/100% var(--cell-overlay-width) no-repeat,
+        linear-gradient(to right, var(--player-4-color) 50%, var(--player-3-color) 50%) 0 100%/100% var(--cell-overlay-width) no-repeat,
+        linear-gradient(to bottom, var(--player-1-color) 50%, var(--player-4-color) 50%) 0/var(--cell-overlay-width) 100% no-repeat,
+        linear-gradient(to bottom, var(--player-2-color) 50%, var(--player-3-color) 50%) 100%/var(--cell-overlay-width) 100% no-repeat;
     }
   }
 
@@ -144,3 +168,9 @@
     opacity: 0;
   }
 }
+
+/* background for 2 peeps
+background: linear-gradient(to right, red 100%, transparent 100%) 0 0/100% 5px no-repeat,
+              linear-gradient(to right, transparent 0%, blue 0%) 0 100%/100% 5px no-repeat,
+    linear-gradient(to bottom, red 50%, blue 50%) 0px/5px 100% no-repeat, linear-gradient(to bottom, red 50%, blue 50%) 100%/5px 100% no-repeat
+ */

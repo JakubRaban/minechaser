@@ -88,7 +88,7 @@ const directionToPosition: Record<Direction, Position> = {
     RIGHT: [0, 1],
 }
 
-export const calculatePosition = (currentPosition: Position, props: GameDef, direction: Direction, playerColor: PlayerColor) => {
+export const calculatePosition = (currentPosition: Position, props: GameDef, direction: Direction) => {
     const relativePosition = directionToPosition[direction]
     const newPosition = currentPosition.map((c, i) => {
         const res = c + relativePosition[i]
@@ -98,7 +98,7 @@ export const calculatePosition = (currentPosition: Position, props: GameDef, dir
     }) as Position
     const newPositionString = toPositionString(newPosition)
     const newCell = props.cells[newPositionString]
-    return Object.entries(props.players).some(([color, player]) => (color !== playerColor && is(player.position, newPosition))) || newCell?.hasMine || newCell?.flaggingPlayer
+    return newCell?.hasMine || newCell?.flaggingPlayer
         ? currentPosition
         : newPosition
 }

@@ -42,6 +42,14 @@ export const PreferencesContextProvider: FC<PropsWithChildren> = ({ children }) 
         storage.setItem('rmPreferences', JSON.stringify(settings))
     }, [settings])
 
+    useEffect(() => {
+        if (settings.colorBlindMode) {
+            document.documentElement.classList.add('colorblind')
+        } else {
+            document.documentElement.classList.remove('colorblind')
+        }
+    }, [settings.colorBlindMode])
+
     return (
         <PreferencesContext.Provider value={{ name, ...settings, setName, setSettings }}>
             {children}

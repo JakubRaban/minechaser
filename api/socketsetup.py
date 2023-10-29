@@ -61,11 +61,18 @@ def clock_sync(_, data: dict):
 
 @sio.event
 def set_name(sid, data: dict):
+    def sanitize_name(name: Optional[str]):
+        sanitized_name = ''
+        for char in name:
+            if len(sanitized_name) < 32 and ord(char) not in range(768, 880):
+                sanitized_name += char
+        return sanitized_name
+
     name = data.pop('name', None)
     if isinstance(name, str) and sid in socket_id_to_player_id:
         print('setting name')
         player_id = socket_id_to_player_id[sid]
-        sanitized_name = ' '.join(name.split())[:32].lower()
+        sanitized_name = sanitize_name(name)
         if len(sanitized_name) >= 3:
             player_id_to_player_name[player_id] = sanitized_name
             return {'name': sanitized_name}

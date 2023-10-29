@@ -58,7 +58,9 @@ export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm, 
         socket.emit(
             'set_name',
             { name: nameState.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current },
-            (nameResponse: Record<'name', string>) => setName(nameResponse.name),
+            (nameResponse?: Record<'name', string>) => {
+                nameResponse ? setName(nameResponse.name) : setNameError('Pick another username')
+            },
         )
         onConfirm?.()
     }

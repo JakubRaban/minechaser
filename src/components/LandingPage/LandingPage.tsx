@@ -38,8 +38,10 @@ export const LandingPage: FC = () => {
                     <ul>
                         <li>
                             Basic mechanics are the same as in the&nbsp;
-                            <a href="https://minesweepergame.com/strategy/how-to-play-minesweeper.php" target="_blank" rel="noreferrer">traditional Minesweeper</a>
-                            <ExternalPageIcon />
+                            <a href="https://minesweepergame.com/strategy/how-to-play-minesweeper.php" target="_blank" rel="noreferrer">
+                                traditional Minesweeper
+                                <ExternalPageIcon />
+                            </a>
                         </li>
                         <li>
                             Instead of clicking on the board, you start in one of the corners and move around using the {isMobile ? 'on-screen arrow buttons' : 'arrow keys'}.

@@ -10,13 +10,13 @@ import { ExternalPageIcon } from '../../icons/ExternalPage/ExternalPageIcon'
 
 import './LandingPage.scss'
 
-const ErrorToast = lazy(() => import('./ErrorToast/ErrorToast'))
+const StatusToast = lazy(() => import('./StatusToast/StatusToast'))
 
 export const LandingPage: FC = () => {
-    const { error } = useLocation().state ?? {}
+    const { error, success } = useLocation().state ?? {}
     usePreload(Queue, PrivateGameLoading, HowToPlay)
-    const { showOnScreenControls: isMobile } = usePreferences()
-    const keyMap = useKeyMap()
+    const { showOnScreenControls: isMobile, name } = usePreferences()
+    const { KeyD, KeyW, KeyS, KeyA } = useKeyMap()
 
     return (
         <div className="landing-page">
@@ -28,7 +28,10 @@ export const LandingPage: FC = () => {
                 <section className="menu">
                     <LandingPageButton text="Play Online" link="/queue" tooltip="Join a game with other players on the web" />
                     <LandingPageButton text="Play With Friends" link="/new-game" tooltip="Create a private game for you and your friends with a unique link to join" />
-                    <LandingPageButton text="Single Player" link="/new-game/single-player" tooltip="Practice the game on your own" />
+                    <div className="grid">
+                        <LandingPageButton text="Single Player" link="/new-game/single-player" tooltip="Practice the game on your own" />
+                        {name && <LandingPageButton text="Preferences" link="/preferences" tooltip="Change your preferences" />}
+                    </div>
                 </section>
                 <section className="rules">
                     <h2>Quick Rules</h2>
@@ -46,7 +49,7 @@ export const LandingPage: FC = () => {
                             If you step on a mine, you&apos;re eliminated!
                         </li>
                         <li>
-                            {isMobile ? <>You can only flag adjacent cells using the &quot;flag&quot; button followed by an arrow button. </> : <>You can only flag adjacent cells using <kbd>{`${keyMap.KeyW}${keyMap.KeyA}${keyMap.KeyS}${keyMap.KeyD}`}</kbd> keys. </>}
+                            {isMobile ? <>You can only flag adjacent cells using the &quot;flag&quot; button followed by an arrow button. </> : <>You can only flag adjacent cells using <kbd>{`${KeyW}${KeyA}${KeyS}${KeyD}`}</kbd> keys. </>}
                             You get points for flagging a cell with a mine.
                             You also get penalty points for flagging a safe cell.
                         </li>
@@ -60,7 +63,7 @@ export const LandingPage: FC = () => {
             <footer>
                 (C) Jakub Raban 2023. All rights reserved.
             </footer>
-            {error && <Suspense><ErrorToast error={error} /></Suspense>}
+            {(error || success) && <Suspense><StatusToast error={error} success={success} /></Suspense>}
         </div>
     )
 }

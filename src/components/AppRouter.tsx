@@ -7,6 +7,7 @@ import { GameWrapper, HowToPlay, PrivateGameLoading, Queue } from './lazy-compon
 import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
 import { useClockSynchronizer } from '../hooks/useClockSynchronizer'
 import config from '../config'
+import { LandingPagePreferencesSetter } from './PreferencesSetter/LandingPagePreferencesSetterWrapper/LandingPagePreferencesSetter'
 
 export const AppRouter: FC = () => {
     const { socket } = useSocket()
@@ -68,6 +69,11 @@ export const AppRouter: FC = () => {
                 <Route path="/how-to-play" element={
                     <Suspense fallback={<LoadingScreen />}>
                         <HowToPlay />
+                    </Suspense>
+                } />
+                <Route path="/preferences" element={
+                    <Suspense fallback={<LoadingScreen />}>
+                        <LandingPagePreferencesSetter />
                     </Suspense>
                 } />
                 <Route path="*" element={<Navigate to="/" />} />

@@ -61,15 +61,31 @@
       &.menu {
         padding-block: $spacing4;
 
-        a:not(:first-child) {
-          padding-block-start: $spacing8;
+        .grid {
+          display: flex;
+          flex-direction: column;
+          gap: $spacing8;
 
-          @media screen and (min-width: $md) {
+          @include media($md) {
+            display: grid;
+            gap: $spacing12;
             padding-block-start: $spacing12;
           }
         }
 
-        button {
+        :where(a, .grid):not(:first-child) {
+          padding-block-start: $spacing8;
+
+          @include media($md) {
+            padding-block-start: $spacing12;
+          }
+        }
+
+        .grid > a {
+          padding-block-start: 0;
+        }
+
+        button, .grid {
           font-size: $text20;
           width: 100%;
 

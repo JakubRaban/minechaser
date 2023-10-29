@@ -97,7 +97,8 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
                 </h3>
             )}
             <div className="action-buttons">
-                <Link to={playAgainLink} state={playAgainState}><button>Play Again{isPrivate && <> (with same players)</>}</button></Link>
+                <Link to={playAgainLink} state={playAgainState}><button>Play Again{isPrivate && <> (with same players)</>}{isSinglePlayer && <> (single player)</>}</button></Link>
+                {isSinglePlayer && <Link to="/queue"><button>Play again (with other players)</button></Link>}
                 <Link to="/"><button className="outline">Back to Main Menu</button></Link>
                 <button className="outline" onClick={() => setShareDialogOpen(true)}>Share</button>
             </div>

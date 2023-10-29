@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useEffect, useState } from 'react'
 import { useSocket } from '../hooks/context/useSocket'
-import { NameSetter } from './NameSetter/NameSetter'
+import { PreferencesSetter } from './PreferencesSetter/PreferencesSetter'
 import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
 import { usePreferences } from '../hooks/context/usePreferences'
 
@@ -23,7 +23,7 @@ export const AuthenticationGuard: FC<PropsWithChildren<{ authenticated: boolean 
     if (!authenticated || !isNameSetCallExecuted) {
         return <LoadingScreen />
     } else if (!name) {
-        return <NameSetter />
+        return <PreferencesSetter buttonText="Join" />
     } else {
         return <>{children}</>
     }

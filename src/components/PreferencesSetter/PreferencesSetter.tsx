@@ -5,7 +5,7 @@ import cn from 'classnames'
 import { usePreferences } from '../../hooks/context/usePreferences'
 import { usePhysicalKeyboardDetector } from '../../hooks/usePhysicalKeyboardDetector'
 
-import './NameSetter.scss'
+import './PreferencesSetter.scss'
 
 const nameValidator = (name: string) => {
     if (name.length) {
@@ -19,10 +19,15 @@ const nameValidator = (name: string) => {
     return ''
 }
 
-export const NameSetter: FC = () => {
+interface NameSetterProps {
+    buttonText: string
+    onConfirm?: () => void
+}
+
+export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm }) => {
     const { socket } = useSocket()
-    const { setSettings, setName, ...settings } = usePreferences()
-    const [nameState, setNameState] = useState('')
+    const { setSettings, setName, name, ...settings } = usePreferences()
+    const [nameState, setNameState] = useState(name || '')
     const [nameError, setNameError] = useState('')
     const [canSubmit, setCanSubmit] = useState(true)
     const placeholderName = useRef(generateRandomUsername())
@@ -54,6 +59,7 @@ export const NameSetter: FC = () => {
             { name: nameState.trim().replaceAll(/\s+/g, ' ').substring(0, 32) || placeholderName.current },
             (nameResponse: Record<'name', string>) => setName(nameResponse.name),
         )
+        onConfirm?.()
     }
 
     useEffect(() => {
@@ -108,7 +114,7 @@ export const NameSetter: FC = () => {
                     </details>
                 </fieldset>
 
-                <button type="submit" disabled={!canSubmit}>Join the Game</button>
+                <button type="submit" disabled={!canSubmit}>{buttonText}</button>
             </form>
         </div>
     )

@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren } from 'react'
+import { memo, PropsWithChildren } from 'react'
 import { PlayerColor } from '../../../../types/model'
 import cn from 'classnames'
 import { usePlayerColorToClassName } from '../../../../hooks/usePlayerColorToClassName'
@@ -15,7 +15,7 @@ interface ScoreboardElementBaseProps {
 
 type ScoreboardElementProps = PropsWithChildren<ScoreboardElementBaseProps>
 
-export const ScoreboardElement: FC<ScoreboardElementProps> = ({ label, color, className, children, backdrop, highlight }) => {
+export const ScoreboardElement = memo<ScoreboardElementProps>(({ label, color, className, children, backdrop, highlight }) => {
     const playerColorToClassName = usePlayerColorToClassName()
 
     return (
@@ -29,4 +29,4 @@ export const ScoreboardElement: FC<ScoreboardElementProps> = ({ label, color, cl
             </div>
         </div>
     )
-}
+})

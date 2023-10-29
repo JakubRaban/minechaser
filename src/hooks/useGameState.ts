@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { ActionResult, GameDef, GameState, PlayerColor, RawGameState } from '../types/model'
+import { useMemo, useRef, useState } from 'react'
+import { ActionResult, GameDef, PlayerColor, RawGameState } from '../types/model'
 import { toPositionString } from '../helpers'
 import { EventType } from '../types/model'
 
@@ -12,25 +12,14 @@ export interface EventDef {
 
 export type PositionedEvents = Record<string, EventDef>
 
-const parseRawGameState = (rawGameState: RawGameState): GameState => {
-    const { startTimestamp, endTimestamp, endGameScheduledTimestamp } = rawGameState
-    return {
-        ...rawGameState,
-        start: new Date(startTimestamp),
-        end: endTimestamp ? new Date(endTimestamp) : null,
-        endScheduled: endGameScheduledTimestamp ? new Date(endGameScheduledTimestamp) : null,
-    }
-}
-
 export const useGameState = (initialState: RawGameState, playerColor: PlayerColor) => {
     const [rawGameState, setRawGameState] = useState(initialState)
-    const gameState = parseRawGameState(rawGameState)
-    const {
-        start,
-        end,
-        endScheduled,
-        game: { players, board: { cells, dims, minesLeft } },
-    } = gameState
+    const { startTimestamp, endTimestamp, endGameScheduledTimestamp } = rawGameState
+    const { start, end, endScheduled } = useMemo(
+        () => ({ start: new Date(startTimestamp), end: endTimestamp ? new Date(endTimestamp) : null, endScheduled: endGameScheduledTimestamp ? new Date(endGameScheduledTimestamp) : null }),
+        [startTimestamp, endTimestamp, endGameScheduledTimestamp],
+    )
+    const { game: { players, board: { cells, dims, minesLeft } } } = rawGameState
     const isFinished = !!end
 
     const [events, setEvents] = useState<PositionedEvents | null>(null)
@@ -67,5 +56,5 @@ export const useGameState = (initialState: RawGameState, playerColor: PlayerColo
     }
 
     const props: GameDef = { start, end, endScheduled, players, dims, minesLeft, cells, isFinished, actionCounter: playerActionCounter }
-    return [props, gameState, events, resolveActionResult, setRawGameState] as const
+    return [props, { ...rawGameState, start, end, endScheduled }, events, resolveActionResult, setRawGameState] as const
 }

@@ -1,4 +1,4 @@
-import { forwardRef, Fragment } from 'react'
+import { forwardRef, Fragment, memo } from 'react'
 import { PlayerScoreboard } from './PlayerScoreboard/PlayerScoreboard'
 import { Player, PlayerColor, PlayerColorMapping, Players } from '../../../types/model'
 import { ScoreboardElement } from './ScoreboardElement/ScoreboardElement'
@@ -17,7 +17,7 @@ interface ScoreboardProps {
     isFinished: boolean
 }
 
-export const Scoreboard = forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLeft, players, playerColor, colorMapping, gameStart, endScheduled, isFinished }, ref) => {
+export const Scoreboard = memo(forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLeft, players, playerColor, colorMapping, gameStart, endScheduled, isFinished }, ref) => {
     const playerEntries = Object.entries(players) as [PlayerColor, Player][]
     const { colorBlindMode } = usePreferences()
 
@@ -33,7 +33,7 @@ export const Scoreboard = forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLe
                         <Fragment key={color}>
                             {i > 0 && i < playerEntries.length && <div className="separator" />}
                             <ScoreboardElement highlight={color === playerColor} label={colorMapping[color]!} color={color} backdrop={!colorBlindMode && !player.alive} className="player-scoreboard">
-                                <PlayerScoreboard key={color} player={player} />
+                                <PlayerScoreboard key={color} score={player.score} />
                             </ScoreboardElement>
                         </Fragment>
                     ))}
@@ -45,4 +45,4 @@ export const Scoreboard = forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLe
             </div>
         </div>
     )
-})
+}))

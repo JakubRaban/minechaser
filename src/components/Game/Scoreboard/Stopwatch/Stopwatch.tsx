@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import {  useEffect, useRef, useState, memo } from 'react'
 import { useDateDiff } from '../../../../hooks/useDateDiff'
 
 import './Stopwatch.scss'
@@ -9,7 +9,7 @@ interface StopwatchProps {
     isActive: boolean
 }
 
-export const Stopwatch: FC<StopwatchProps> = ({ timestampAtZero, endScheduled, isActive }) => {
+export const Stopwatch = memo<StopwatchProps>(({ timestampAtZero, endScheduled, isActive }) => {
     const [stopwatchValue, setStopwatchValue] = useState(0)
     const [endGameTimer, setEndGameTimer] = useState<number | null>(null)
     const interval = useRef<NodeJS.Timeout | null>(null)
@@ -38,4 +38,4 @@ export const Stopwatch: FC<StopwatchProps> = ({ timestampAtZero, endScheduled, i
             <span className="stopwatch-value">{stopwatchValue}</span>
         </div>
     )
-}
+})

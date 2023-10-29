@@ -1,17 +1,16 @@
-import { FC } from 'react'
+import { FC, memo } from 'react'
 import cn from 'classnames'
-import { Player } from '../../../../types/model'
 
 interface PlayerScoreboardProps {
-    player: Player
+    score: number
 }
 
-export const PlayerScoreboard: FC<PlayerScoreboardProps> = ({ player }) => {
+export const PlayerScoreboard = memo<PlayerScoreboardProps>(({ score }) => {
     return (
         <div className={cn('player-scoreboard-wrapper')}>
             <div className={cn('score')}>
-                {player.score}
+                {score}
             </div>
         </div>
     )
-}
+})

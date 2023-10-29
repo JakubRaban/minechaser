@@ -32,7 +32,7 @@ const colorToCorner: Record<PlayerColor, string> = {
 
 const playersToPositions = (players: Players, playerColor: PlayerColor, optimisticPosition: Position) => {
     const result: Record<string, PlayerColor[]> = {}
-    const playerPositions = Object.entries(players).map(([color, player]) => [color === playerColor ? optimisticPosition : player.position, color as PlayerColor] as const)
+    const playerPositions = Object.entries(players).filter(([, player]) => player.alive).map(([color, player]) => [color === playerColor ? optimisticPosition : player.position, color as PlayerColor] as const)
     playerPositions.forEach(([position, color]) => {
         const positionString = toPositionString(position)
         result[positionString] ? result[positionString].push(color) : result[positionString] = [color]

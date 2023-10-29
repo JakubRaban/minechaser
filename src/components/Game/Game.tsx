@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useCallback, useRef, useLayoutEffect } from 'react'
+import { FC, useEffect, useState, useCallback, useRef, useLayoutEffect, useMemo } from 'react'
 import { useSocket } from '../../hooks/context/useSocket'
 import { GameStateData } from './GameWrapper/GameWrapper'
 import { useGameState } from '../../hooks/useGameState'
@@ -110,7 +110,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     useEffect(() => {
         if (props.end) {
             GameSummary.preload()
-            const timeout = setTimeout(startFadingOut, 2500)
+            const timeout = setTimeout(startFadingOut, props.minesLeft ? 2000 : 1000)
             return () => clearTimeout(timeout)
         }
     }, [props.end])
@@ -128,6 +128,14 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
             window.dispatchEvent(new Event('resize'))
         }
     }, [showDefeatedMessage])
+
+    const scoreboardPlayers = useMemo(
+        () => props.players,
+        [
+            props.players.RED?.score, props.players.GREEN?.score, props.players.BLUE?.score, props.players.YELLOW?.score,
+            props.players.RED?.alive, props.players.GREEN?.alive, props.players.BLUE?.alive, props.players.YELLOW?.alive,
+        ],
+    )
 
     if (goToSummary) {
         return (
@@ -156,7 +164,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
                     )}
                     <Scoreboard
                         ref={scoreboardRef}
-                        players={props.players}
+                        players={scoreboardPlayers}
                         playerColor={playerColor}
                         colorMapping={colorMapping}
                         minesLeft={props.minesLeft}

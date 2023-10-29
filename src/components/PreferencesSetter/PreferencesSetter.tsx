@@ -22,9 +22,10 @@ const nameValidator = (name: string) => {
 interface NameSetterProps {
     buttonText: string
     onConfirm?: () => void
+    openDetails?: boolean
 }
 
-export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm }) => {
+export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm, openDetails }) => {
     const { socket } = useSocket()
     const { setSettings, setName, name, ...settings } = usePreferences()
     const [nameState, setNameState] = useState(name || '')
@@ -82,11 +83,15 @@ export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm }
                             onBlur={handleNameBlur}
                             aria-invalid={!!nameError || undefined}
                             aria-describedby="name-error"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            autoCapitalize="off"
+                            spellCheck={false}
                         />
                         <small id="name-error">{nameError}</small>
                     </label>
 
-                    <details>
+                    <details open={openDetails}>
                         <summary>Adjust Your Experience</summary>
                         <label>
                             <input name="showOnScreenControls" checked={settings.showOnScreenControls} type="checkbox" role="switch" onChange={setFieldValue} />

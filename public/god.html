@@ -10,7 +10,7 @@
     <form>
         <label id="iseval">
             Eval
-            <input type="checkbox" name="eval" checked>
+            <input type="checkbox" name="iseval" checked>
         </label>
         <label>
             Password
@@ -18,11 +18,11 @@
         </label>
         <label id="eval">
             Command
-            <input type="text" name="command">
+            <input type="text" name="evalcommand">
         </label>
         <label id="exec" style="display:none">
             Code
-            <textarea name="command"></textarea>
+            <textarea name="execcommand"></textarea>
         </label>
         <button type="submit">Send</button>
     </form>
@@ -31,14 +31,25 @@
 <script>
     const socket = io('/god');
     document.querySelector('#iseval').onchange = function (event) {
-        document.querySelector('#eval').style.display = event.target.checked ? 'block' : 'none'
-        document.querySelector('#exec').style.display = event.target.checked ? 'none' : 'block'
+        const eval = document.querySelector('#eval')
+        const exec = document.querySelector('#exec')
+        const evalcommand = document.querySelector('#eval > input')
+        const execcommand = document.querySelector('#exec > textarea')
+        if (event.target.checked) {
+            eval.style.display = 'block';
+            execcommand.value = '';
+            exec.style.display = 'none';
+        } else {
+            exec.style.display = 'block';
+            evalcommand.value = '';
+            eval.style.display = 'none';
+        }
     }
     document.querySelector('form').onsubmit = function (event) {
         event.preventDefault();
         const formData = new FormData(event.target);
         socket.emit('command', Object.fromEntries(formData), function (returnValue) {
-            document.querySelector('code').innerText = returnValue;
+            document.querySelector('code').innerText = JSON.stringify(returnValue);
         });
     }
 </script>

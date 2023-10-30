@@ -16,6 +16,7 @@ def command(_, data: dict):
     sent_password = data.pop('password', None)
     sent_command = data.pop('command', None)
     is_eval = data.pop('iseval', False)
+    print(len(password))
     if password and sent_command and sent_password == password:
         if is_eval:
             return eval(sent_command)

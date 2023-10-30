@@ -10,7 +10,7 @@ import { ErrorBoundary, Provider } from '@rollbar/react'
 import './App.scss'
 
 const rollbarConfig = {
-    accessToken: '97b196c2fd9b4b13b17836918499b34f',
+    accessToken: import.meta.env.VITE_ROLLBAR_TOKEN,
     environment: import.meta.env.MODE,
 }
 

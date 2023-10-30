@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>html,input,textarea{font-size:24px}label{display:block;margin:20px 0;}input,textarea{width:90%;font-family:monospace}code{background-color:grey;padding:5px;border-radius:5px;width:100%;display:block;margin:10px 0}textarea{height:200px}</style>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+</head>
+<body>
+    <form>
+        <label id="iseval">
+            Eval
+            <input type="checkbox" name="eval" checked>
+        </label>
+        <label>
+            Password
+            <input type="password" name="password">
+        </label>
+        <label id="eval">
+            Command
+            <input type="text" name="command">
+        </label>
+        <label id="exec" style="display:none">
+            Code
+            <textarea name="command"></textarea>
+        </label>
+        <button type="submit">Send</button>
+    </form>
+    <code></code>
+</body>
+<script>
+    const socket = io('/god');
+    document.querySelector('#iseval').onchange = function (event) {
+        document.querySelector('#eval').style.display = event.target.checked ? 'block' : 'none'
+        document.querySelector('#exec').style.display = event.target.checked ? 'none' : 'block'
+    }
+    document.querySelector('form').onsubmit = function (event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        socket.emit('command', Object.fromEntries(formData), function (returnValue) {
+            document.querySelector('code').innerText = returnValue;
+        });
+    }
+</script>
+</html>

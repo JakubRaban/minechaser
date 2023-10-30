@@ -6,6 +6,7 @@ from typing import Optional
 
 import socketio
 from bidict import bidict
+from dotenv import find_dotenv, load_dotenv
 import ownjson
 
 
@@ -13,6 +14,7 @@ sio = socketio.Server(
     async_mode='gevent',
     cors_allowed_origins=[
         'http://localhost:3000',
+        'http://localhost:5000',
         'https://plankton-app-tgr3d.ondigitalocean.app',
         'https://minechaser.com'
     ],
@@ -20,6 +22,7 @@ sio = socketio.Server(
 )
 socket_id_to_player_id = bidict()
 player_id_to_player_name = dict()
+load_dotenv(find_dotenv('.env.local'))
 
 
 def with_player_id(func):
@@ -34,6 +37,7 @@ def with_player_id(func):
 
 
 import views
+import views.admin
 
 
 @sio.event

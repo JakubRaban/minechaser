@@ -10,9 +10,10 @@ import { usePreload } from '../../hooks/usePreload'
 import cn from 'classnames'
 import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/ScreenOrientationWarning'
 import { Tooltip } from 'react-tooltip'
+import { Link } from 'react-router-dom'
 
 import './PrivateGameLobby.scss'
-import { Link } from 'react-router-dom'
+import { ConfirmCancelContainer } from '../lib/ConfirmCancelContainer/ConfirmCancelContainer'
 
 export type GameStartFn = (data: GameStateData) => void
 
@@ -96,7 +97,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
                         <BoardSizeForm size={size} onChange={setSize} />
                     </label>
 
-                    <div className="start-game-container">
+                    <ConfirmCancelContainer>
                         <button
                             className="start-game-button"
                             disabled={joiningDisabled}
@@ -109,7 +110,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
                         <button className="leave-game-button outline">
                             <Link to="/">Leave the Game</Link>
                         </button>
-                    </div>
+                    </ConfirmCancelContainer>
                     <Tooltip id="cannot-join-tooltip" />
                 </div>
             </div>

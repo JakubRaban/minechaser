@@ -63,7 +63,7 @@ export const LandingPage: FC = () => {
                 </section>
             </main>
             <footer>
-                (C) Jakub Raban 2023. All rights reserved.
+                &copy; 2023{new Date().getFullYear() > 2023 && `-${new Date().getFullYear()}`} Jakub Raban. All rights reserved.
             </footer>
             {(error || success) && <Suspense><StatusToast error={error} success={success} /></Suspense>}
         </div>

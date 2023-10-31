@@ -80,21 +80,5 @@
         }
       }
     }
-
-    .start-game-container {
-      display: flex;
-      gap: $spacing4;
-
-      button {
-        &.start-game-button {
-          flex-grow: 1;
-          width: 100%;
-        }
-
-        &.leave-game-button {
-          white-space: nowrap;
-        }
-      }
-    }
   }
 }

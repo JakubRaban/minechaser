@@ -1,0 +1,16 @@
+@import '../../../styles/constants';
+
+.confirm-cancel-container {
+  display: flex;
+  gap: $spacing4;
+
+  button:first-child {
+    flex-grow: 1;
+    width: 100%;
+  }
+
+  button:last-child {
+    flex-shrink: 3;
+    white-space: nowrap;
+  }
+}

@@ -4,6 +4,7 @@ import { generateRandomUsername } from '../../helpers'
 import cn from 'classnames'
 import { usePreferences } from '../../hooks/context/usePreferences'
 import { usePhysicalKeyboardDetector } from '../../hooks/usePhysicalKeyboardDetector'
+import { ConfirmCancelContainer } from '../lib/ConfirmCancelContainer/ConfirmCancelContainer'
 
 import './PreferencesSetter.scss'
 
@@ -22,10 +23,11 @@ const nameValidator = (name: string) => {
 interface NameSetterProps {
     buttonText: string
     onConfirm?: () => void
+    onCancel?: () => void
     openDetails?: boolean
 }
 
-export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm, openDetails }) => {
+export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm, onCancel, openDetails }) => {
     const { socket } = useSocket()
     const { setSettings, setName, name, ...settings } = usePreferences()
     const [nameState, setNameState] = useState(name || '')
@@ -121,7 +123,10 @@ export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm, 
                     </details>
                 </fieldset>
 
-                <button type="submit" disabled={!canSubmit}>{buttonText}</button>
+                <ConfirmCancelContainer>
+                    <button type="submit" disabled={!canSubmit}>{buttonText}</button>
+                    {onCancel && <button type="button" onClick={onCancel} className="outline">Cancel</button>}
+                </ConfirmCancelContainer>
             </form>
         </div>
     )

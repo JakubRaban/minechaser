@@ -15,3 +15,4 @@ export const GameWrapper = lazyPreload(() => import('./Game/GameWrapper/GameWrap
 export const HowToPlay = lazyPreload(() => import('./HowToPlay/HowToPlay'))
 export const GameSummary = lazyPreload(() => import('./GameSummary/GameSummary'))
 export const ShareDialog = lazyPreload(() => import('./ShareDialog/ShareDialog'))
+export const AboutDialog = lazyPreload(() => import('./LandingPage/AboutDialog/AboutDialog'))

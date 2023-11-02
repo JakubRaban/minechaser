@@ -1,0 +1,41 @@
+@import "../../../styles/constants";
+
+.about-dialog {
+  article {
+    padding-block: $spacing32;
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    button.close {
+      outline: none;
+      border: none;
+      background: var(--pico-icon-close) no-repeat center;
+      margin-block-end: .5em;
+    }
+
+    > div {
+      display: flex;
+      gap: $spacing16;
+
+      p {
+        text-align: justify;
+        hyphens: auto;
+      }
+
+      img {
+        width: $spacing192;
+        height: $spacing192;
+        border-radius: $spacing96;
+      }
+
+      span + span::before {
+        content: '•';
+        margin-inline: $spacing8;
+      }
+    }
+  }
+}

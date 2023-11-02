@@ -8,6 +8,7 @@ import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
 import { useClockSynchronizer } from '../hooks/useClockSynchronizer'
 import config from '../config'
 import { LandingPagePreferencesSetter } from './PreferencesSetter/LandingPagePreferencesSetterWrapper/LandingPagePreferencesSetter'
+import CookieToast from './CookieToast/CookieToast'
 
 export const AppRouter: FC = () => {
     const { socket } = useSocket()
@@ -34,50 +35,54 @@ export const AppRouter: FC = () => {
     }, [])
     
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/queue" element={
-                    <Suspense fallback={<LoadingScreen />}>
-                        <AuthenticationGuard authenticated={authenticated}>
-                            <Queue />
-                        </AuthenticationGuard>
-                    </Suspense>
-
-                } />
-                <Route path="/new-game" element={
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <AuthenticationGuard authenticated={authenticated}>
-                            <PrivateGameLoading singlePlayer={false} />
-                        </AuthenticationGuard>
-                    </Suspense>
-                } />
-                <Route path="/new-game/single-player" element={
-                    <Suspense fallback={<LoadingScreen />}>
-                        <AuthenticationGuard authenticated={authenticated}>
-                            <PrivateGameLoading singlePlayer={true} />
-                        </AuthenticationGuard>
-                    </Suspense>
-                } />
-                <Route path="/game/:gameId" element={
-                    <Suspense fallback={<LoadingScreen />}>
-                        <AuthenticationGuard authenticated={authenticated}>
-                            <GameWrapper />
-                        </AuthenticationGuard>
-                    </Suspense>
-                } />
-                <Route path="/how-to-play" element={
-                    <Suspense fallback={<LoadingScreen />}>
-                        <HowToPlay />
-                    </Suspense>
-                } />
-                <Route path="/preferences" element={
-                    <Suspense fallback={<LoadingScreen />}>
-                        <LandingPagePreferencesSetter />
-                    </Suspense>
-                } />
-                <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-        </BrowserRouter>
+        <>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/about" element={<LandingPage showAboutDialog />} />
+                    <Route path="/contact" element={<LandingPage showContactDialog />} />
+                    <Route path="/queue" element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <AuthenticationGuard authenticated={authenticated}>
+                                <Queue />
+                            </AuthenticationGuard>
+                        </Suspense>
+                    } />
+                    <Route path="/new-game" element={
+                        <Suspense fallback={<div>Loading...</div>}>
+                            <AuthenticationGuard authenticated={authenticated}>
+                                <PrivateGameLoading singlePlayer={false} />
+                            </AuthenticationGuard>
+                        </Suspense>
+                    } />
+                    <Route path="/new-game/single-player" element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <AuthenticationGuard authenticated={authenticated}>
+                                <PrivateGameLoading singlePlayer={true} />
+                            </AuthenticationGuard>
+                        </Suspense>
+                    } />
+                    <Route path="/game/:gameId" element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <AuthenticationGuard authenticated={authenticated}>
+                                <GameWrapper />
+                            </AuthenticationGuard>
+                        </Suspense>
+                    } />
+                    <Route path="/how-to-play" element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <HowToPlay />
+                        </Suspense>
+                    } />
+                    <Route path="/preferences" element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <LandingPagePreferencesSetter />
+                        </Suspense>
+                    } />
+                    <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+            </BrowserRouter>
+            <CookieToast />
+        </>
     )
 }

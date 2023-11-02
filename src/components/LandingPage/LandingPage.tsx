@@ -2,7 +2,7 @@ import { FC, lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
-import { HowToPlay, PrivateGameLoading, Queue } from '../lazy-components'
+import { HowToPlay, PrivateGameLoading, Queue, AboutDialog } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
 import { useKeyMap } from '../../hooks/useKeyMap'
 import { usePreferences } from '../../hooks/context/usePreferences'
@@ -12,7 +12,12 @@ import './LandingPage.scss'
 
 const StatusToast = lazy(() => import('./StatusToast/StatusToast'))
 
-export const LandingPage: FC = () => {
+interface LandingPageProps {
+    showAboutDialog?: boolean
+    showContactDialog?: boolean
+}
+
+export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContactDialog }) => {
     const { error, success } = useLocation().state ?? {}
     usePreload(Queue, PrivateGameLoading, HowToPlay)
     const { showOnScreenControls: isMobile, name } = usePreferences()
@@ -63,9 +68,18 @@ export const LandingPage: FC = () => {
                 </section>
             </main>
             <footer>
-                &copy; 2023{new Date().getFullYear() > 2023 && `-${new Date().getFullYear()}`} Jakub Raban. All rights reserved.
+                <span>
+                    &copy; 2023{new Date().getFullYear() > 2023 && `-${new Date().getFullYear()}`}&nbsp;
+                    <Link to="/about">Jakub Raban</Link>. All Rights Reserved.
+                </span>
+                <span><Link to="/privacypolicy">Privacy Policy</Link></span>
+                <span><Link to="/contact">Feedback/Report a Problem</Link></span>
             </footer>
             {(error || success) && <Suspense><StatusToast error={error} success={success} /></Suspense>}
+            {showAboutDialog && <Suspense><AboutDialog /></Suspense>}
+            <dialog open={showContactDialog}>
+
+            </dialog>
         </div>
     )
 }

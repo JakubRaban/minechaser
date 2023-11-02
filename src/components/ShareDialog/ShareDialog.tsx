@@ -25,7 +25,7 @@ interface ShareDialogProps {
 
 const url = `${location.protocol}//${location.host}`
 const subject = 'Check out MineChaser'
-const body = 'I recently played this game and I\'d like to show it with you'
+const body = 'I recently played this game and I\'d like to show it to you'
 
 const props = { url, subject, body, title: subject }
 const size = 100

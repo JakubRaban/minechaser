@@ -125,6 +125,11 @@
     padding-block: $spacing4;
     font-size: $text16;
     background-color: $slate-950;
+
+    > * + *::before {
+      content: '•';
+      margin-inline: $spacing8;
+    }
   }
 
   .toast {

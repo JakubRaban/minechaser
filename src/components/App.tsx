@@ -1,16 +1,15 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SocketIOContext } from '../contexts/SocketIOContext'
 import { io } from 'socket.io-client'
 import config from '../config'
 import { AppRouter } from './AppRouter'
 import { PreferencesContextProvider } from '../contexts/PreferencesContext'
 import { TimeOffsetContextProvider } from '../contexts/TimeOffsetContext'
-import { ErrorBoundary, Provider } from '@rollbar/react'
+import { ErrorBoundary, Provider as RollbarProvider } from '@rollbar/react'
 
 import './App.scss'
 
 const rollbarConfig = {
-    accessToken: import.meta.env.VITE_ROLLBAR_TOKEN,
     environment: import.meta.env.MODE,
 }
 
@@ -23,15 +22,29 @@ const ErrorUI: FC = () => (
     </div>
 )
 
-export const App: FC = () =>
-    <Provider config={rollbarConfig}>
-        <ErrorBoundary fallbackUI={ErrorUI}>
-            <SocketIOContext.Provider value={{ socket: io(config.SERVER_URL, { autoConnect: false, closeOnBeforeunload: false }) }}>
-                <PreferencesContextProvider>
-                    <TimeOffsetContextProvider>
-                        <AppRouter />
-                    </TimeOffsetContextProvider>
-                </PreferencesContextProvider>
-            </SocketIOContext.Provider>
-        </ErrorBoundary>
-    </Provider>
+export const App: FC = () => {
+    const [useRollbar, setUseRollbar] = useState(false)
+
+    useEffect(() => {
+        const enableRollbar = () => {
+            console.log('accepted use rollbar')
+            setUseRollbar(true)
+        }
+        window.addEventListener('cookiesaccept', enableRollbar)
+        return () => window.removeEventListener('cookiesaccept', enableRollbar)
+    }, [])
+
+    return (
+        <RollbarProvider config={useRollbar ? { ...rollbarConfig, accessToken: import.meta.env.VITE_ROLLBAR_TOKEN } : rollbarConfig}>
+            <ErrorBoundary fallbackUI={ErrorUI}>
+                <SocketIOContext.Provider value={{ socket: io(config.SERVER_URL, { autoConnect: false, closeOnBeforeunload: false }) }}>
+                    <PreferencesContextProvider>
+                        <TimeOffsetContextProvider>
+                            <AppRouter />
+                        </TimeOffsetContextProvider>
+                    </PreferencesContextProvider>
+                </SocketIOContext.Provider>
+            </ErrorBoundary>
+        </RollbarProvider>
+    )
+}

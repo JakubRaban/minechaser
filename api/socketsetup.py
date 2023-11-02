@@ -1,14 +1,14 @@
 import random
 import string
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from functools import wraps
-from typing import Optional
+from typing import Optional, Dict
 
 import socketio
 from bidict import bidict
 from dotenv import find_dotenv, load_dotenv
 import ownjson
-
+from scheduler import scheduler
 
 sio = socketio.Server(
     async_mode='gevent',
@@ -21,8 +21,23 @@ sio = socketio.Server(
     json=ownjson
 )
 socket_id_to_player_id = bidict()
-player_id_to_player_name = dict()
+player_id_last_seen: Dict[str, datetime] = dict()
+player_id_to_player_name: Dict[str, str] = dict()
 load_dotenv(find_dotenv('.env.local'))
+
+
+def remove_stale_players():
+    to_remove = []
+    for player_id, time in player_id_last_seen.items():
+        if datetime.now(timezone.utc) - time > timedelta(days=30):
+            to_remove.append(player_id)
+    for player_id in to_remove:
+        print('removing stale player', player_id)
+        player_id_last_seen.pop(player_id)
+        socket_id_to_player_id.inverse.pop(player_id)
+
+
+scheduler.add_job(remove_stale_players, 'interval', days=1)
 
 
 def with_player_id(func):
@@ -54,6 +69,7 @@ def authenticate(sid, data):
         if validate_token(data['token']) \
         else f"dupa{''.join([random.choice(string.ascii_letters) for _ in range(16)])}"
     socket_id_to_player_id.forceput(sid, token)
+    player_id_last_seen[token] = datetime.now(timezone.utc)
     print(f"Authenticated {sid} as {token}")
     return {'token': token}
 

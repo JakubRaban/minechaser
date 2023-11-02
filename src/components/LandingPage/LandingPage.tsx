@@ -2,7 +2,7 @@ import { FC, lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
-import { HowToPlay, PrivateGameLoading, Queue, AboutDialog } from '../lazy-components'
+import { HowToPlay, PrivateGameLoading, Queue, AboutDialog, ContactDialog } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
 import { useKeyMap } from '../../hooks/useKeyMap'
 import { usePreferences } from '../../hooks/context/usePreferences'
@@ -42,7 +42,7 @@ export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContact
                     <h2>Quick Rules</h2>
                     <ul>
                         <li>
-                            Basic mechanics are the same as in the&nbsp;
+                            The board and mines are generated the same way as in a&nbsp;
                             <a href="https://minesweepergame.com/strategy/how-to-play-minesweeper.php" target="_blank" rel="noreferrer">
                                 traditional Minesweeper
                                 <ExternalPageIcon />
@@ -77,9 +77,7 @@ export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContact
             </footer>
             {(error || success) && <Suspense><StatusToast error={error} success={success} /></Suspense>}
             {showAboutDialog && <Suspense><AboutDialog /></Suspense>}
-            <dialog open={showContactDialog}>
-
-            </dialog>
+            {showContactDialog && <Suspense><ContactDialog /></Suspense>}
         </div>
     )
 }

@@ -30,8 +30,16 @@ export const App: FC = () => {
             console.log('accepted use rollbar')
             setUseRollbar(true)
         }
+        const disableRollbar = () => {
+            console.log('disabled rollbar')
+            setUseRollbar(false)
+        }
         window.addEventListener('cookiesaccept', enableRollbar)
-        return () => window.removeEventListener('cookiesaccept', enableRollbar)
+        window.addEventListener('cookiesnonaccept', disableRollbar)
+        return () => {
+            window.removeEventListener('cookiesaccept', enableRollbar)
+            window.removeEventListener('cookiesnonaccept', disableRollbar)
+        }
     }, [])
 
     return (

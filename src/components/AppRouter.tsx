@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { LandingPage } from './LandingPage/LandingPage'
 import { useSocket } from '../hooks/context/useSocket'
 import { AuthenticationGuard } from './AuthenticationGuard'
-import { GameWrapper, HowToPlay, PrivateGameLoading, Queue } from './lazy-components'
+import { GameWrapper, HowToPlay, PrivateGameLoading, Queue, PrivacyPolicyPage } from './lazy-components'
 import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
 import { useClockSynchronizer } from '../hooks/useClockSynchronizer'
 import config from '../config'
@@ -24,7 +24,7 @@ export const AppRouter: FC = () => {
             })
         })
         socket.on('disconnect', () => {
-            window.location.href = '/'
+            // window.location.href = '/'
         })
         socket.connect()
         return () => {
@@ -77,6 +77,11 @@ export const AppRouter: FC = () => {
                     <Route path="/preferences" element={
                         <Suspense fallback={<LoadingScreen />}>
                             <LandingPagePreferencesSetter />
+                        </Suspense>
+                    } />
+                    <Route path="/privacypolicy" element={
+                        <Suspense fallback={<LoadingScreen />}>
+                            <PrivacyPolicyPage />
                         </Suspense>
                     } />
                     <Route path="*" element={<Navigate to="/" />} />

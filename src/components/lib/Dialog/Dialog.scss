@@ -1,0 +1,20 @@
+@import "../../../styles/constants";
+
+dialog.dialog {
+  article {
+    padding-block: $spacing32;
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    button.close {
+      outline: none;
+      border: none;
+      background: var(--pico-icon-close) no-repeat center;
+      margin-block-end: .5em;
+    }
+  }
+}

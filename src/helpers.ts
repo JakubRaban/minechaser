@@ -1,4 +1,4 @@
-import { GameDef, PlayerColor, Position } from './types/model'
+import { GameDef, Position } from './types/model'
 import { Direction } from './components/Game/Game'
 
 export const toPositionString = ([col, row]: Position) => `(${col}, ${row})`
@@ -102,3 +102,8 @@ export const calculatePosition = (currentPosition: Position, props: GameDef, dir
         ? currentPosition
         : newPosition
 }
+
+export const removeAllCookies = () => document.cookie.split(';').forEach((c) => {
+    document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/')
+})
+

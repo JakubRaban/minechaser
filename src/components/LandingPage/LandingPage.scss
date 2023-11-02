@@ -109,7 +109,7 @@
           margin-block-end: $spacing4;
 
           @include media($md) {
-            margin-block-end: revert;
+            margin-block-end: $spacing12;
           }
         }
 

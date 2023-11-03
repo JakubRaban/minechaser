@@ -98,6 +98,11 @@
       &.rules {
         text-align: justify;
         hyphens: auto;
+        padding-block-end: $spacing16;
+
+        @include media($md) {
+          padding-block-end: 0;
+        }
 
         @include media($md) {
           padding: $spacing16 $spacing32;

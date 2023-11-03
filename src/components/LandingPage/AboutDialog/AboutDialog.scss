@@ -3,7 +3,15 @@
 .about-dialog {
   article > div {
     display: flex;
-    gap: $spacing16;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing12;
+
+    @media screen and (orientation: landscape), screen and (min-width: $md) {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $spacing16;
+    }
 
     p {
       text-align: justify;
@@ -11,9 +19,15 @@
     }
 
     img {
-      width: $spacing192;
-      height: $spacing192;
-      border-radius: $spacing96;
+      width: $spacing128;
+      height: $spacing128;
+      border-radius: $spacing64;
+
+      @media screen and (orientation: landscape), screen and (min-width: $md) {
+        width: $spacing192;
+        height: $spacing192;
+        border-radius: $spacing96;
+      }
     }
 
     span + span::before {

@@ -7,6 +7,8 @@ import './CookieToast.scss'
 
 const CookieToast = () => {
     const { STORAGE: storage } = config
+    const dateAccepted = Number(storage.getItem('rmCookiesAccepted'))
+    const acceptExpired = !dateAccepted || Date.now() - dateAccepted > 180 * 24 * 60 * 60 * 1000
 
     const onAccept = (t: Toast) => {
         storage.setItem('rmCookiesAccepted', String(Date.now()))
@@ -15,8 +17,7 @@ const CookieToast = () => {
     }
 
     useEffect(() => {
-        const dateAccepted = Number(storage.getItem('rmCookiesAccepted'))
-        if (!dateAccepted || Date.now() - dateAccepted > 180 * 24 * 60 * 60 * 1000) {
+        if (acceptExpired) {
             toast(t => (
                 <span>
                     <div>
@@ -37,7 +38,7 @@ const CookieToast = () => {
         }
     }, [])
 
-    return <Toaster position="bottom-right" toastOptions={{ className: 'toast cookie-toast' }} />
+    return acceptExpired ? <Toaster position="bottom-right" toastOptions={{ className: 'toast cookie-toast' }} /> : null
 }
 
 export default CookieToast

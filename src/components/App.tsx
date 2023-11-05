@@ -5,12 +5,17 @@ import config from '../config'
 import { AppRouter } from './AppRouter'
 import { ErrorBoundary, Provider as RollbarProvider } from '@rollbar/react'
 import CookieToast from './CookieToast/CookieToast'
+import Rollbar from 'rollbar'
 
 import './App.scss'
 
 const rollbarConfig = {
     environment: import.meta.env.MODE,
+    accessToken: import.meta.env.VITE_ROLLBAR_TOKEN,
 }
+
+const rollbar = new Rollbar(rollbarConfig)
+rollbar.options.enabled = false
 
 const ErrorUI: FC = () => (
     <div className="error-screen">
@@ -24,7 +29,6 @@ const ErrorUI: FC = () => (
 export const App: FC = () => {
     const { socket } = useSocket()
     
-    const [useRollbar, setUseRollbar] = useState(false)
     const [authenticated, setAuthenticated] = useState(false)
     const [disconnected, setDisconnected] = useState(false)
     const { STORAGE: storage } = config
@@ -53,11 +57,11 @@ export const App: FC = () => {
     useEffect(() => {
         const enableRollbar = () => {
             console.log('accepted use rollbar')
-            setUseRollbar(true)
+            rollbar.options.enabled = true
         }
         const disableRollbar = () => {
             console.log('disabled rollbar')
-            setUseRollbar(false)
+            rollbar.options.enabled = false
         }
         const setOnline = () => setDisconnected(false)
         const setOffline = () => setDisconnected(true)
@@ -74,7 +78,7 @@ export const App: FC = () => {
     }, [])
 
     return (
-        <RollbarProvider config={useRollbar ? { ...rollbarConfig, accessToken: import.meta.env.VITE_ROLLBAR_TOKEN } : rollbarConfig}>
+        <RollbarProvider config={rollbarConfig}>
             <ErrorBoundary fallbackUI={ErrorUI}>
                 {disconnected && <div className="disconnected-banner">Server connection lost</div>}
                 <AppRouter authenticated={authenticated} />

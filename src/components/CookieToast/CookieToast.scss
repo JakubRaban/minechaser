@@ -5,12 +5,15 @@
 .toast.cookie-toast {
   background-color: $slate-800;
   color: var(--pico-color);
-  font-size: $text12;
   text-align: justify;
   hyphens: auto;
 
-  @include media($md) {
-    font-size: $text16;
+  &, & * {
+    font-size: $text12;
+
+    @include media($md) {
+      font-size: $text16;
+    }
   }
 
   svg {
@@ -29,13 +32,8 @@
     margin-block-start: 0.5em;
 
     button {
-      font-size: $text12;
       height: 2em;
       padding: 0.25em 0.5em;
-
-      @include media($md) {
-        font-size: $text16;
-      }
     }
   }
 }

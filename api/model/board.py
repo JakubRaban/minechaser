@@ -75,7 +75,7 @@ class Board:
                         do_step(p, result_outcome)
                 else:
                     result_outcome.add_action(CellAction(cell=cell, event=MineFreeCellStepped()))
-            return result_outcome
+            return result_outcome.add_action(CellAction(cell=cell, event=UncoveredCellStepped()))
 
         return do_step(position, outcome)
 

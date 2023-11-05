@@ -12,10 +12,27 @@ import { usePreferences } from '../../hooks/context/usePreferences'
 import cn from 'classnames'
 import { GameSummary } from '../lazy-components'
 import { useDelayedFlag } from '../../hooks/useDelayedFlag'
-import { calculatePosition } from '../../helpers'
+import { calculatePosition, pickRandom } from '../../helpers'
 import { useDateDiff } from '../../hooks/useDateDiff'
 import { useStateRef } from '../../hooks/useStateRef'
 import { Link } from 'react-router-dom'
+
+import flag1 from '/sounds/flag1.mp3'
+import flag2 from '/sounds/flag2.mp3'
+import flag3 from '/sounds/flag3.mp3'
+import flag4 from '/sounds/flag4.mp3'
+import flag5 from '/sounds/flag5.mp3'
+import step1 from '/sounds/step1.mp3'
+import step2 from '/sounds/step2.mp3'
+import step3 from '/sounds/step3.mp3'
+import step4 from '/sounds/step4.mp3'
+import step5 from '/sounds/step5.mp3'
+import uncover1 from '/sounds/uncover1.mp3'
+import uncover2 from '/sounds/uncover2.mp3'
+import uncover3 from '/sounds/uncover3.mp3'
+import incorrectFlag from '/sounds/incorrectflag.mp3'
+import explode from '/sounds/explode.mp3'
+import gameSuccess from '/sounds/gamesuccess.mp3'
 
 import './Game.scss'
 
@@ -37,6 +54,22 @@ const keyToDirection: Record<string, Direction> = {
     KeyD: 'RIGHT',
 }
 
+const flagSounds = [flag1, flag2, flag3, flag4, flag5].map(f => {
+    const a = new Audio(f)
+    a.volume = 0.6
+    return a
+})
+const stepSounds = [step1, step2, step3, step4, step5].map(f => new Audio(f))
+const uncoverSounds = [uncover1, uncover2, uncover3].map(f => {
+    const a = new Audio(f)
+    a.volume = 0.8
+    return a
+})
+const incorrectFlagSound = new Audio(incorrectFlag)
+incorrectFlagSound.volume = 0.5
+const explodeSound = new Audio(explode)
+const gameSuccessSound = new Audio(gameSuccess)
+
 const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMapping, isPrivate }) => {
     const { socket } = useSocket()
     const { gameId } = useParams()
@@ -53,7 +86,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const [fadeOut, goToSummary, startFadingOut] = useDelayedFlag(700)
 
     const [cellSizePx, containerRef, scoreboardRef, defeatedMessageRef] = useCellSize(props.dims)
-    const { showOnScreenControls, invertControls, controlsOnLeft, setSettings } = usePreferences()
+    const { showOnScreenControls, invertControls, controlsOnLeft, disableSoundEffects, setSettings } = usePreferences()
 
     const handlePlayerAction = (actionType: ActionType, direction: Direction) => {
         socket.emit('player_action', { gameId, actionType, direction })
@@ -96,6 +129,13 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
         socket.on('action_result', (actionResult?: ActionResult) => {
             if (actionResult) {
                 resolveAction(actionResult)
+                if (!disableSoundEffects && actionResult.players[playerColor]) {
+                    if (actionResult.events?.includes('MineCellStepped')) explodeSound.play()
+                    else if (actionResult.events?.includes('MineFreeCellFlagged')) incorrectFlagSound.play()
+                    else if (actionResult.events?.includes('MineCellFlagged')) pickRandom(flagSounds).play()
+                    else if (actionResult.events?.includes('MineFreeCellStepped')) pickRandom(uncoverSounds).play()
+                    else if (actionResult.events?.includes('UncoveredCellStepped')) pickRandom(stepSounds).play()
+                }
             }
         })
         socket.on('game_finished', (finalGameState: RawGameState) => {
@@ -109,8 +149,11 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
 
     useEffect(() => {
         if (props.end) {
+            if (!disableSoundEffects && props.minesLeft === 0) {
+                gameSuccessSound.play()
+            }
             GameSummary.preload()
-            const timeout = setTimeout(startFadingOut, props.minesLeft ? 2000 : 1000)
+            const timeout = setTimeout(startFadingOut, 2000)
             return () => clearTimeout(timeout)
         }
     }, [props.end])

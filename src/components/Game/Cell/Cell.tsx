@@ -1,4 +1,4 @@
-import { useState, memo, useEffect, useLayoutEffect } from 'react'
+import { useState, memo, useEffect, useLayoutEffect, useRef } from 'react'
 import { Cell as CellType, PlayerColor } from '../../../types/model'
 import cn from 'classnames'
 import { FlagIcon } from '../../../icons/Flag/FlagIcon'
@@ -27,6 +27,7 @@ export const Cell = memo<CellProps>(({ cell, steppingPlayersColors, event }) => 
         { [cellClassName]: !!cell },
         { ...toClassNameFlag(flaggingPlayer), [`mines-${minesAround}`]: !!minesAround && !hasMine, uncovered: isUncovered, mine: uncoveredMine },
     )
+    const cellRef = useRef<HTMLDivElement>(null)
 
     const [incorrectFlagColor, setIncorrectFlagColor] = useState<PlayerColor | null>(null)
     const [pointsChange, setPointsChange] = useState<number | null>(null)
@@ -53,7 +54,7 @@ export const Cell = memo<CellProps>(({ cell, steppingPlayersColors, event }) => 
     useEffect(() => {
         if ((steppingPlayersColors?.length || 0) > 1) {
             steppingPlayersColors!.forEach((color, index) => {
-                (document.querySelector(`.${cellClassName}`) as HTMLElement).style.setProperty(
+                cellRef.current!.style.setProperty(
                     `--player-${index + 1}-color`,
                     getComputedStyle(document.documentElement).getPropertyValue(`--player-${color.toLowerCase()}`),
                 )
@@ -70,7 +71,7 @@ export const Cell = memo<CellProps>(({ cell, steppingPlayersColors, event }) => 
     }
 
     return (
-        <div className={className}>
+        <div className={className} ref={cellRef}>
             {isUncovered && hasMine && <MineIcon />}
             <div className="cell-content">
                 {isUncovered && !hasMine && (minesAround && minesAround > 0 ? minesAround : '')}

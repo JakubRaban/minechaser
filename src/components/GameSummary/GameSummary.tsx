@@ -8,8 +8,10 @@ import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { PrivateGameLoading, ShareDialog } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
+import applause from '/sounds/applause.wav'
 
 import './GameSummary.scss'
+import { usePreferences } from '../../hooks/context/usePreferences'
 
 interface GameSummaryProps {
     gameState: GameState
@@ -45,20 +47,26 @@ const firstPlaceDead = [
 
 type RankedPlayer = Player & { ranking: number }
 
+const getRankedPlayers = (gameState: GameState) => {
+    const positions: Record<number, number> = {}
+    const players = Object.entries(gameState.game.players) as [PlayerColor, RankedPlayer][]
+    players.sort(([, player1], [, player2]) => (player2.score - (player2.alive ? 0 : 10000)) - (player1.score - (player1.alive ? 0 : 10000)))
+    players.forEach(([, player], index) => {
+        const ranking = positions[player.score] ?? index + 1
+        player.ranking = ranking
+        positions[player.score] = ranking
+    })
+    return players
+}
+
 const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColor, isPrivate, isSinglePlayer }) => {
     const { gameId } = useParams()
     const playAgainLink = isSinglePlayer ? '/new-game/single-player' : isPrivate ? '/new-game' : '/queue'
     const playAgainState = isPrivate ? { restartedGameId: gameId } : undefined
 
-    const positions = useRef<Record<number, number>>({})
-    const players = Object.entries(gameState.game.players) as [PlayerColor, RankedPlayer][]
-    players.sort(([, player1], [, player2]) => (player2.score - (player2.alive ? 0 : 10000)) - (player1.score - (player1.alive ? 0 : 10000)))
-    players.forEach(([, player], index) => {
-        const ranking = positions.current[player.score] ?? index + 1
-        player.ranking = ranking
-        positions.current[player.score] = ranking
-    })
+    const players = getRankedPlayers(gameState)
 
+    const { alive: currentPlayerAlive, score: currentPlayerScore } = gameState.game.players[playerColor]!
     const currentPlayerName = colorMapping[playerColor]!
     const currentPlayerStanding = players.find(([color]) => color === playerColor)![1].ranking
 
@@ -68,19 +76,26 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
     const totalCells = dims[0] * dims[1]
     
     const [shareDialogOpen, setShareDialogOpen] = useState(false)
-    usePreload(ShareDialog)
-    
-    useEffect(() => {
-        if (isPrivate) {
-            PrivateGameLoading.preload()
-        }
-    }, [isPrivate])
 
     const [animationStopped, setAnimationStopped] = useState(false)
     const pickedGreetings = useRef(pickRandom(greetings))
     const pickedFirstPlaceDead = useRef(pickRandom(firstPlaceDead))
 
     const gameTimeout = gameState.end! >= gameState!.endScheduled!
+    const { disableSoundEffects } = usePreferences()
+    usePreload(ShareDialog)
+
+    useEffect(() => {
+        if (isPrivate) {
+            PrivateGameLoading.preload()
+        }
+    }, [isPrivate])
+
+    useEffect(() => {
+        if (!disableSoundEffects && !gameTimeout && currentPlayerStanding === 1 && currentPlayerAlive) {
+            new Audio(applause).play()
+        }
+    }, [])
 
     return (
         <div className={cn('game-summary', { 'single-player': isSinglePlayer, 'no-animation': animationStopped })} onClick={() => setAnimationStopped(true)}>
@@ -90,9 +105,9 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
             ) : (
                 <h3>
                     {!isSinglePlayer ? <>You finished in the <span>{standingsMapping[currentPlayerStanding].text}</span> place </> : <>You finished the game </>}
-                    with <span>{gameState.game.players[playerColor]!.score} points</span>.
+                    with <span>{currentPlayerScore} points</span>.
                     {!isSinglePlayer && currentPlayerStanding === 1 && (
-                        <>&nbsp;{gameState.game.players[playerColor]!.alive ? `${pickedGreetings.current}!`: `${pickedFirstPlaceDead.current}...`}</>
+                        <>&nbsp;{currentPlayerAlive ? `${pickedGreetings.current}!`: `${pickedFirstPlaceDead.current}...`}</>
                     )}
                 </h3>
             )}

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import toast, { Toast, Toaster } from 'react-hot-toast'
 import config from '../../config'
 import { ExternalPageIcon } from '../../icons/ExternalPage/ExternalPageIcon'
@@ -9,11 +9,20 @@ const CookieToast = () => {
     const { STORAGE: storage } = config
     const dateAccepted = Number(storage.getItem('rmCookiesAccepted'))
     const acceptExpired = !dateAccepted || Date.now() - dateAccepted > 180 * 24 * 60 * 60 * 1000
+    const [displayed, setDisplayed] = useState(!acceptExpired)
 
     const onAccept = (t: Toast) => {
         storage.setItem('rmCookiesAccepted', String(Date.now()))
         window.dispatchEvent(new Event('cookiesaccept'))
         toast.dismiss(t.id)
+        setDisplayed(true)
+    }
+
+    const onReject = (t: Toast) => {
+        storage.removeItem('rmCookiesAccepted')
+        window.dispatchEvent(new Event('cookiesnonaccept'))
+        toast.dismiss(t.id)
+        setDisplayed(true)
     }
 
     useEffect(() => {
@@ -29,7 +38,7 @@ const CookieToast = () => {
                     </div>
                     <div className="buttons">
                         <button onClick={() => onAccept(t)}>Accept</button>
-                        <button onClick={() => toast.dismiss(t.id)} className="secondary outline">Reject</button>
+                        <button onClick={() => onReject(t)} className="secondary outline">Reject</button>
                     </div>
                 </span>
             ), { duration: Number.POSITIVE_INFINITY })
@@ -38,7 +47,7 @@ const CookieToast = () => {
         }
     }, [])
 
-    return acceptExpired ? <Toaster position="bottom-right" toastOptions={{ className: 'toast cookie-toast' }} /> : null
+    return !displayed ? <Toaster position="bottom-right" toastOptions={{ className: 'toast cookie-toast' }} /> : null
 }
 
 export default CookieToast

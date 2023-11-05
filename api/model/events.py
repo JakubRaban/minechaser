@@ -16,6 +16,12 @@ class MineFreeCellStepped(GameEvent):
 
 
 @dataclass(kw_only=True)
+class UncoveredCellStepped(GameEvent):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+@dataclass(kw_only=True)
 class MineCellStepped(GameEvent):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -59,6 +65,6 @@ class ActionOutcome:
         for act in ([action] if isinstance(action, CellAction) else action):
             self.event_types.add(type(act.event))
             self.cells.add(act.cell)
-            self.points_change = act.event.points_change
+            self.points_change += act.event.points_change
             self.kill = self.kill or act.event.kill
         return self

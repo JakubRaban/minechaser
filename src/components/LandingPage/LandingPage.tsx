@@ -73,7 +73,7 @@ export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContact
                     <Link to="/about">Jakub Raban</Link>. All Rights Reserved.
                 </span>
                 <span><Link to="/privacypolicy">Privacy Policy</Link></span>
-                <span><Link to="/contact">Feedback/Report a Problem</Link></span>
+                <span><Link to="/contact">Feedback/Report an Issue</Link></span>
             </footer>
             {(error || success) && <Suspense><StatusToast error={error} success={success} /></Suspense>}
             {showAboutDialog && <Suspense><AboutDialog /></Suspense>}

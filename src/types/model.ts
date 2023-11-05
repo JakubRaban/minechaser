@@ -1,6 +1,6 @@
 export type Position = [number, number]
 export type PlayerColor = 'RED' | 'GREEN' | 'BLUE' | 'YELLOW'
-export type EventType = 'MineFreeCellStepped' | 'MineCellStepped' | 'MineFreeCellFlagged' | 'MineCellFlagged' | 'NoMinesLeft'
+export type EventType = 'MineFreeCellStepped' | 'MineCellStepped' | 'MineFreeCellFlagged' | 'MineCellFlagged' | 'NoMinesLeft' | 'UncoveredCellStepped'
 export type PlayerColorMapping = Partial<Record<PlayerColor, string>>
 
 export interface RawGameState {

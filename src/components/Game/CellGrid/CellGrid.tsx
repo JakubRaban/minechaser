@@ -74,7 +74,7 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
     }, [secondsUntilStart])
 
     useEffect(() => {
-        if (secondsUntilStart > initialSecondsUntilStart.current + 1 && secondsUntilStart > 0) {
+        if (secondsUntilStart + 1 < initialSecondsUntilStart.current && secondsUntilStart > 0) {
             beepSound.play()
         } else if (secondsUntilStart === 0 && Date.now() - gameStart.getTime() < 1000) {
             finalBeepSound.play()

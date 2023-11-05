@@ -10,6 +10,9 @@ import { usePreferences } from '../../../hooks/context/usePreferences'
 import { useDateDiff } from '../../../hooks/useDateDiff'
 import { ControlsInstructions } from './ControlsInstructions/ControlsInstructions'
 
+import beep from '/sounds/beep.mp3'
+import finalBeep from '/sounds/finalbeep.mp3'
+
 import './CellGrid.scss'
 
 interface CellGridProps {
@@ -30,6 +33,9 @@ const colorToCorner: Record<PlayerColor, string> = {
     'YELLOW': 'bottom-right',
 }
 
+const beepSound = new Audio(beep)
+const finalBeepSound = new Audio(finalBeep)
+
 const playersToPositions = (players: Players, playerColor: PlayerColor, optimisticPosition: Position) => {
     const result: Record<string, PlayerColor[]> = {}
     const playerPositions = Object.entries(players).filter(([, player]) => player.alive).map(([color, player]) => [color === playerColor ? optimisticPosition : player.position, color as PlayerColor] as const)
@@ -45,8 +51,8 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
     
     const [height, width] = dims
     const [secondsUntilStart, setSecondsUntilStart] = useState(dateDiff(gameStart, new Date()).seconds)
+    const initialSecondsUntilStart = useRef(secondsUntilStart)
     const hasStarted = secondsUntilStart <= 0
-
 
     const positionToPlayersColors = playersToPositions(players, playerColor, optimisticPosition)
     const interval = useRef<NodeJS.Timeout | null>(null)
@@ -58,12 +64,20 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
         if (!interval.current && secondsUntilStart > 0) {
             interval.current = setInterval(() => {
                 setSecondsUntilStart(dateDiff(gameStart, new Date()).seconds)
-            }, 200)
+            }, 500)
         } else if (secondsUntilStart <= 0) {
             clearInterval(interval.current!)
         }
         return () => {
             if (secondsUntilStart <= 0) clearInterval(interval.current!)
+        }
+    }, [secondsUntilStart])
+
+    useEffect(() => {
+        if (secondsUntilStart > initialSecondsUntilStart.current + 1 && secondsUntilStart > 0) {
+            beepSound.play()
+        } else if (secondsUntilStart === 0 && Date.now() - gameStart.getTime() < 1000) {
+            finalBeepSound.play()
         }
     }, [secondsUntilStart])
 

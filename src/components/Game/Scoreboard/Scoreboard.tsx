@@ -19,7 +19,6 @@ interface ScoreboardProps {
 
 export const Scoreboard = memo(forwardRef<HTMLDivElement, ScoreboardProps>(({ minesLeft, players, playerColor, colorMapping, gameStart, endScheduled, isFinished }, ref) => {
     const playerEntries = Object.entries(players) as [PlayerColor, Player][]
-    const { colorBlindMode } = usePreferences()
 
     return (
         <div className="scoreboard-wrapper">
@@ -32,7 +31,7 @@ export const Scoreboard = memo(forwardRef<HTMLDivElement, ScoreboardProps>(({ mi
                     {playerEntries.map(([color, player], i) => (
                         <Fragment key={color}>
                             {i > 0 && i < playerEntries.length && <div className="separator" />}
-                            <ScoreboardElement highlight={color === playerColor} label={colorMapping[color]!} color={color} backdrop={!colorBlindMode && !player.alive} className="player-scoreboard">
+                            <ScoreboardElement highlight={color === playerColor} label={colorMapping[color]!} color={color} backdrop={!player.alive} className="player-scoreboard">
                                 <PlayerScoreboard key={color} score={player.score} />
                             </ScoreboardElement>
                         </Fragment>

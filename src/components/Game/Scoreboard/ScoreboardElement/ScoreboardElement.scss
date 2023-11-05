@@ -16,6 +16,10 @@
     &.highlight {
       font-weight: bold;
     }
+
+    &.strike {
+      text-decoration: line-through;
+    }
   }
 
   .scoreboard-element-content {

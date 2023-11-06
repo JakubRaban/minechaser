@@ -58,7 +58,7 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
     const interval = useRef<NodeJS.Timeout | null>(null)
     
     const playerColorToClassName = usePlayerColorToClassName()
-    const { colorBlindMode } = usePreferences()
+    const { colorBlindMode, disableSoundEffects } = usePreferences()
 
     useEffect(() => {
         if (!interval.current && secondsUntilStart > 0) {
@@ -74,10 +74,12 @@ export const CellGrid: FC<CellGridProps> = ({ dims, cells, players, playerColor,
     }, [secondsUntilStart])
 
     useEffect(() => {
-        if (secondsUntilStart + 1 < initialSecondsUntilStart.current && secondsUntilStart > 0) {
-            beepSound.play()
-        } else if (secondsUntilStart === 0 && Date.now() - gameStart.getTime() < 1000) {
-            finalBeepSound.play()
+        if (!disableSoundEffects) {
+            if (secondsUntilStart + 1 < initialSecondsUntilStart.current && secondsUntilStart > 0) {
+                beepSound.play()
+            } else if (secondsUntilStart === 0 && Date.now() - gameStart.getTime() < 1000) {
+                finalBeepSound.play()
+            }
         }
     }, [secondsUntilStart])
 

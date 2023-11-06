@@ -17,6 +17,7 @@ export const AppRouter = memo<AppRouterProps>(({ authenticated }) => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/about" element={<LandingPage showAboutDialog />} />
                 <Route path="/contact" element={<LandingPage showContactDialog />} />
+                <Route path="/credits" element={<LandingPage showCreditsDialog />} />
                 <Route path="/queue" element={
                     <Suspense fallback={<LoadingScreen />}>
                         <AuthenticationGuard authenticated={authenticated}>

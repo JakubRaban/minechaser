@@ -2,7 +2,7 @@ import { FC, lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
-import { HowToPlay, PrivateGameLoading, Queue, AboutDialog, ContactDialog } from '../lazy-components'
+import { HowToPlay, PrivateGameLoading, Queue, AboutDialog, ContactDialog, CreditsDialog } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
 import { useKeyMap } from '../../hooks/useKeyMap'
 import { usePreferences } from '../../hooks/context/usePreferences'
@@ -15,13 +15,14 @@ const StatusToast = lazy(() => import('./StatusToast/StatusToast'))
 interface LandingPageProps {
     showAboutDialog?: boolean
     showContactDialog?: boolean
+    showCreditsDialog?: boolean
 }
 
-export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContactDialog }) => {
+export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContactDialog, showCreditsDialog }) => {
     const { error, success } = useLocation().state ?? {}
-    usePreload(Queue, PrivateGameLoading, HowToPlay)
     const { showOnScreenControls: isMobile, name } = usePreferences()
     const { KeyD, KeyW, KeyS, KeyA } = useKeyMap()
+    usePreload(Queue, PrivateGameLoading, HowToPlay)
 
     return (
         <div className="landing-page">
@@ -74,10 +75,12 @@ export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContact
                 </span>
                 <span><Link to="/privacypolicy">Privacy Policy</Link></span>
                 <span><Link to="/contact">Feedback/Report an Issue</Link></span>
+                <span><Link to="/credits">Credits</Link></span>
             </footer>
             {(error || success) && <Suspense><StatusToast error={error} success={success} /></Suspense>}
             {showAboutDialog && <Suspense><AboutDialog /></Suspense>}
             {showContactDialog && <Suspense><ContactDialog /></Suspense>}
+            {showCreditsDialog && <Suspense><CreditsDialog /></Suspense>}
         </div>
     )
 }

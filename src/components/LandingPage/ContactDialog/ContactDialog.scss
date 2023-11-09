@@ -2,7 +2,19 @@
 
 .contact-dialog {
   p {
-    font-size: $text24;
-    text-align: center;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  textarea {
+    min-height: 20vh;
+  }
+
+  .spinner {
+    display: inline-block;
+    height: 1.5em;
+    width: 1.5em;
+    margin-inline-start: 1em;
+    background: var(--pico-icon-loading) no-repeat center;
   }
 }

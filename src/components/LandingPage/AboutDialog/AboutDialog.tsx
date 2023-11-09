@@ -1,5 +1,6 @@
 import jakub from '/images/jakub256.jpeg'
 import { Dialog, DialogHeader } from '../../lib/Dialog/Dialog'
+import { Link } from 'react-router-dom'
 
 import './AboutDialog.scss'
 
@@ -19,12 +20,10 @@ const AboutDialog = () =>
                 <p>
                     MineChaser is my first publicly available website and I really hope you enjoy it.
                     Feel free to reach out to me with any suggestions, feedback, or if you want to have a coffee
-                    together
-                    in Geneva.
+                    with me in Geneva.
                 </p>
                 <p>
-                    <span><a href="mailto:minechaser@jakubraban.com" target="_blank"
-                        rel="noreferrer">Email</a></span>
+                    <span><Link to="/contact">Send a Message</Link></span>
                     <span><a href="https://linkedin.com/in/jakub-raban/" target="_blank"
                         rel="noreferrer">LinkedIn</a></span>
                     <span><a href="https://github.com/JakubRaban" target="_blank"

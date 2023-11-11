@@ -14,6 +14,7 @@ import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/Screen
 import { MessageBox } from '../lib/MessageBox/MessageBox'
 
 import './Queue.scss'
+import { useAudio } from '../../hooks/context/useAudio'
 
 const progressUpdaterFactory = (waitingStart: Date) => {
     const start = waitingStart
@@ -42,6 +43,7 @@ const Queue: FC = () => {
     const { name: currentPlayerName } = usePreferences()
     const navigate = useNavigate()
     const { pathname } = useLocation()
+    const { stopMusic } = useAudio()
     usePreload(Game, GameWrapper)
 
     const [players, setPlayers] = useState<string[]>([])
@@ -74,6 +76,7 @@ const Queue: FC = () => {
 
     useEffect(() => {
         if (dequeuedSuccessfully && !navigateToGame) {
+            stopMusic()
             setTimeout(startFadingOut, 1500)
         } else if (dequeuedSuccessfully && navigateToGame) {
             const { gameId, ...stateData } = dequeuedSuccessfully

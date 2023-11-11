@@ -11,9 +11,10 @@ import cn from 'classnames'
 import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/ScreenOrientationWarning'
 import { Tooltip } from 'react-tooltip'
 import { Link } from 'react-router-dom'
+import { ConfirmCancelContainer } from '../lib/ConfirmCancelContainer/ConfirmCancelContainer'
+import { useAudio } from '../../hooks/context/useAudio'
 
 import './PrivateGameLobby.scss'
-import { ConfirmCancelContainer } from '../lib/ConfirmCancelContainer/ConfirmCancelContainer'
 
 export type GameStartFn = (data: GameStateData) => void
 
@@ -27,6 +28,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
     const { socket } = useSocket()
     const { gameId } = useParams()
     const { name: currentPlayerName } = usePreferences()
+    const { stopMusic } = useAudio()
     usePreload(Game)
 
     const [players, setPlayers] = useState(playersProp)
@@ -41,6 +43,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
         })
         socket.on('private_game_started', ({ state }) => {
             gameStarted.current = true
+            stopMusic()
             onGameStart(state)
         })
         return () => {
@@ -64,7 +67,10 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
         socket.emit('start_private_game', { gameId, size })
     }
 
-    const copyGameLink = () => navigator.clipboard.writeText(window.location.href).then(() => setLinkCopied(true))
+    const copyGameLink = () => navigator.clipboard.writeText(window.location.href).then(() => {
+        setLinkCopied(true)
+        setTimeout(() => setLinkCopied(false), 5000)
+    })
     const joiningDisabled = players.length < 2
 
     return (

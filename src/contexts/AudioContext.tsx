@@ -2,7 +2,7 @@ import { FC, PropsWithChildren, useRef, createContext } from 'react'
 import { pickRandom } from '../helpers'
 import { usePreferences } from '../hooks/context/usePreferences'
 
-import game1 from '/sounds/gamemusic1.mp3'
+import game1 from 'sounds/gamemusic1.mp3'
 import game2 from '/sounds/gamemusic2.mp3'
 import game3 from '/sounds/gamemusic3.mp3'
 import game4 from '/sounds/gamemusic4.mp3'
@@ -14,7 +14,7 @@ const menuAudio = new Audio(menu)
 interface AudioControl {
     playMenuMusic: () => void
     playGameMusic: () => void
-    stopPlaying: () => void
+    stopMusic: () => void
 }
 
 function stop(audio?: HTMLAudioElement) {
@@ -80,14 +80,14 @@ export const AudioContextProvider: FC<PropsWithChildren> = ({ children }) => {
         }
     }
     
-    const stopPlaying = () => {
+    const stopMusic = () => {
         if (!disableMusic) {
             fadeOut(audioRef.current)
         }
     }
     
     return (
-        <AudioContext.Provider value={{ playGameMusic, playMenuMusic, stopPlaying } as AudioControl}>
+        <AudioContext.Provider value={{ playGameMusic, playMenuMusic, stopMusic } as AudioControl}>
             {children}
         </AudioContext.Provider>
     )

@@ -76,7 +76,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const { gameId } = useParams()
     const dateDiff = useDateDiff()
     const gamePageRef = useRef<HTMLDivElement>(null)
-    const { playGameMusic, stopPlaying: stopPlayingGameMusic } = useAudio()
+    const { playGameMusic, stopMusic } = useAudio()
 
     const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState, playerColor)
     const isSinglePlayer = Object.entries(colorMapping).length === 1
@@ -156,7 +156,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
                 gameSuccessSound.play()
             }
             GameSummary.preload()
-            stopPlayingGameMusic()
+            stopMusic()
             const timeout = setTimeout(startFadingOut, 2000)
             return () => clearTimeout(timeout)
         }

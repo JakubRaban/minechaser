@@ -23,7 +23,7 @@ export const AuthenticationGuard: FC<PropsWithChildren<{ authenticated: boolean 
     if (!authenticated || !isNameSetCallExecuted) {
         return <LoadingScreen />
     } else if (!name) {
-        return <PreferencesSetter buttonText="Join the Game" />
+        return <PreferencesSetter buttonText="Join the Game" showCollapsibleMenu />
     } else {
         return <>{children}</>
     }

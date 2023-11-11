@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, FC, FormEvent, useEffect, useRef, useState } from 'react'
+import { BaseSyntheticEvent, FC, FormEvent, PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { useSocket } from '../../hooks/context/useSocket'
 import { generateRandomUsername } from '../../helpers'
 import cn from 'classnames'
@@ -20,14 +20,27 @@ const nameValidator = (name: string) => {
     return ''
 }
 
+const AdvancedOptions: FC<PropsWithChildren<{ collapsible?: boolean }>> = ({ children, collapsible }) => {
+    return collapsible ? (
+        <details className="advanced">
+            <summary>Show more options</summary>
+            {children}
+        </details>
+    ) : (
+        <div className="advanced expanded">
+            {children}
+        </div>
+    )
+}
+
 interface NameSetterProps {
     buttonText: string
     onConfirm?: () => void
     onCancel?: () => void
-    openDetails?: boolean
+    showCollapsibleMenu?: boolean
 }
 
-export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm, onCancel, openDetails }) => {
+export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm, onCancel, showCollapsibleMenu }) => {
     const { socket } = useSocket()
     const { setSettings, setName, name, ...settings } = usePreferences()
     const [nameState, setNameState] = useState(name || '')
@@ -95,8 +108,17 @@ export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm, 
                         <small id="name-error">{nameError}</small>
                     </label>
 
-                    <details open={openDetails}>
-                        <summary>Adjust Your Experience</summary>
+                    <label>
+                        <input name="disableMusic" checked={settings.disableMusic} type="checkbox" role="switch" onChange={setFieldValue} />
+                        Disable Music
+                    </label>
+
+                    <label>
+                        <input name="disableSoundEffects" checked={settings.disableSoundEffects} type="checkbox" role="switch" onChange={setFieldValue} />
+                        Disable Sound Effects
+                    </label>
+
+                    <AdvancedOptions collapsible={showCollapsibleMenu}>
                         <label>
                             <input name="showOnScreenControls" checked={settings.showOnScreenControls} type="checkbox" role="switch" onChange={setFieldValue} />
                             Show on-screen controls
@@ -115,12 +137,7 @@ export const PreferencesSetter: FC<NameSetterProps> = ({ buttonText, onConfirm, 
                             <input name="colorBlindMode" checked={settings.colorBlindMode} type="checkbox" role="switch" onChange={setFieldValue} />
                             Color Blind Mode
                         </label>
-
-                        <label>
-                            <input name="disableSoundEffects" checked={settings.disableSoundEffects} type="checkbox" role="switch" onChange={setFieldValue} />
-                            Disable Sound Effects
-                        </label>
-                    </details>
+                    </AdvancedOptions>
                 </fieldset>
 
                 <ConfirmCancelContainer>

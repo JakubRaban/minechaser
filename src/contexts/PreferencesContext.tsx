@@ -2,11 +2,12 @@ import { createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useStat
 import config from '../config'
 
 export interface UserPreferences {
-    name?: string,
-    invertControls: boolean,
-    colorBlindMode: boolean,
-    disableSoundEffects: boolean,
-    showOnScreenControls: boolean,
+    name?: string
+    invertControls: boolean
+    colorBlindMode: boolean
+    disableSoundEffects: boolean
+    disableMusic: boolean
+    showOnScreenControls: boolean
     controlsOnLeft: boolean
 }
 
@@ -21,6 +22,7 @@ export const PreferencesContextProvider: FC<PropsWithChildren> = ({ children }) 
         invertControls: false,
         colorBlindMode: false,
         disableSoundEffects: false,
+        disableMusic: false,
         showOnScreenControls: ('ontouchstart' in window) || (navigator.maxTouchPoints > 0),
         controlsOnLeft: false,
     })

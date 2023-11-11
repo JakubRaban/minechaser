@@ -34,7 +34,9 @@ const colorToCorner: Record<PlayerColor, string> = {
 }
 
 const beepSound = new Audio(beep)
+beepSound.volume = 0.8
 const finalBeepSound = new Audio(finalBeep)
+finalBeepSound.volume = 0.8
 
 const playersToPositions = (players: Players, playerColor: PlayerColor, optimisticPosition: Position) => {
     const result: Record<string, PlayerColor[]> = {}

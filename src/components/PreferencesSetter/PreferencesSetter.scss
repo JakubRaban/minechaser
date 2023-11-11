@@ -11,7 +11,13 @@
   max-width: min(calc(100% - 20px), 768px);
   margin: 0 auto;
 
-  details {
+  .advanced {
+    margin-block-start: $spacing16;
+
+    &.expanded {
+      display: contents;
+    }
+
     summary {
       display: flex;
 

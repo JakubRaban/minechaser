@@ -6,6 +6,7 @@ import config from './config'
 import { PreferencesContextProvider } from './contexts/PreferencesContext'
 import { SocketIOContext } from './contexts/SocketIOContext'
 import { TimeOffsetContextProvider } from './contexts/TimeOffsetContext'
+import { AudioContextProvider } from './contexts/AudioContext'
 
 import './styles/setup.scss'
 
@@ -16,7 +17,9 @@ root.render(
     <SocketIOContext.Provider value={{ socket: io(config.SERVER_URL, { autoConnect: false, closeOnBeforeunload: false }) }}>
         <PreferencesContextProvider>
             <TimeOffsetContextProvider>
-                <App />
+                <AudioContextProvider>
+                    <App />
+                </AudioContextProvider>
             </TimeOffsetContextProvider>
         </PreferencesContextProvider>
     </SocketIOContext.Provider>,

@@ -1,4 +1,4 @@
-import { FC, lazy, Suspense } from 'react'
+import { FC, lazy, Suspense, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
@@ -9,6 +9,7 @@ import { usePreferences } from '../../hooks/context/usePreferences'
 import { ExternalPageIcon } from '../../icons/ExternalPage/ExternalPageIcon'
 
 import './LandingPage.scss'
+import { useAudio } from '../../hooks/context/useAudio'
 
 const StatusToast = lazy(() => import('./StatusToast/StatusToast'))
 
@@ -22,7 +23,12 @@ export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContact
     const { error, success } = useLocation().state ?? {}
     const { showOnScreenControls: isMobile, name } = usePreferences()
     const { KeyD, KeyW, KeyS, KeyA } = useKeyMap()
+    const { playMenuMusic } = useAudio()
     usePreload(Queue, PrivateGameLoading, HowToPlay)
+
+    useEffect(() => {
+        playMenuMusic()
+    }, [])
 
     return (
         <div className="landing-page">

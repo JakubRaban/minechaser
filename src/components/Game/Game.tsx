@@ -16,6 +16,7 @@ import { calculatePosition, pickRandom } from '../../helpers'
 import { useDateDiff } from '../../hooks/useDateDiff'
 import { useStateRef } from '../../hooks/useStateRef'
 import { Link } from 'react-router-dom'
+import { useAudio } from '../../hooks/context/useAudio'
 
 import flag1 from '/sounds/flag1.mp3'
 import flag2 from '/sounds/flag2.mp3'
@@ -75,6 +76,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
     const { gameId } = useParams()
     const dateDiff = useDateDiff()
     const gamePageRef = useRef<HTMLDivElement>(null)
+    const { playGameMusic, stopPlaying: stopPlayingGameMusic } = useAudio()
 
     const [props, gameState, events, resolveAction, setGameState] = useGameState(rawGameState, playerColor)
     const isSinglePlayer = Object.entries(colorMapping).length === 1
@@ -125,6 +127,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
 
     useEffect(() => {
         gamePageRef.current?.focus()
+        playGameMusic()
 
         socket.on('action_result', (actionResult?: ActionResult) => {
             if (actionResult) {
@@ -153,6 +156,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
                 gameSuccessSound.play()
             }
             GameSummary.preload()
+            stopPlayingGameMusic()
             const timeout = setTimeout(startFadingOut, 2000)
             return () => clearTimeout(timeout)
         }

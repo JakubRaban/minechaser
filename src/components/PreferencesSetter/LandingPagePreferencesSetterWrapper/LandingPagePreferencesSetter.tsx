@@ -7,5 +7,5 @@ export const LandingPagePreferencesSetter = () => {
     const onConfirm = () => navigate('/', { state: { success: 'Preferences saved' } })
     const onCancel = () => navigate('/')
     
-    return <PreferencesSetter buttonText="Save" onConfirm={onConfirm} onCancel={onCancel} openDetails />
+    return <PreferencesSetter buttonText="Save" onConfirm={onConfirm} onCancel={onCancel} />
 }

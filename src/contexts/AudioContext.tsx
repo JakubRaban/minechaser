@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useRef, createContext } from 'react'
+import { FC, PropsWithChildren, useRef, createContext, useEffect } from 'react'
 import { pickRandom } from '../helpers'
 import { usePreferences } from '../hooks/context/usePreferences'
 
@@ -8,8 +8,13 @@ import game3 from '/sounds/gamemusic3.mp3'
 import game4 from '/sounds/gamemusic4.mp3'
 import menu from '/sounds/menumusic.mp3'
 
-const gameAudios = [game1, game2, game3, game4].map(f => new Audio(f))
+const gameAudios = [game1, game2, game3, game4].map(f => {
+    const a = new Audio(f)
+    a.loop = true
+    return a
+})
 const menuAudio = new Audio(menu)
+menuAudio.loop = true
 
 interface AudioControl {
     playMenuMusic: () => void
@@ -63,7 +68,6 @@ export const AudioContextProvider: FC<PropsWithChildren> = ({ children }) => {
             stop(audioRef.current)
             audioRef.current = pickRandom(gameAudios)
             audioRef.current.volume = 0.1
-            audioRef.current.loop = true
             tryPlaying(audioRef.current)
             fadeIn(audioRef.current)
         }
@@ -74,20 +78,23 @@ export const AudioContextProvider: FC<PropsWithChildren> = ({ children }) => {
             stop(audioRef.current)
             audioRef.current = menuAudio
             audioRef.current.volume = 0.1
-            audioRef.current.loop = true
             tryPlaying(audioRef.current)
             fadeIn(audioRef.current)
         }
     }
     
     const stopMusic = () => {
-        if (!disableMusic) {
-            fadeOut(audioRef.current)
-        }
+        fadeOut(audioRef.current)
     }
+
+    useEffect(() => {
+        if (disableMusic) {
+            stopMusic()
+        }
+    }, [disableMusic])
     
     return (
-        <AudioContext.Provider value={{ playGameMusic, playMenuMusic, stopMusic } as AudioControl}>
+        <AudioContext.Provider value={{ playGameMusic, playMenuMusic, stopMusic }}>
             {children}
         </AudioContext.Provider>
     )

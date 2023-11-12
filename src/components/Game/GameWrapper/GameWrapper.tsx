@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router'
-import { RawGameState, PlayerColor, PlayerColorMapping } from '../../../types/model'
+import { PlayerColor, PlayerColorMapping, RawGameState } from '../../../types/model'
 import { PrivateGameInviteeWrapper } from './PrivateGameInviteeWrapper/PrivateGameInviteeWrapper'
 import { PrivateGameLobby } from '../../PrivateGameLobby/PrivateGameLobby'
 import { useSocket } from '../../../hooks/context/useSocket'

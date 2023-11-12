@@ -1,4 +1,4 @@
-import { useState, memo, useEffect, useLayoutEffect, useRef } from 'react'
+import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Cell as CellType, PlayerColor } from '../../../types/model'
 import cn from 'classnames'
 import { FlagIcon } from '../../../icons/Flag/FlagIcon'

@@ -3,7 +3,6 @@ import { PlayerScoreboard } from './PlayerScoreboard/PlayerScoreboard'
 import { Player, PlayerColor, PlayerColorMapping, Players } from '../../../types/model'
 import { ScoreboardElement } from './ScoreboardElement/ScoreboardElement'
 import { Stopwatch } from './Stopwatch/Stopwatch'
-import { usePreferences } from '../../../hooks/context/usePreferences'
 
 import './Scoreboard.scss'
 

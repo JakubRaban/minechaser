@@ -1,10 +1,12 @@
-import { Suspense, memo } from 'react'
+import { memo, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { LandingPage } from './LandingPage/LandingPage'
 import { AuthenticationGuard } from './AuthenticationGuard'
-import { GameWrapper, HowToPlay, PrivateGameLoading, Queue, PrivacyPolicyPage } from './lazy-components'
+import { GameWrapper, HowToPlay, PrivacyPolicyPage, PrivateGameLoading, Queue } from './lazy-components'
 import { LoadingScreen } from './lib/LoadingScreen/LoadingScreen'
-import { LandingPagePreferencesSetter } from './PreferencesSetter/LandingPagePreferencesSetterWrapper/LandingPagePreferencesSetter'
+import {
+    LandingPagePreferencesSetter,
+} from './PreferencesSetter/LandingPagePreferencesSetterWrapper/LandingPagePreferencesSetter'
 
 interface AppRouterProps {
     authenticated: boolean

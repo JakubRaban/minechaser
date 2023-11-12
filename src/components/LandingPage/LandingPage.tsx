@@ -2,14 +2,14 @@ import { FC, lazy, Suspense, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { LandingPageButton } from '../lib/LandingPageButton/LandingPageButton'
-import { HowToPlay, PrivateGameLoading, Queue, AboutDialog, ContactDialog, CreditsDialog } from '../lazy-components'
+import { AboutDialog, ContactDialog, CreditsDialog, HowToPlay, PrivateGameLoading, Queue } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
 import { useKeyMap } from '../../hooks/useKeyMap'
 import { usePreferences } from '../../hooks/context/usePreferences'
 import { ExternalPageIcon } from '../../icons/ExternalPage/ExternalPageIcon'
+import { useAudio } from '../../hooks/context/useAudio'
 
 import './LandingPage.scss'
-import { useAudio } from '../../hooks/context/useAudio'
 
 const StatusToast = lazy(() => import('./StatusToast/StatusToast'))
 
@@ -27,7 +27,8 @@ export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContact
     usePreload(Queue, PrivateGameLoading, HowToPlay)
 
     useEffect(() => {
-        playMenuMusic()
+        const t = setTimeout(playMenuMusic, 500)
+        return () => clearTimeout(t)
     }, [])
 
     return (
@@ -49,7 +50,7 @@ export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContact
                     <h2>Quick Rules</h2>
                     <ul>
                         <li>
-                            The board and mines are generated the same way as in a&nbsp;
+                            The board and mines are generated the same way as in the&nbsp;
                             <a href="https://minesweepergame.com/strategy/how-to-play-minesweeper.php" target="_blank" rel="noreferrer">
                                 traditional Minesweeper
                                 <ExternalPageIcon />
@@ -71,7 +72,7 @@ export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContact
                             Stay alive and gain more points than your opponents to win!
                         </li>
                     </ul>
-                    <div>You can also check the <Link to="/how-to-play">detailed rules</Link></div>
+                    <div>For more details, you can check <Link to="/how-to-play">the Rules page</Link></div>
                 </section>
             </main>
             <footer>

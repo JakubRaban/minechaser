@@ -8,10 +8,10 @@ import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { PrivateGameLoading, ShareDialog } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
+import { usePreferences } from '../../hooks/context/usePreferences'
 import applause from '/sounds/applause.wav'
 
 import './GameSummary.scss'
-import { usePreferences } from '../../hooks/context/usePreferences'
 
 interface GameSummaryProps {
     gameState: GameState
@@ -47,10 +47,10 @@ const firstPlaceDead = [
 
 type RankedPlayer = Player & { ranking: number }
 
-const getRankedPlayers = (gameState: GameState) => {
+const getRankedPlayers = (gameState: GameState, gameTimeout: boolean) => {
     const positions: Record<number, number> = {}
     const players = Object.entries(gameState.game.players) as [PlayerColor, RankedPlayer][]
-    players.sort(([, player1], [, player2]) => (player2.score - (player2.alive ? 0 : 10000)) - (player1.score - (player1.alive ? 0 : 10000)))
+    players.sort(([, player1], [, player2]) => (player2.score - ((player2.alive || gameTimeout) ? 0 : 10000)) - (player1.score - ((player1.alive || gameTimeout) ? 0 : 10000)))
     players.forEach(([, player], index) => {
         const ranking = positions[player.score] ?? index + 1
         player.ranking = ranking
@@ -64,7 +64,8 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
     const playAgainLink = isSinglePlayer ? '/new-game/single-player' : isPrivate ? '/new-game' : '/queue'
     const playAgainState = isPrivate ? { restartedGameId: gameId } : undefined
 
-    const players = getRankedPlayers(gameState)
+    const gameTimeout = gameState.end! >= gameState!.endScheduled!
+    const players = getRankedPlayers(gameState, gameTimeout)
 
     const { alive: currentPlayerAlive, score: currentPlayerScore } = gameState.game.players[playerColor]!
     const currentPlayerName = colorMapping[playerColor]!
@@ -81,7 +82,6 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
     const pickedGreetings = useRef(pickRandom(greetings))
     const pickedFirstPlaceDead = useRef(pickRandom(firstPlaceDead))
 
-    const gameTimeout = gameState.end! >= gameState!.endScheduled!
     const { disableSoundEffects } = usePreferences()
     usePreload(ShareDialog)
 
@@ -100,17 +100,13 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
     return (
         <div className={cn('game-summary', { 'single-player': isSinglePlayer, 'no-animation': animationStopped })} onClick={() => setAnimationStopped(true)}>
             <h1>Game Summary</h1>
-            {gameTimeout ? (
-                <h3>The game finished due to inactivity</h3>
-            ) : (
-                <h3>
-                    {!isSinglePlayer ? <>You finished in the <span>{standingsMapping[currentPlayerStanding].text}</span> place </> : <>You finished the game </>}
-                    with <span>{currentPlayerScore} points</span>.
-                    {!isSinglePlayer && currentPlayerStanding === 1 && (
-                        <>&nbsp;{currentPlayerAlive ? `${pickedGreetings.current}!`: `${pickedFirstPlaceDead.current}...`}</>
-                    )}
-                </h3>
-            )}
+            <h3>
+                {!isSinglePlayer ? <>You finished in the <span>{standingsMapping[currentPlayerStanding].text}</span> place </> : <>You finished the game </>}
+                with <span>{currentPlayerScore} points</span>.
+                {!isSinglePlayer && currentPlayerStanding === 1 && !gameTimeout && (
+                    <>&nbsp;{currentPlayerAlive ? `${pickedGreetings.current}!`: `${pickedFirstPlaceDead.current}...`}</>
+                )}
+            </h3>
             <div className="action-buttons">
                 <Link to={playAgainLink} state={playAgainState}><button>Play Again{isPrivate && <> (with same players)</>}{isSinglePlayer && <> (single player)</>}</button></Link>
                 {isSinglePlayer && <Link to="/queue"><button>Play again (with other players)</button></Link>}
@@ -122,11 +118,11 @@ const GameSummary: FC<GameSummaryProps> = ({ gameState, colorMapping, playerColo
                     <table>
                         <tbody>
                             {players.map(([playerColor, player]) => (
-                                <tr key={playerColor} className={cn({ dead: !player.alive && players.some(([, p]) => p.alive) })}>
-                                    <td>{!gameTimeout ? standingsMapping[player.ranking].emoji : ''}</td>
+                                <tr key={playerColor} className={cn({ dead: !player.alive && !gameTimeout && players.some(([, p]) => p.alive) })}>
+                                    <td>{standingsMapping[player.ranking].emoji}</td>
                                     <td className="color-cell"><PlayerColorComponent color={playerColor} /></td>
                                     <td className={cn('name-cell', { current: colorMapping[playerColor] === currentPlayerName })}>{colorMapping[playerColor]}</td>
-                                    {players.some(([, p]) => !p.alive) && (
+                                    {players.some(([, p]) => !p.alive) && !gameTimeout && (
                                         <td className="dead-cell">
                                             <div className={cn('dead-indicator', { alive: player.alive })}>
                                                 <MineIcon />

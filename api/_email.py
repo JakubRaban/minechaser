@@ -20,5 +20,6 @@ def send_message(from_email, content):
         message["Subject"] = f'Contact Form Message From {from_email}'
         message["From"] = f'MineChaser <{email}>'
         message["To"] = email
+        message["Reply-To"] = from_email
         message.set_content(content)
-        # server.send_message(message)
+        server.send_message(message)

@@ -177,6 +177,7 @@ class GameProxy:
         if self.game is not None:
             self.game.board.show_pristine_cells()
         self.end_timestamp = datetime.now(timezone.utc)
+        self.end_game_scheduler.cancel()
         self.on_game_finished(self)
 
     def __getstate__(self):
@@ -205,3 +206,6 @@ class EndGameScheduler:
         self.finish_game_job = scheduler.reschedule_job(
             self.random_id, trigger='date', run_date=datetime.now(timezone.utc)
         )
+
+    def cancel(self):
+        scheduler.remove_job(self.random_id)

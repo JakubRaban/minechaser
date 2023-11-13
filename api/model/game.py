@@ -5,6 +5,8 @@ from functools import wraps
 from threading import RLock
 from typing import List, Optional
 
+from apscheduler.jobstores.base import JobLookupError
+
 from scheduler import scheduler
 from model.events import MineCellFlagged, NoMinesLeft, MineCellStepped, ActionOutcome
 from model.player import Players, PlayerColor, Direction, Player
@@ -208,4 +210,7 @@ class EndGameScheduler:
         )
 
     def cancel(self):
-        scheduler.remove_job(self.random_id)
+        try:
+            scheduler.remove_job(self.random_id)
+        except JobLookupError:
+            pass

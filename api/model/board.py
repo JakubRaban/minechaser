@@ -46,7 +46,7 @@ class Board:
                     break
             if len(marked) == target:
                 for pos in [p for p, cell in self.cells.items() if cell.has_mine]:
-                    if all(c.has_mine for c in self.get_adjacent_cells(pos).values()):
+                    if all(c.has_mine for c in self.get_adjacent_cells(pos, walkable=True).values()):
                         return False
                 return True
             return False

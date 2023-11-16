@@ -18,7 +18,6 @@ sio = socketio.Server(
     cors_allowed_origins=[
         'http://localhost:3000',
         'http://localhost:5000',
-        'https://plankton-app-tgr3d.ondigitalocean.app',
         'https://minechaser.com'
     ],
     json=ownjson

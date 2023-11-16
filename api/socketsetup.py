@@ -15,11 +15,7 @@ from scheduler import scheduler
 
 sio = socketio.Server(
     async_mode='gevent',
-    cors_allowed_origins=[
-        'http://localhost:3000',
-        'http://localhost:5000',
-        'https://minechaser.com'
-    ],
+    cors_allowed_origins='*',
     json=ownjson
 )
 socket_id_to_player_id = bidict()

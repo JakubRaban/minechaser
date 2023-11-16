@@ -5,32 +5,9 @@ import bottle
 from bottle_cors_plugin import cors_plugin
 import socketio
 from geventwebsocket.handler import WebSocketHandler
-from pathlib import Path
-import jsonpickle
-import atexit
 import json
-from socketsetup import sio, socket_id_to_player_id, player_id_to_player_name
+from socketsetup import sio
 from _email import send_message
-
-
-if Path('store/playerids.txt').exists():
-    with open('store/playerids.txt', 'r') as f:
-        socket_id_to_player_id = jsonpickle.loads(f.read())
-
-if Path('store/playernames.txt').exists():
-    with open('store/playernames.txt', 'r') as f:
-        player_id_to_player_name = jsonpickle.loads(f.read())
-
-
-def dump_state():
-    Path('store/').mkdir(parents=True, exist_ok=True)
-    with open('store/playerids.txt', 'w') as f:
-        f.write(jsonpickle.dumps(socket_id_to_player_id))
-    with open('store/playernames.txt', 'w') as f:
-        f.write(jsonpickle.dumps(player_id_to_player_name))
-
-
-atexit.register(dump_state)
 
 
 @bottle.route('/robots.txt')

@@ -10,16 +10,17 @@ import {
 
 interface AppRouterProps {
     authenticated: boolean
+    message: string | null
 }
 
-export const AppRouter = memo<AppRouterProps>(({ authenticated }) => {
+export const AppRouter = memo<AppRouterProps>(({ authenticated, message }) => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/about" element={<LandingPage showAboutDialog />} />
-                <Route path="/contact" element={<LandingPage showContactDialog />} />
-                <Route path="/credits" element={<LandingPage showCreditsDialog />} />
+                <Route path="/" element={<LandingPage message={message} />} />
+                <Route path="/about" element={<LandingPage message={message} showAboutDialog />} />
+                <Route path="/contact" element={<LandingPage message={message} showContactDialog />} />
+                <Route path="/credits" element={<LandingPage message={message} showCreditsDialog />} />
                 <Route path="/queue" element={
                     <Suspense fallback={<LoadingScreen />}>
                         <AuthenticationGuard authenticated={authenticated}>

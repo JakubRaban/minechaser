@@ -31,6 +31,7 @@ export const App: FC = () => {
     
     const [authenticated, setAuthenticated] = useState(false)
     const [disconnected, setDisconnected] = useState(false)
+    const [message, setMessage] = useState<string | null>(null)
     const { STORAGE: storage } = config
     
     useClockSynchronizer()
@@ -38,10 +39,14 @@ export const App: FC = () => {
     useEffect(() => {
         socket.on('connect', () => {
             setDisconnected(false)
-            socket.emit('authenticate', { token: storage.getItem('rmAuth') }, ({ token }: { token: string }) => {
+            socket.emit('authenticate', { token: storage.getItem('rmAuth') }, ({ token, message }: { token: string; message: string }) => {
                 storage.setItem('rmAuth', token)
                 setAuthenticated(true)
+                setMessage(message ?? null)
             })
+        })
+        socket.on('message', ({ message }) => {
+            setMessage(message ?? null)
         })
         socket.on('disconnect', () => {
             setDisconnected(true)
@@ -50,6 +55,7 @@ export const App: FC = () => {
         return () => {
             socket.off('connect')
             socket.off('disconnect')
+            socket.off('message')
             socket.disconnect()
         }
     }, [])
@@ -81,7 +87,7 @@ export const App: FC = () => {
         <RollbarProvider config={rollbarConfig}>
             <ErrorBoundary fallbackUI={ErrorUI}>
                 {disconnected && <div className="disconnected-banner">Server connection lost</div>}
-                <AppRouter authenticated={authenticated} />
+                <AppRouter authenticated={authenticated} message={message} />
                 <CookieToast />
             </ErrorBoundary>
         </RollbarProvider>

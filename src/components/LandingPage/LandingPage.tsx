@@ -14,12 +14,13 @@ import './LandingPage.scss'
 const StatusToast = lazy(() => import('./StatusToast/StatusToast'))
 
 interface LandingPageProps {
+    message: string | null
     showAboutDialog?: boolean
     showContactDialog?: boolean
     showCreditsDialog?: boolean
 }
 
-export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContactDialog, showCreditsDialog }) => {
+export const LandingPage: FC<LandingPageProps> = ({ message, showAboutDialog, showContactDialog, showCreditsDialog }) => {
     const { error, success } = useLocation().state ?? {}
     const { showOnScreenControls: isMobile, name } = usePreferences()
     const { KeyD, KeyW, KeyS, KeyA } = useKeyMap()
@@ -33,6 +34,7 @@ export const LandingPage: FC<LandingPageProps> = ({ showAboutDialog, showContact
 
     return (
         <div className="landing-page">
+            {message && <div className="message">{message}</div>}
             <header>
                 <h1 className="title">MineChaser</h1>
                 <h6 className="subtitle">Where Minesweeper meets Battle Royale</h6>

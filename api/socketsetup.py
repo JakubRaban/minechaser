@@ -1,9 +1,12 @@
+import atexit
 import random
 import string
 from datetime import datetime, timezone, timedelta
 from functools import wraps
+from pathlib import Path
 from typing import Optional, Dict
 
+import jsonpickle
 import socketio
 from bidict import bidict
 from dotenv import find_dotenv, load_dotenv
@@ -23,7 +26,49 @@ sio = socketio.Server(
 socket_id_to_player_id = bidict()
 player_id_last_seen: Dict[str, datetime] = dict()
 player_id_to_player_name: Dict[str, str] = dict()
+motd = ''
 load_dotenv(find_dotenv('.env.local'))
+
+
+players_store = 'store/playerids.txt'
+message_store = 'store/motd.txt'
+
+if Path(players_store).exists():
+    with open(players_store, 'r') as f:
+        store = jsonpickle.loads(f.read())
+        socket_id_to_player_id = store['socket_id_to_player_id']
+        player_id_last_seen = store['player_id_last_seen']
+        player_id_to_player_name = store['player_id_to_player_name']
+
+
+def dump_state():
+    Path('store/').mkdir(parents=True, exist_ok=True)
+    with open(players_store, 'w') as ff:
+        ff.write(jsonpickle.dumps({
+            'socket_id_to_player_id': socket_id_to_player_id,
+            'player_id_last_seen': player_id_last_seen,
+            'player_id_to_player_name': player_id_to_player_name
+        }))
+
+
+atexit.register(dump_state)
+
+
+def read_motd():
+    global motd
+    if Path(message_store).exists():
+        with open(message_store, 'r') as sf:
+            new_motd = sf.read()
+            if new_motd and new_motd != motd:
+                motd = new_motd
+                sio.emit('message', {'message': motd})
+    else:
+        motd = ''
+        sio.emit('message', {'message': None})
+
+
+read_motd()
+scheduler.add_job(read_motd, 'interval', minutes=1)
 
 
 def remove_stale_players():
@@ -37,6 +82,7 @@ def remove_stale_players():
         socket_id_to_player_id.inverse.pop(player_id)
 
 
+remove_stale_players()
 scheduler.add_job(remove_stale_players, 'interval', days=1)
 
 
@@ -71,7 +117,7 @@ def authenticate(sid, data):
     socket_id_to_player_id.forceput(sid, token)
     player_id_last_seen[token] = datetime.now(timezone.utc)
     print(f"Authenticated {sid} as {token}")
-    return {'token': token}
+    return {'token': token, 'message': motd}
 
 
 @sio.event

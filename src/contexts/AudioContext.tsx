@@ -46,6 +46,7 @@ function fadeIn(audio?: HTMLAudioElement) {
 }
 
 function fadeOut(audio?: HTMLAudioElement) {
+    console.log('fading out')
     if (audio) {
         const fadeOutInterval = setInterval(() => {
             const newVolume = audio.volume - 0.1
@@ -88,7 +89,9 @@ export const AudioContextProvider: FC<PropsWithChildren> = ({ children }) => {
     }
 
     useEffect(() => {
+        console.log('effect')
         if (disableMusic) {
+            console.log('disabling')
             stopMusic()
         }
     }, [disableMusic])

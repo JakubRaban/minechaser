@@ -5,8 +5,36 @@ import { FlagIcon } from '../../../icons/Flag/FlagIcon'
 import { MineIcon } from '../../../icons/Mine/MineIcon'
 import { EventDef } from '../../../hooks/useGameState'
 import { usePlayerColorToClassName } from '../../../hooks/usePlayerColorToClassName'
+import { FreezeBonusIcon } from '../../../icons/bonus/FreezeBonusIcon/FreezeBonusIcon'
+import { DoublePointsBonusIcon } from '../../../icons/bonus/DoublePointsBonusIcon/DoublePointsBonusIcon'
+import disappear from '/images/disappear.png'
 
 import './Cell.scss'
+
+interface CellIconsProps {
+    bonusName?: string | null
+    showMine?: boolean
+    flaggingPlayer?: PlayerColor
+    incorrectFlagColor?: PlayerColor | null
+}
+
+export const CellIcons = memo<CellIconsProps>(({ bonusName, showMine, flaggingPlayer, incorrectFlagColor }) => {
+    const toClassName = usePlayerColorToClassName()
+    
+    return (
+        <>
+            {showMine ? <MineIcon /> : (
+                <>
+                    {bonusName === 'freeze' && <FreezeBonusIcon />}
+                    {bonusName === 'x2' && <DoublePointsBonusIcon />}
+                    {bonusName === 'disappear' && <img src={disappear} alt="disappear bonus" />}
+                    {flaggingPlayer && <FlagIcon fillClassName={toClassName(flaggingPlayer)} />}
+                    {incorrectFlagColor && <FlagIcon fillClassName={toClassName(incorrectFlagColor)} className="incorrect" />}
+                </>
+            )}
+        </>
+    )
+})
 
 interface CellProps {
     cell?: CellType
@@ -15,17 +43,22 @@ interface CellProps {
 }
 
 export const Cell = memo<CellProps>(({ cell, steppingPlayersColors, event }) => {
-    const { hasMine, minesAround, flaggingPlayer, isUncovered, hidePristine } = cell ?? {}
+    const { hasMine, minesAround, flaggingPlayer, isUncovered, hidePristine, bonus } = cell ?? {}
     const uncoveredMine = hasMine && isUncovered
-
-    const toClassName = usePlayerColorToClassName()
+    
     const toClassNameFlag = usePlayerColorToClassName('flag')
     const toClassNamePlayer = usePlayerColorToClassName('player')
     const cellClassName = `cell-${cell?.position[0]}-${cell?.position[1]}`
     const className = cn(
         'cell',
-        { [cellClassName]: !!cell },
-        { ...toClassNameFlag(flaggingPlayer), [`mines-${minesAround}`]: !!minesAround && !hasMine, uncovered: isUncovered, mine: uncoveredMine },
+        {
+            [cellClassName]: !!cell,
+            [`mines-${minesAround}`]: !!minesAround && !hasMine,
+            uncovered: isUncovered,
+            mine: uncoveredMine,
+            bonus: bonus && !hasMine,
+            ...toClassNameFlag(flaggingPlayer),
+        },
     )
     const cellRef = useRef<HTMLDivElement>(null)
 
@@ -72,22 +105,20 @@ export const Cell = memo<CellProps>(({ cell, steppingPlayersColors, event }) => 
 
     return (
         <div className={className} ref={cellRef}>
-            {isUncovered && hasMine && <MineIcon />}
+            <CellIcons showMine={isUncovered && hasMine} bonusName={bonus?.name} flaggingPlayer={flaggingPlayer} incorrectFlagColor={incorrectFlagColor} />
             <div className="cell-content">
                 {isUncovered && !hasMine && (minesAround && minesAround > 0 ? minesAround : '')}
-                {flaggingPlayer && <FlagIcon fillClassName={toClassName(flaggingPlayer)} />}
-                {incorrectFlagColor && <FlagIcon fillClassName={toClassName(incorrectFlagColor)} className="incorrect" />}
                 {pointsChange && (
                     <div className={cn('points-change', { negative: pointsChange < 0 })}>
                         {pointsChange > 0 ? `+${pointsChange}` : pointsChange}
                     </div>
                 )}
-                <div className={cn(
-                    'cell-player-overlay',
-                    { [`players-${steppingPlayersColors?.length}`]: steppingPlayersColors?.length },
-                    ...(steppingPlayersColors?.map(toClassNamePlayer) || []))}
-                />
             </div>
+            <div className={cn(
+                'cell-player-overlay',
+                { [`players-${steppingPlayersColors?.length}`]: steppingPlayersColors?.length },
+                ...(steppingPlayersColors?.map(toClassNamePlayer) || []))}
+            />
         </div>
     )
 })

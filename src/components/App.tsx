@@ -62,11 +62,9 @@ export const App: FC = () => {
 
     useEffect(() => {
         const enableRollbar = () => {
-            console.log('accepted use rollbar')
             rollbar.options.enabled = true
         }
         const disableRollbar = () => {
-            console.log('disabled rollbar')
             rollbar.options.enabled = false
         }
         const setOnline = () => setDisconnected(false)

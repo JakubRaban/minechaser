@@ -15,7 +15,6 @@
     </script>
     <script>
       window.addEventListener('cookiesaccept', () => {
-        console.log('accepted use analytics')
         if(!window.location.host.includes('localhost')) {
           gtag('consent', 'update', {'ad_storage': 'granted', 'analytics_storage': 'granted'});
         }

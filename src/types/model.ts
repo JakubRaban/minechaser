@@ -38,26 +38,26 @@ export interface Cell {
     minesAround?: number
     flaggingPlayer?: PlayerColor
     isUncovered: boolean
-    bonus: null
+    bonus: Bonus | null
     hidePristine: boolean
 }
 
 export interface Player {
     position: Position
     score: number
-    inventory: []
+    bonus: Bonus | null
     alive: boolean
 }
 
-export interface ActionResult {
+export type ActionResult = Partial<{
     originatorColor: PlayerColor
     players: Players
-    cells?: Cell[],
-    events?: EventType[]
-    minesLeft?: number | null
-    pointsChange?: number
-    endGameScheduledTimestamp?: string | null
-}
+    cells: Cell[],
+    events: EventType[]
+    minesLeft: number | null
+    pointsChange: number
+    endGameScheduledTimestamp: string | null
+}>
 
 export interface GameDef {
     start: Date
@@ -69,4 +69,9 @@ export interface GameDef {
     cells: Cells
     isFinished: boolean
     actionCounter: number
+}
+
+export interface Bonus {
+    name: string;
+    expiresAtTimestamp: string;
 }

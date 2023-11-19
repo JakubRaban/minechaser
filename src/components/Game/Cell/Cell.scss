@@ -29,6 +29,10 @@
     }
   }
 
+  &.bonus {
+    background-color: $cell-bonus-color;
+  }
+
   &.mines- {
     &1 { color: $number-1-color; }
     &2 { color: $number-2-color; }
@@ -42,6 +46,11 @@
   .mine-icon, .flag-icon {
     width: var(--icon-size);
     height: var(--icon-size);
+  }
+
+  .bonus-icon {
+    width: 100%;
+    height: 100%;
   }
 
   .cell-content {
@@ -98,6 +107,8 @@
 
   .flag-icon.incorrect {
     position: absolute;
+    top: 50%;
+    left: 50%;
     animation: incorrect-flag 1s cubic-bezier(0.17, 0.67, 0.7, 0.67);
     animation-fill-mode: forwards;
     offset-path: path("M 0 0 C 6 -45 24.5 -25.5 23.875 -16");
@@ -168,9 +179,3 @@
     opacity: 0;
   }
 }
-
-/* background for 2 peeps
-background: linear-gradient(to right, red 100%, transparent 100%) 0 0/100% 5px no-repeat,
-              linear-gradient(to right, transparent 0%, blue 0%) 0 100%/100% 5px no-repeat,
-    linear-gradient(to bottom, red 50%, blue 50%) 0px/5px 100% no-repeat, linear-gradient(to bottom, red 50%, blue 50%) 100%/5px 100% no-repeat
- */

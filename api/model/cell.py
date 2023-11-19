@@ -11,12 +11,18 @@ class Cell:
         self.mines_around = 0
         self.is_uncovered = False
         self.flagging_player: Optional[PlayerColor] = None
-        self.bonus = None  # TODO - correct type
+        self.bonus: Optional['Bonus'] = None
         self.hide_pristine = True
 
     @property
     def pristine(self):
+        """Cell is untouched by players"""
         return not self.is_uncovered and self.flagging_player is None
+
+    @property
+    def contentful(self):
+        """Cell has been touched by some player or there is a bonus in there"""
+        return not self.pristine or self.bonus
 
     def __getstate__(self):
         return {

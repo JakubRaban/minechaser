@@ -4,7 +4,8 @@ from .game import Game, GameProxy, ActionResult
 from .player import Player, Players, PlayerColor, Direction
 from .board import Board
 from .cell import Cell
-from .events import GameEvent, MineCellFlagged, NoMinesLeft, MineCellStepped, MineFreeCellFlagged, MineFreeCellStepped
+from .events import GameEvent, MineCellFlagged, NoMinesLeft, MineCellStepped, MineFreeCellFlagged, MineFreeCellStepped, ActionOutcome
+from .bonus import Bonus
 
 model_classes = [
     Board,
@@ -21,7 +22,9 @@ model_classes = [
     MineFreeCellStepped,
     Game,
     GameProxy,
-    ActionResult
+    ActionResult,
+    Bonus,
+    ActionOutcome
 ]
 
 

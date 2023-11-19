@@ -1,13 +1,16 @@
 import uuid
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from functools import wraps
 from threading import RLock
-from typing import List, Optional
+from typing import List, Optional, Callable
 
 from apscheduler.jobstores.base import JobLookupError
 
+from helpers import generate_game_id
 from scheduler import scheduler
+from model.cell import Cell
 from model.events import MineCellFlagged, NoMinesLeft, MineCellStepped, ActionOutcome
 from model.player import Players, PlayerColor, Direction, Player
 from model.board import Board
@@ -17,23 +20,24 @@ from types_ import Dimensions, Position
 class ActionType(Enum):
     STEP = 'step'
     FLAG = 'flag'
+    BONUS_PLACED = 'bonus_placed'
     NOOP = 'noop'
 
 
 class ActionResult:
     def __init__(
-            self,
-            originator: Player,
-            originator_color: PlayerColor,
-            action_type: ActionType,
-            position: Position,
-            outcome: ActionOutcome,
-            mines_left: Optional[int] = None
+        self,
+        originator: Player,
+        originator_color: PlayerColor,
+        action_type: ActionType,
+        position: Optional[Position] = None,
+        outcome: Optional[ActionOutcome] = None,
+        mines_left: Optional[int] = None
     ):
         self.originator_color = originator_color
         self.players = {originator_color: originator}
         self.outcome = outcome
-        self.points_change = outcome.points_change
+        self.points_change = outcome.points_change if outcome else 0
         self.mines_left = mines_left
         self.action_type = action_type
         self.position = position
@@ -43,8 +47,8 @@ class ActionResult:
         full_result = {
             'originatorColor': self.originator_color.name,
             'players': {color.name: player for color, player in self.players.items()},
-            'cells': [cell for cell in self.outcome.cells],
-            'events': [event.__name__ for event in self.outcome.event_types],
+            'cells': [cell for cell in self.outcome.cells] if self.outcome else [],
+            'events': [event.__name__ for event in self.outcome.event_types] if self.outcome else [],
             'pointsChange': self.points_change,
             'minesLeft': self.mines_left,
             'endGameScheduledTimestamp': self.end_game_scheduled_timestamp
@@ -52,11 +56,20 @@ class ActionResult:
         return {k: v for k, v in full_result.items() if v or k == 'minesLeft'}
 
 
+@dataclass
+class CellUpdate:
+    cells: List[Cell]
+
+
 class Game:
-    def __init__(self, dimensions: Dimensions, players_count: int):
-        self.board = Board(dimensions)
+    def __init__(self, dimensions: Dimensions, players_count: int, on_server_action: Callable[[CellUpdate | ActionResult], None]):
+        def on_bonus_added(cell: Cell):
+            self.on_server_action(CellUpdate([cell]))
+
+        self.board = Board(dimensions, on_bonus_added)
         starting_positions = self.board.corners[:players_count]
         self.players = Players(starting_positions)
+        self.on_server_action = on_server_action
         for player in self.players.values():
             self.board.step(player.position)
 
@@ -67,6 +80,8 @@ class Game:
             if not self.board.cells[new_position].flagging_player:
                 outcome = self.board.step(new_position)
                 player.position = new_position
+                if outcome.bonus:
+                    player.add_bonus(outcome.bonus, lambda p: self._on_bonus_expired(p))
                 player.process_outcome(outcome)
                 return ActionResult(player, player_color, ActionType.STEP, new_position, outcome, self.board.mines_left)
             return ActionResult(player, player_color, ActionType.NOOP, player.position, ActionOutcome())
@@ -77,21 +92,34 @@ class Game:
             new_position = player.calculate_new_position(direction)
             if new_position not in self.players.positions and new_position in self.board.cells:
                 outcome = self.board.flag(new_position, player_color)
+                if outcome.bonus:
+                    player.add_bonus(outcome.bonus, lambda p: self._on_bonus_expired(p))
                 player.process_outcome(outcome)
                 return ActionResult(player, player_color, ActionType.FLAG, new_position, outcome, self.board.mines_left)
             return ActionResult(player, player_color, ActionType.NOOP, new_position, ActionOutcome())
 
+    def _on_bonus_expired(self, player):
+        self.on_server_action(ActionResult(player, player.color, ActionType.NOOP))
+
 
 class GameProxy:
-    def __init__(self, player_ids: List[str], on_game_finished: callable, autostart: bool, next_game_id: Optional[str] = None):
-        self.game = Game((18, 27), len(player_ids)) if autostart else None
-        self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=9 if len(player_ids) > 1 else 1) if autostart else None
+    def __init__(self, player_ids: List[str], on_game_finished: callable, on_server_action: Callable[[CellUpdate | ActionResult], None], autostart: bool):
+        is_public = autostart and len(player_ids) > 1
+        is_single_player = autostart and len(player_ids) == 1
+        time_before_start = 9 if is_public else 1
+
+        self.game = Game((18, 27), len(player_ids), on_server_action) if autostart else None
+        self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=time_before_start) if autostart else None
         self.players = dict(zip(player_ids, self.game.players.colors() if autostart else [None] * 4))
         self.end_timestamp = None
-        self.on_game_finished = on_game_finished
-        self.end_game_scheduler = EndGameScheduler(self._finish_game)
+        self.end_game_scheduler = EndGameScheduler(self._finish_game, autostart=autostart) \
+            if is_public or not is_single_player else None
+
         self.lock = RLock()
-        self.next_game_id = next_game_id
+        self.is_started = autostart
+        self.next_game_id = generate_game_id()
+        self.on_server_action = on_server_action
+        self.on_game_finished = on_game_finished
 
     def locked(func):
         @wraps(func)
@@ -123,8 +151,10 @@ class GameProxy:
     @locked
     def start_game(self, dimensions: Dimensions):
         if not self.game:
-            self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=9)
-            self.game = Game(dimensions, len(self.players))
+            self.is_started = True
+            self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=6)
+            self.game = Game(dimensions, len(self.players), self.on_server_action)
+            self.end_game_scheduler.start()
             for player, color in zip(self.player_ids, self.game.players.colors()):
                 self.players[player] = color
 
@@ -132,11 +162,9 @@ class GameProxy:
     def created(self):
         return self.game is not None
 
-    def is_started(self):
-        return self.start_timestamp and datetime.now(timezone.utc) >= self.start_timestamp
-
+    @property
     def is_finished(self):
-        return self.end_timestamp is not None
+        return bool(self.end_timestamp)
 
     @locked
     def step(self, player_id: str, direction: Direction):
@@ -146,7 +174,10 @@ class GameProxy:
             if result:
                 for event_type in result.outcome.event_types:
                     if event_type == MineCellStepped and self._all_players_dead():
-                        self.end_game_scheduler.finish_now()
+                        if self.end_game_scheduler:
+                            self.end_game_scheduler.finish_now()
+                        else:
+                            self._finish_game()
                 return result
 
     @locked
@@ -159,7 +190,7 @@ class GameProxy:
                     if event_type == NoMinesLeft:
                         self._finish_game()
                         return
-                    if event_type == MineCellFlagged and len(self.players) > 1:
+                    if self.end_game_scheduler and event_type == MineCellFlagged and len(self.players) > 1:
                         result.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(minutes=2)
                         self.end_game_scheduler.postpone_end(result.end_game_scheduled_timestamp)
                 return result
@@ -169,7 +200,7 @@ class GameProxy:
         return self.players.keys()
 
     def _allow_action(self, player_id: str):
-        return player_id in self.players and self.is_started() and not self.is_finished()
+        return player_id in self.players and self.is_started and not self.is_finished
 
     def _all_players_dead(self):
         return all(not player.alive for player in self.game.players.values())
@@ -179,24 +210,39 @@ class GameProxy:
         if self.game is not None:
             self.game.board.show_pristine_cells()
         self.end_timestamp = datetime.now(timezone.utc)
-        self.end_game_scheduler.cancel()
+        if self.end_game_scheduler:
+            self.end_game_scheduler.stop()
+        self.game.board.bonus_generator.stop()
         self.on_game_finished(self)
 
     def __getstate__(self):
         base_state = {k: v for k, v in self.__dict__.items() if k in ['game', 'start_timestamp', 'end_timestamp']}
         return {
             **base_state,
-            'endGameScheduledTimestamp': self.end_game_scheduler.end_game_scheduled_timestamp
+            'endGameScheduledTimestamp': self.end_game_scheduler.end_game_scheduled_timestamp if self.end_game_scheduler else None
         }
 
 
 class EndGameScheduler:
-    def __init__(self, on_game_finished: callable):
-        self.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(hours=1)
-        self.random_id = f'end_game-{str(uuid.uuid4())}'
-        self.finish_game_job = scheduler.add_job(
-            on_game_finished, 'date', id=self.random_id, run_date=self.end_game_scheduled_timestamp, args=[]
-        )
+    def __init__(self, on_game_finished: callable, autostart=True):
+        self.on_game_finished = on_game_finished
+        self.finish_game_job = None
+        self.random_id = None
+        self.end_game_scheduled_timestamp = None
+        if autostart:
+            self.start()
+
+    def start(self):
+        if not self.started:
+            self.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(hours=1)
+            self.random_id = f'end_game-{str(uuid.uuid4())}'
+            self.finish_game_job = scheduler.add_job(
+                self.on_game_finished, 'date', id=self.random_id, run_date=self.end_game_scheduled_timestamp, args=[]
+            )
+
+    @property
+    def started(self):
+        return bool(self.random_id)
 
     def postpone_end(self, end_game_scheduled_timestamp: datetime):
         self.end_game_scheduled_timestamp = end_game_scheduled_timestamp
@@ -209,7 +255,7 @@ class EndGameScheduler:
             self.random_id, trigger='date', run_date=datetime.now(timezone.utc)
         )
 
-    def cancel(self):
+    def stop(self):
         try:
             scheduler.remove_job(self.random_id)
         except JobLookupError:

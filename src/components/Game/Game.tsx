@@ -132,12 +132,14 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
         socket.on('action_result', (actionResult?: ActionResult) => {
             if (actionResult) {
                 resolveAction(actionResult)
-                if (!disableSoundEffects && actionResult.players[playerColor]) {
+                if (!disableSoundEffects) {
                     if (actionResult.events?.includes('MineCellStepped')) explodeSound.play()
-                    else if (actionResult.events?.includes('MineFreeCellFlagged')) incorrectFlagSound.play()
-                    else if (actionResult.events?.includes('MineCellFlagged')) pickRandom(flagSounds).play()
-                    else if (actionResult.events?.includes('MineFreeCellStepped')) pickRandom(uncoverSounds).play()
-                    else if (actionResult.events?.includes('UncoveredCellStepped')) pickRandom(stepSounds).play()
+                    if (actionResult.players?.[playerColor]) {
+                        if (actionResult.events?.includes('MineFreeCellFlagged')) incorrectFlagSound.play()
+                        else if (actionResult.events?.includes('MineCellFlagged')) pickRandom(flagSounds).play()
+                        else if (actionResult.events?.includes('MineFreeCellStepped')) pickRandom(uncoverSounds).play()
+                        else if (actionResult.events?.includes('UncoveredCellStepped')) pickRandom(stepSounds).play()
+                    }
                 }
             }
         })
@@ -181,6 +183,8 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
         [
             props.players.RED?.score, props.players.GREEN?.score, props.players.BLUE?.score, props.players.YELLOW?.score,
             props.players.RED?.alive, props.players.GREEN?.alive, props.players.BLUE?.alive, props.players.YELLOW?.alive,
+            props.players.RED?.bonus?.name, props.players.GREEN?.bonus?.name,
+            props.players.BLUE?.bonus?.name, props.players.YELLOW?.bonus?.name,
         ],
     )
 

@@ -41,9 +41,12 @@ finalBeepSound.volume = 0.8
 const playersToPositions = (players: Players, playerColor: PlayerColor, optimisticPosition: Position) => {
     const result: Record<string, PlayerColor[]> = {}
     const playerPositions = Object.entries(players).filter(([, player]) => player.alive).map(([color, player]) => [color === playerColor ? optimisticPosition : player.position, color as PlayerColor] as const)
+    const playersWithDisappear = Object.entries(players).filter(([, player]) => player.bonus?.name === 'disappear').map(([color]) => color as PlayerColor)
     playerPositions.forEach(([position, color]) => {
-        const positionString = toPositionString(position)
-        result[positionString] ? result[positionString].push(color) : result[positionString] = [color]
+        if (!playersWithDisappear.some(bonusPlayerColor => bonusPlayerColor !== color)) {
+            const positionString = toPositionString(position)
+            result[positionString] ? result[positionString].push(color) : result[positionString] = [color]
+        }
     })
     return result
 }

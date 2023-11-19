@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { ActionResult, GameDef, PlayerColor, RawGameState } from '../types/model'
+import { ActionResult, Cell, GameDef, PlayerColor, RawGameState } from '../types/model'
 import { toPositionString } from '../helpers'
 import { EventType } from '../types/model'
 
@@ -39,7 +39,7 @@ export const useGameState = (initialState: RawGameState, playerColor: PlayerColo
                     minesLeft: result.minesLeft ?? prev.game.board.minesLeft,
                     cells: {
                         ...prev.game.board.cells,
-                        ...(cells ? Object.fromEntries(cells.map(cell => [toPositionString(cell.position), cell])) : {}),
+                        ...(cells ? Object.fromEntries(cells.map((cell: Cell) => [toPositionString(cell.position), cell])) : {}),
                     },
                 },
             },
@@ -49,7 +49,7 @@ export const useGameState = (initialState: RawGameState, playerColor: PlayerColo
             const type = events.find(e => ['MineFreeCellFlagged', 'MineCellFlagged'].includes(e))!
             setEvents(e => ({
                 ...(e ?? {}),
-                [toPositionString(cells[0].position)]: { originatorColor, type, pointsChange: pointsChange || 0, id: eventId.current++ },
+                [toPositionString(cells[0].position)]: { originatorColor: originatorColor!, type, pointsChange: pointsChange || 0, id: eventId.current++ },
             }))
         }
         setPlayerActionCounter(c => originatorColor === playerColor ? c + 1 : c)

@@ -31,7 +31,13 @@ export const Scoreboard = memo(forwardRef<HTMLDivElement, ScoreboardProps>(({ mi
                         <Fragment key={color}>
                             {i > 0 && i < playerEntries.length && <div className="separator" />}
                             <ScoreboardElement highlight={color === playerColor} label={colorMapping[color]!} color={color} backdrop={!player.alive} className="player-scoreboard">
-                                <PlayerScoreboard key={color} score={player.score} />
+                                <PlayerScoreboard
+                                    key={color}
+                                    score={player.score}
+                                    bonusName={player.bonus?.name}
+                                    bonusExpiresAtTimestamp={player.bonus?.expiresAtTimestamp}
+                                    alive={player.alive}
+                                />
                             </ScoreboardElement>
                         </Fragment>
                     ))}

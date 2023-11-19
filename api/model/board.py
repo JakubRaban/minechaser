@@ -1,26 +1,32 @@
 import operator
+import random
+from datetime import datetime, timezone, timedelta
 from functools import reduce
 from itertools import product
 from random import sample
-from typing import Dict
+from typing import Dict, Callable
+
+from apscheduler.jobstores.base import JobLookupError
 
 from helpers import sum_positions
 from model.cell import Cell
 from model.events import *
 from model.player import PlayerColor
+from scheduler import scheduler
 from types_ import Position, Dimensions
+from model.bonus import Bonus
 
 mine_free_area_size = 3
 mine_density = 0.2
 
 
 class Board:
-    def __init__(self, dims: Dimensions):
+    def __init__(self, dims: Dimensions, on_bonus_added: Callable[[Cell], None]):
         self.dims = dims
         self.cells: Dict[Position, Cell] = {}
         self.initial_mines = int((self.dims[0] * self.dims[1] - 4 * mine_free_area_size ** 2) * mine_density)
         self.mines_left = self.initial_mines
-        self.hide_pristine_cells = True
+        self.serialize_contentful_cells_only = True
         for cell_position in product(range(self.dims[0]), range(self.dims[1])):
             self.cells[cell_position] = Cell(cell_position)
 
@@ -53,31 +59,42 @@ class Board:
 
         place_mines()
         if check_board_correct():
+            def on_bonus_generated(bonus: Bonus):
+                if position := self.place_bonus(bonus):
+                    on_bonus_added(self.cells[position])
+
             assign_number_of_mines_around()
+            self.bonus_generator = BonusGenerator(on_bonus_generated)
         else:
-            self.__init__(dims)
+            self.__init__(dims, on_bonus_added)
 
     def step(self, position: Position) -> ActionOutcome:
         outcome = ActionOutcome()
 
-        def do_step(pos: Position, result_outcome: ActionOutcome) -> ActionOutcome:
+        def do_step(pos: Position) -> ActionOutcome:
             cell = self.cells[pos]
             if cell.pristine:
                 cell.is_uncovered = True
                 if cell.has_mine:
                     self.mines_left -= 1
-                    result_outcome.add_action(CellAction(cell=cell, event=MineCellStepped()))
+                    outcome.add_action(CellAction(cell=cell, event=MineCellStepped()))
                     if self.mines_left == 0:
-                        result_outcome.add_action(CellAction(cell=cell, event=NoMinesLeft()))
-                elif cell.mines_around == 0:
-                    result_outcome.add_action(CellAction(cell=cell, event=MineFreeCellStepped()))
-                    for p in self.get_adjacent_cells(pos).keys():
-                        do_step(p, result_outcome)
+                        outcome.add_action(CellAction(cell=cell, event=NoMinesLeft()))
                 else:
-                    result_outcome.add_action(CellAction(cell=cell, event=MineFreeCellStepped()))
-            return result_outcome.add_action(CellAction(cell=cell, event=UncoveredCellStepped()))
+                    if cell.bonus:
+                        bonus = cell.bonus
+                        cell.bonus = None
+                        outcome.add_action(CellAction(cell=cell, event=BonusCollectedEvent(bonus=bonus)))
+                    if cell.mines_around == 0:
+                        outcome.add_action(CellAction(cell=cell, event=MineFreeCellStepped()))
+                        for p in self.get_adjacent_cells(pos).keys():
+                            do_step(p)
+                    else:
+                        outcome.add_action(CellAction(cell=cell, event=MineFreeCellStepped()))
+                return outcome
+            return outcome.add_action(CellAction(cell=cell, event=UncoveredCellStepped()))
 
-        return do_step(position, outcome)
+        return do_step(position)
 
     def flag(self, position: Position, flagging_player: PlayerColor) -> ActionOutcome:
         cell = self.cells[position]
@@ -89,6 +106,10 @@ class Board:
                 outcome.add_action(CellAction(cell=cell, event=MineCellFlagged()))
                 if self.mines_left == 0:
                     outcome.add_action(CellAction(cell=cell, event=NoMinesLeft()))
+                if cell.bonus:
+                    bonus = cell.bonus
+                    cell.bonus = None
+                    outcome.add_action(CellAction(cell=cell, event=BonusCollectedEvent(bonus=bonus)))
             else:
                 outcome.add_action(CellAction(cell=cell, event=MineFreeCellFlagged()))
         return outcome
@@ -117,16 +138,55 @@ class Board:
         return {coords: self.cells[coords] for coords in adjacent_coords if coords in self.cells}
 
     def show_pristine_cells(self):
-        self.hide_pristine_cells = False
+        self.serialize_contentful_cells_only = False
         for cell in self.cells.values():
             cell.hide_pristine = False
 
+    def place_bonus(self, bonus: Bonus):
+        try:
+            position, random_pristine_cell = random.choice(
+                [(pos, cell) for pos, cell in self.cells.items() if not cell.contentful]
+            )
+            random_pristine_cell.bonus = bonus
+            return position
+        except IndexError:
+            return None
+
     def __getstate__(self):
-        state = {k: v for k, v in self.__dict__.items() if k not in ['cells', 'hide_pristine_cells']}
+        state = {k: v for k, v in self.__dict__.items() if k not in ['cells', 'hide_contentful_cells', 'bonus_generator']}
         state['cells'] = {
             coords: cell
             for coords, cell
             in self.cells.items()
-            if (not cell.pristine if self.hide_pristine_cells else True)
+            if (cell.contentful if self.serialize_contentful_cells_only else True)
         }
         return state
+
+
+class BonusGenerator:
+    def __init__(self, on_bonus_added: Callable[[Bonus], None]):
+        self.on_bonus_added = on_bonus_added
+        self.job = None
+        self.add_next_job(random.uniform(30.0, 45.0))
+
+    def generate_bonus(self):
+        self.on_bonus_added(
+            Bonus(
+                random.choice(['x2', 'freeze', 'disappear']),
+                random.uniform(15.0, 20.0)
+            )
+        )
+        self.add_next_job(random.uniform(45.0, 75.0))
+
+    def add_next_job(self, interval: float):
+        self.job = scheduler.add_job(
+            self.generate_bonus,
+            'date',
+            run_date=datetime.now(timezone.utc) + timedelta(seconds=interval)
+        )
+
+    def stop(self):
+        try:
+            self.job.remove()
+        except JobLookupError:
+            pass

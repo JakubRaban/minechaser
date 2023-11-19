@@ -1,7 +1,7 @@
-import random
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Optional
 
+from helpers import generate_game_id
 from scheduler import scheduler
 from model import Direction
 from model.game import GameProxy, ActionType
@@ -17,10 +17,11 @@ class GameService:
 
     @staticmethod
     def create_public_game(player_ids: List[str]):
-        game_id = _generate_game_id()
+        game_id = generate_game_id()
         GameService.games[game_id] = GameProxy(
             player_ids,
             on_game_finished=lambda game_proxy: GameResponses.finish_game(game_proxy, game_id),
+            on_server_action=lambda cell_update: GameResponses.server_update(game_id, cell_update),
             autostart=True
         )
         LobbyResponses.create_public_game(GameService.games[game_id], game_id, player_ids)
@@ -29,13 +30,12 @@ class GameService:
 
     @staticmethod
     def create_private_game(player_id: str, single_player: bool = False, restarted_game_id: Optional[str] = None):
-        game_id = restarted_game_id or _generate_game_id()
-        next_game_id = _generate_game_id()
+        game_id = restarted_game_id or generate_game_id()
         GameService.games[game_id] = GameProxy(
             [player_id],
             on_game_finished=lambda game_proxy: GameResponses.finish_game(game_proxy, game_id),
-            autostart=single_player,
-            next_game_id=next_game_id
+            on_server_action=lambda cell_update: GameResponses.server_update(game_id, cell_update),
+            autostart=single_player
         )
         if single_player:
             LobbyResponses.start_single_player_game(GameService.games[game_id], game_id, player_id)
@@ -108,11 +108,6 @@ class GameService:
                 return game
             return {'error': {'code': 'alien'}}
         return {'error': {'code': 'notFound'}}
-
-
-def _generate_game_id():
-    letters = 'bcdfghjklmnpqrstvxz'
-    return ''.join(random.choice(letters) for _ in range(8))
 
 
 def delete_finished_games():

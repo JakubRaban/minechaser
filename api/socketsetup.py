@@ -58,8 +58,10 @@ def read_motd():
                 motd = new_motd
                 sio.emit('message', {'message': motd})
     else:
-        motd = ''
-        sio.emit('message', {'message': None})
+        new_motd = ''
+        if motd != new_motd:
+            motd = new_motd
+            sio.emit('message', {'message': None})
 
 
 read_motd()

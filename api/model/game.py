@@ -62,11 +62,11 @@ class CellUpdate:
 
 
 class Game:
-    def __init__(self, dimensions: Dimensions, players_count: int, on_server_action: Callable[[CellUpdate | ActionResult], None]):
+    def __init__(self, dimensions: Dimensions, players_count: int, on_server_action: Callable[[CellUpdate | ActionResult], None], generate_bonuses: bool):
         def on_bonus_added(cell: Cell):
             self.on_server_action(CellUpdate([cell]))
 
-        self.board = Board(dimensions, on_bonus_added)
+        self.board = Board(dimensions, on_bonus_added if generate_bonuses else None)
         starting_positions = self.board.corners[:players_count]
         self.players = Players(starting_positions)
         self.on_server_action = on_server_action
@@ -105,15 +105,15 @@ class Game:
 class GameProxy:
     def __init__(self, player_ids: List[str], on_game_finished: callable, on_server_action: Callable[[CellUpdate | ActionResult], None], autostart: bool):
         is_public = autostart and len(player_ids) > 1
-        is_single_player = autostart and len(player_ids) == 1
+        self.is_single_player = autostart and len(player_ids) == 1
         time_before_start = 9 if is_public else 1
 
-        self.game = Game((18, 27), len(player_ids), on_server_action) if autostart else None
+        self.game = Game((18, 27), len(player_ids), on_server_action, not self.is_single_player) if autostart else None
         self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=time_before_start) if autostart else None
         self.players = dict(zip(player_ids, self.game.players.colors() if autostart else [None] * 4))
         self.end_timestamp = None
         self.end_game_scheduler = EndGameScheduler(self._finish_game, autostart=autostart) \
-            if is_public or not is_single_player else None
+            if is_public or not self.is_single_player else None
 
         self.lock = RLock()
         self.is_started = autostart
@@ -153,7 +153,7 @@ class GameProxy:
         if not self.game:
             self.is_started = True
             self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=6)
-            self.game = Game(dimensions, len(self.players), self.on_server_action)
+            self.game = Game(dimensions, len(self.players), self.on_server_action, not self.is_single_player)
             self.end_game_scheduler.start()
             for player, color in zip(self.player_ids, self.game.players.colors()):
                 self.players[player] = color
@@ -212,7 +212,8 @@ class GameProxy:
         self.end_timestamp = datetime.now(timezone.utc)
         if self.end_game_scheduler:
             self.end_game_scheduler.stop()
-        self.game.board.bonus_generator.stop()
+        if self.game.board.bonus_generator:
+            self.game.board.bonus_generator.stop()
         self.on_game_finished(self)
 
     def __getstate__(self):

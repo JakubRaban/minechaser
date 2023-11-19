@@ -64,12 +64,14 @@ class Board:
                     on_bonus_added(self.cells[position])
 
             assign_number_of_mines_around()
-            self.bonus_generator = BonusGenerator(on_bonus_generated)
+            if on_bonus_added:
+                self.bonus_generator = BonusGenerator(on_bonus_generated)
         else:
             self.__init__(dims, on_bonus_added)
 
     def step(self, position: Position) -> ActionOutcome:
         outcome = ActionOutcome()
+        recursively_stepped_cells = set()
 
         def do_step(pos: Position) -> ActionOutcome:
             cell = self.cells[pos]
@@ -81,13 +83,14 @@ class Board:
                     if self.mines_left == 0:
                         outcome.add_action(CellAction(cell=cell, event=NoMinesLeft()))
                 else:
+                    recursively_stepped_cells.add(cell)
                     if cell.bonus:
                         bonus = cell.bonus
                         cell.bonus = None
                         outcome.add_action(CellAction(cell=cell, event=BonusCollectedEvent(bonus=bonus)))
                     if cell.mines_around == 0:
                         outcome.add_action(CellAction(cell=cell, event=MineFreeCellStepped()))
-                        for p in self.get_adjacent_cells(pos).keys():
+                        for p in [pos for pos in self.get_adjacent_cells(pos).keys() if not self.cells[pos] in recursively_stepped_cells]:
                             do_step(p)
                     else:
                         outcome.add_action(CellAction(cell=cell, event=MineFreeCellStepped()))

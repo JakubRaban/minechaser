@@ -212,7 +212,7 @@ class GameProxy:
         self.end_timestamp = datetime.now(timezone.utc)
         if self.end_game_scheduler:
             self.end_game_scheduler.stop()
-        if self.game.board.bonus_generator:
+        if hasattr(self.game.board, 'bonus_generator'):
             self.game.board.bonus_generator.stop()
         self.on_game_finished(self)
 

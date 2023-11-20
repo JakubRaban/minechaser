@@ -1,5 +1,6 @@
 import { createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useState, useEffect } from 'react'
 import config from '../config'
+import { useSocket } from '../hooks/context/useSocket'
 
 export interface UserPreferences {
     name?: string
@@ -17,6 +18,7 @@ interface UserPreferencesContext extends UserPreferences {
 }
 
 export const PreferencesContextProvider: FC<PropsWithChildren> = ({ children }) => {
+    const { socket } = useSocket()
     const [name, setName] = useState('')
     const [settings, setSettingsState] = useState<UserPreferences>({
         invertControls: false,
@@ -38,6 +40,12 @@ export const PreferencesContextProvider: FC<PropsWithChildren> = ({ children }) 
         if (savedPreferences) {
             setSettingsState(JSON.parse(savedPreferences))
         }
+    }, [])
+    
+    useEffect(() => {
+        socket.emit('is_name_set', {}, ({ name }: { name: string }) => {
+            if (name) setName(name)
+        })
     }, [])
 
     useEffect(() => {

@@ -26,7 +26,7 @@ interface ShareDialogProps {
 }
 
 const url = `${location.protocol}//${location.host}`
-const subject = 'Check out MineChaser'
+const subject = 'Check out Minechaser'
 const body = 'I recently played this game and I\'d like to show it to you'
 
 const props = { url, subject, body, title: subject }
@@ -36,7 +36,7 @@ const ShareDialog: FC<ShareDialogProps> = ({ open, onClose }) => {
     return (
         <dialog className="share-dialog" open={open}>
             <article>
-                <h1>Share MineChaser</h1>
+                <h1>Share Minechaser</h1>
                 <div className="share-buttons">
                     <FacebookShareButton {...props}>
                         <FacebookIcon size={size} round={true} />
@@ -56,7 +56,7 @@ const ShareDialog: FC<ShareDialogProps> = ({ open, onClose }) => {
                     <TelegramShareButton {...props}>
                         <TelegramIcon size={size} round={true} />
                     </TelegramShareButton>
-                    <LinkedinShareButton {...props} source="MineChaser">
+                    <LinkedinShareButton {...props} source="Minechaser">
                         <LinkedinIcon size={size} round={true} />
                     </LinkedinShareButton>
                     <EmailShareButton {...props}>

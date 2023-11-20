@@ -9,8 +9,8 @@ const HowToPlay: FC = () => {
     
     return (
         <div className="how-to-play-page">
-            <h1>MineChaser Rules</h1>
-            <p>MineChaser is a Minesweeper-inspired game where you get a chance to actually walk on the minefield &mdash; one hasty step and it might be over!</p>
+            <h1>Minechaser Rules</h1>
+            <p>Minechaser is a Minesweeper-inspired game where you get a chance to actually walk on the minefield &mdash; one hasty step and it might be over!</p>
 
             <h2>Objective</h2>
             <p>Gain more points than your opponents by flagging cells with mines and stay alive until all the mines are cleared.</p>

@@ -34,7 +34,7 @@ const PrivacyPolicyPage = () => {
                 <h1>Privacy Policy</h1>
                 <p>Always available at <a href={window.location.href}>{window.location.href}</a></p>
                 <p>Effective date {new Date(1698836400000).toLocaleDateString()}</p>
-                <Link to="/">&larr; Back to MineChaser</Link>
+                <Link to="/">&larr; Back to Minechaser</Link>
             </header>
             <main>
                 <h2>Introduction</h2>
@@ -62,21 +62,16 @@ const PrivacyPolicyPage = () => {
                     access our website.
                     You have a right to not consent or revoke the consent to collect this information at any time:
                 </p>
-                <label style={{ border: '3px solid #9062ca', padding: '12px' }}>
-                    <input type="checkbox" role="switch" checked={cookiesAccepted} onChange={e => e.target.checked ? onAccept() : onReject()} />
-                    Consent to Automatically Collected Information
-                </label>
                 <ul>
                     <li>
-                        <b>Google Analytics</b>:
-                        We use Google Analytics, a third-party service, to analyze user interactions with our website.
-                        Google Analytics may collect information such as your IP address, browser type, operating
-                        system, and website activity.
-                        No personally identifiable information is sent to Google Analytics.
-                        You can learn more about Google Analytics and its data practices by visiting their privacy
-                        policy at&nbsp;
-                        <a href="https://policies.google.com/privacy" target="_blank"
-                            rel="noreferrer">https://policies.google.com/privacy</a>.
+                        <b>Cloudflare</b>:
+                        We use Cloudflare, a third-party service, to improve security and reliability of our service.
+                        Cloudflare also provides analytics for our service, which means we can understand better our user base.
+                        Cloudflare may collect information such as your IP address, browser type, operating system, and website activity.
+                        No personally identifiable information is sent to Cloudflare.
+                        You can learn more about Cloudflare and its data practices by visiting&nbsp;
+                        <a href="https://www.cloudflare.com/trust-hub/privacy-and-data-protection/" target="_blank"
+                            rel="noreferrer">https://www.cloudflare.com/trust-hub/privacy-and-data-protection</a>.
                     </li>
                     <li>
                         <b>Rollbar</b>:
@@ -93,6 +88,10 @@ const PrivacyPolicyPage = () => {
                 <p>
                     We may also collect information that your browser sends whenever you visit our Service.
                 </p>
+                <label style={{ border: '3px solid #9062ca', padding: '12px' }}>
+                    <input type="checkbox" role="switch" checked={cookiesAccepted} onChange={e => e.target.checked ? onAccept() : onReject()} />
+                    Consent to Automatically Collected Information
+                </label>
 
                 <h3>Tracking Technologies and Cookies</h3>
                 <p>To accomplish the above, we use the following technologies to store information:</p>

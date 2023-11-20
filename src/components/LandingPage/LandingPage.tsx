@@ -36,7 +36,7 @@ export const LandingPage: FC<LandingPageProps> = ({ message, showAboutDialog, sh
         <div className="landing-page">
             {message && <div className="message">{message}</div>}
             <header>
-                <h1 className="title">MineChaser</h1>
+                <h1 className="title">Minechaser</h1>
                 <h6 className="subtitle">Where Minesweeper meets Battle Royale</h6>
             </header>
             <main>

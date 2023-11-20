@@ -32,7 +32,7 @@ const ContactDialog = () => {
             <DialogHeader title="Contact Me" />
             <div>
                 <p>
-                    Whether you have any feedback or suggestions regarding MineChaser, or you want to discuss a different topic,
+                    Whether you have any feedback or suggestions regarding Minechaser, or you want to discuss a different topic,
                     feel free to contact me using the form below. I&apos;ll answer as soon as I can. Thank you!
                 </p>
                 <form ref={formRef} onSubmit={submit}>

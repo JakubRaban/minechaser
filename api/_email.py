@@ -23,7 +23,7 @@ def send_message(from_email, content):
     if parseaddr(from_email)[1]:
         message = EmailMessage()
         message["Subject"] = f'Contact Form Message From {from_email}'
-        message["From"] = f'MineChaser <{email}>'
+        message["From"] = f'Minechaser <{email}>'
         message["To"] = email
         message["Reply-To"] = from_email
         message.set_content(content)

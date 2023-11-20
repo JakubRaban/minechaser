@@ -30,10 +30,9 @@ const CookieToast = () => {
             toast(t => (
                 <span>
                     <div>
-                        MineChaser shares some anonymized user data with third-party services to ensure its reliability
-                        (<a href="https://rollbar.com" target="_blank" rel="noreferrer">Rollbar<ExternalPageIcon /></a>)
-                        and better understand its user base
-                        (<a href="https://marketingplatform.google.com/intl/en/about/analytics/" target="_blank" rel="noreferrer">Google Analytics<ExternalPageIcon /></a>)
+                        Minechaser shares some anonymized user data with third-party services to ensure its reliability and better understand its user base (
+                        <a href="https://rollbar.com" target="_blank" rel="noreferrer">Rollbar<ExternalPageIcon /></a>
+                        , <a href="https://www.cloudflare.com/" target="_blank" rel="noreferrer">Cloudflare<ExternalPageIcon /></a>)
                         in accordance with <a href="/privacypolicy">Privacy Policy</a>. You can opt out at any time.
                     </div>
                     <div className="buttons">

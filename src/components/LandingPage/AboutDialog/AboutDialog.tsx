@@ -18,7 +18,7 @@ const AboutDialog = () =>
                     In my free time I travel, work out, learn languages and never refuse a good fondue.
                 </p>
                 <p>
-                    MineChaser is my first publicly available website and I really hope you enjoy it.
+                    Minechaser is my first publicly available website and I really hope you enjoy it.
                     Feel free to reach out to me with any suggestions, feedback, or if you want to have a coffee
                     with me in Geneva.
                 </p>

@@ -177,7 +177,7 @@ class GameProxy:
                         if self.end_game_scheduler:
                             self.end_game_scheduler.finish_now()
                         else:
-                            self._finish_game()
+                            scheduler.add_job(self._finish_game, 'date', run_date=datetime.now(timezone.utc))
                 return result
 
     @locked

@@ -129,9 +129,9 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
         gamePageRef.current?.focus()
         playGameMusic()
 
-        socket.on('action_result', (actionResult?: ActionResult) => {
+        const actionHandler = (serverSide: boolean) => (actionResult?: ActionResult) => {
             if (actionResult) {
-                resolveAction(actionResult)
+                resolveAction(actionResult, serverSide)
                 if (!disableSoundEffects) {
                     if (actionResult.events?.includes('MineCellStepped')) explodeSound.play()
                     if (actionResult.players?.[playerColor]) {
@@ -142,10 +142,15 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
                     }
                 }
             }
-        })
+        }
+
+        socket.on('action_result', actionHandler(false))
+        socket.on('server_action_result', actionHandler(true))
+
         socket.on('game_finished', (finalGameState: RawGameState) => {
             setGameState(finalGameState)
         })
+
         return () => {
             socket.off('action_result')
             socket.off('game_finished')

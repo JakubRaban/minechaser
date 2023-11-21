@@ -11,4 +11,4 @@ class GameResponses:
 
     @staticmethod
     def server_update(game_id: str, server_update: ActionResult | CellUpdate):
-        sio.emit('action_result', server_update, room=game_id)
+        sio.emit('server_action_result', server_update, room=game_id)

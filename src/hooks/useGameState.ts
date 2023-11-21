@@ -27,7 +27,7 @@ export const useGameState = (initialState: RawGameState, playerColor: PlayerColo
 
     const [playerActionCounter, setPlayerActionCounter] = useState(0)
 
-    const resolveActionResult = (result: ActionResult) => {
+    const resolveActionResult = (result: ActionResult, serverSide: boolean) => {
         const { players, cells, endGameScheduledTimestamp, originatorColor, events, pointsChange } = result
         setRawGameState((prev: RawGameState): RawGameState => ({
             ...prev,
@@ -52,7 +52,9 @@ export const useGameState = (initialState: RawGameState, playerColor: PlayerColo
                 [toPositionString(cells[0].position)]: { originatorColor: originatorColor!, type, pointsChange: pointsChange || 0, id: eventId.current++ },
             }))
         }
-        setPlayerActionCounter(c => originatorColor === playerColor ? c + 1 : c)
+        if (!serverSide) {
+            setPlayerActionCounter(c => originatorColor === playerColor ? c + 1 : c)
+        }
     }
 
     const props: GameDef = { start, end, endScheduled, players, dims, minesLeft, cells, isFinished, actionCounter: playerActionCounter }

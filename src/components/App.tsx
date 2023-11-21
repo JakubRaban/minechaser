@@ -17,6 +17,8 @@ const rollbarConfig = {
 const rollbar = new Rollbar(rollbarConfig)
 rollbar.options.enabled = false
 
+const bc = new BroadcastChannel('multiple-tab-detector')
+
 const ErrorUI: FC = () => (
     <div className="error-screen">
         Something went wrong :(
@@ -32,6 +34,7 @@ export const App: FC = () => {
     const [authenticated, setAuthenticated] = useState(false)
     const [disconnected, setDisconnected] = useState(false)
     const [message, setMessage] = useState<string | null>(null)
+    const [multipleTabsOpenError, setMultipleTabsOpenError] = useState(false)
     const { STORAGE: storage } = config
     
     useClockSynchronizer()
@@ -81,7 +84,26 @@ export const App: FC = () => {
         }
     }, [])
 
-    return (
+    useEffect(() => {
+        if (import.meta.env.MODE === 'production') {
+            bc.onmessage = event => {
+                if (event.data === 'ping') {
+                    bc.postMessage('pong')
+                }
+                if (event.data === 'pong') {
+                    setMultipleTabsOpenError(true)
+                }
+            }
+            bc.postMessage('ping')
+        }
+    }, [])
+
+    return multipleTabsOpenError ? (
+        <div className="error-screen">
+            Minechaser is already running in another tab
+            <button className="primary" onClick={() => location.reload()}>Retry</button>
+        </div>
+    ) : (
         <RollbarProvider config={rollbarConfig}>
             <ErrorBoundary fallbackUI={ErrorUI}>
                 {disconnected && <div className="disconnected-banner">Server connection lost</div>}

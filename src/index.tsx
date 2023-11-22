@@ -9,6 +9,7 @@ import { TimeOffsetContextProvider } from './contexts/TimeOffsetContext'
 import { AudioContextProvider } from './contexts/AudioContext'
 
 import './styles/setup.scss'
+import './styles/tippy.css'
 
 const container = document.getElementById('root')
 const root = createRoot(container!)

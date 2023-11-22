@@ -20,7 +20,7 @@ export const useClockSynchronizer = () => {
                 counter++
             })
             if (counter >= 5) clearInterval(interval)
-        }, 500)
+        }, 1000)
     }, [])
     
     useEffect(() => {

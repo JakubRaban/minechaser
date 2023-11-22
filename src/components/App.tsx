@@ -6,6 +6,7 @@ import { AppRouter } from './AppRouter'
 import { ErrorBoundary, Provider as RollbarProvider } from '@rollbar/react'
 import CookieToast from './CookieToast/CookieToast'
 import Rollbar from 'rollbar'
+import { usePreferences } from '../hooks/context/usePreferences'
 
 import './App.scss'
 
@@ -30,13 +31,14 @@ const ErrorUI: FC = () => (
 
 export const App: FC = () => {
     const { socket } = useSocket()
-    
+    const { setName } = usePreferences()
+
     const [authenticated, setAuthenticated] = useState(false)
     const [disconnected, setDisconnected] = useState(false)
     const [message, setMessage] = useState<string | null>(null)
     const [multipleTabsOpenError, setMultipleTabsOpenError] = useState(false)
     const { STORAGE: storage } = config
-    
+
     useClockSynchronizer()
     
     useEffect(() => {
@@ -46,6 +48,9 @@ export const App: FC = () => {
                 storage.setItem('rmAuth', token)
                 setAuthenticated(true)
                 setMessage(message ?? null)
+                socket.emit('is_name_set', {}, ({ name }: { name: string }) => {
+                    if (name) setName(name)
+                })
             })
         })
         socket.on('message', ({ message }) => {

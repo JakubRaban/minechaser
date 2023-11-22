@@ -64,6 +64,9 @@
 
   .cell-icons {
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .cell-player-overlay {

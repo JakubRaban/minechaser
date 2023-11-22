@@ -159,7 +159,7 @@ const Game: FC<GameProps> = ({ gameState: rawGameState, playerColor, colorMappin
 
     useEffect(() => {
         if (props.end) {
-            if (!disableSoundEffects && props.minesLeft === 0) {
+            if (!disableSoundEffects && props.minesLeft === 0 && Object.values(props.players).some(p => p.alive)) {
                 gameSuccessSound.play()
             }
             GameSummary.preload()

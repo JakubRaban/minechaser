@@ -118,9 +118,11 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
                                 Start the Game
                             </button>
                         </div>
-                        <button className="leave-game-button outline">
-                            <Link to="/">Leave the Game</Link>
-                        </button>
+                        <Link to="/">
+                            <button className="leave-game-button outline">
+                                Leave the Game
+                            </button>
+                        </Link>
                     </ConfirmCancelContainer>
                 </div>
             </div>

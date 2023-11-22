@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router'
 import { PlayerColor, PlayerColorMapping, RawGameState } from '../../../types/model'
 import { PrivateGameInviteeWrapper } from './PrivateGameInviteeWrapper/PrivateGameInviteeWrapper'
@@ -22,24 +22,26 @@ interface GameStateError {
 
 interface GameWrapperState extends GameStateData {
     players: string[]
-    origin: string
 }
 
-type GameStateResponse = { state: Partial<GameStateData>, error?: GameStateError }
+interface GameStateResponse {
+    state: Partial<GameStateData>
+    isPrivate?: boolean
+    error?: GameStateError
+}
 
 const GameWrapper: FC = () => {
     const { socket } = useSocket()
     const navigate = useNavigate()
     const { gameId } = useParams()
-    const { gameState, playerColor, players , colorMapping, origin } = (useLocation().state ?? {}) as Partial<GameWrapperState>
+    const { gameState, playerColor, players , colorMapping } = (useLocation().state ?? {}) as Partial<GameWrapperState>
 
     const [gameData, setGameData] = useState(
         gameState && playerColor && colorMapping ? { gameState, playerColor, colorMapping } : undefined,
     )
     const [gameStateChecked, setGameStateChecked] = useState(false)
+    const [isPrivate, setIsPrivate] = useState(false)
     const [fadeOut, moveToGame, startFadingOut] = useDelayedFlag(700)
-    
-    const isGamePrivate = useRef(!origin || origin === '/new-game')
 
     const handleStart = (data: GameStateData) => {
         setGameData(data)
@@ -60,7 +62,8 @@ const GameWrapper: FC = () => {
         if (!gameData) {
             Promise.all([
                 new Promise<void>(resolve => {
-                    socket.emit('get_game_state', { gameId }, ({ state, error }: GameStateResponse) => {
+                    socket.emit('get_game_state', { gameId }, ({ state, isPrivate, error }: GameStateResponse) => {
+                        setIsPrivate(isPrivate ?? false)
                         if (state?.gameState) {
                             handleStart(state as GameStateData)
                         } else if (error) {
@@ -79,8 +82,8 @@ const GameWrapper: FC = () => {
     if (!gameStateChecked) {
         return <LoadingScreen />
     } else if (gameData && moveToGame) {
-        return <Game isPrivate={isGamePrivate.current} {...gameData} />
-    } else if (isGamePrivate.current && !fadeOut) {
+        return <Game isPrivate={isPrivate} {...gameData} />
+    } else if (isPrivate && !fadeOut) {
         if (players) {
             return <PrivateGameLobby players={players} onGameStart={handleStart} className={className} />
         } else {

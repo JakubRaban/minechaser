@@ -8,6 +8,7 @@ export interface RawGameState {
     startTimestamp: string
     endTimestamp: string | null
     endGameScheduledTimestamp: string | null
+    isPrivate: boolean
 }
 
 export interface GameState extends Omit<RawGameState, 'startTimestamp' | 'endTimestamp' | 'endGameScheduledTimestamp'> {

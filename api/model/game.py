@@ -105,6 +105,7 @@ class Game:
 class GameProxy:
     def __init__(self, player_ids: List[str], on_game_finished: callable, on_server_action: Callable[[CellUpdate | ActionResult], None], autostart: bool):
         is_public = autostart and len(player_ids) > 1
+        self.is_private = not autostart and len(player_ids) == 1
         self.is_single_player = autostart and len(player_ids) == 1
         time_before_start = 9 if is_public else 4
 
@@ -116,7 +117,7 @@ class GameProxy:
 
         self.lock = RLock()
         self.is_started = autostart
-        self.next_game_id = generate_game_id()
+        self.next_game_id = generate_game_id() if self.is_private else None
         self.on_server_action = on_server_action
         self.on_game_finished = on_game_finished
 
@@ -212,7 +213,7 @@ class GameProxy:
         self.on_game_finished(self)
 
     def __getstate__(self):
-        base_state = {k: v for k, v in self.__dict__.items() if k in ['game', 'start_timestamp', 'end_timestamp']}
+        base_state = {k: v for k, v in self.__dict__.items() if k in ['game', 'start_timestamp', 'end_timestamp', 'is_private']}
         return {
             **base_state,
             'endGameScheduledTimestamp': self.end_game_scheduler.end_game_scheduled_timestamp

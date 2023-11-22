@@ -13,4 +13,4 @@ def game_state(game: GameProxy, player_id: str):
                 in game.players.items()
             }
         }
-    } if game.created else {'state': {}}
+    } if game.created else {'state': {}, 'isPrivate': game.is_private}

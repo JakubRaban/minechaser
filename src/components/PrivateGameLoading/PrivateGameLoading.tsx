@@ -11,15 +11,15 @@ interface PrivateGameLoadingProps {
 const PrivateGameLoading: FC<PrivateGameLoadingProps> = ({ singlePlayer }) => {
     const { socket } = useSocket()
     const navigate = useNavigate()
-    const { pathname, state } = useLocation()
+    const { state } = useLocation()
     const { restartedGameId: gameId } = state ?? {}
 
     useEffect(() => {
         socket.on('single_player_game_started', ({ gameId, gameState, playerColor, colorMapping }) => {
-            navigate(`/game/${gameId}`, { replace: true, state: { gameState, playerColor, colorMapping, origin: pathname } })
+            navigate(`/game/${gameId}`, { replace: true, state: { gameState, playerColor, colorMapping } })
         })
         socket.on('private_game_lobby_update', ({ gameId, players }) => {
-            navigate(`/game/${gameId}`, { replace: true, state: { players, origin: pathname } })
+            navigate(`/game/${gameId}`, { replace: true, state: { players } })
         })
         
         if (singlePlayer) {

@@ -72,6 +72,8 @@ export interface GameDef {
 }
 
 export interface Bonus {
-    name: string;
+    name: BonusName;
     expiresAtTimestamp: string;
 }
+
+export type BonusName = 'x2' | 'freeze' | 'disappear'

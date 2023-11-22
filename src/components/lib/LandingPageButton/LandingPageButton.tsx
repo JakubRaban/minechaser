@@ -1,6 +1,6 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Tooltip } from 'react-tooltip'
+import tippy from 'tippy.js'
 
 import './LandingPageButton.scss'
 
@@ -15,6 +15,10 @@ interface ButtonProps {
 export const LandingPageButton: FC<ButtonProps> = ({ text, link, tooltip, onClick, onHover }) => {
     const tooltipId = text.split(' ').join('')
 
+    useEffect(() => {
+        tippy(`#${tooltipId}`, { content: tooltip, theme: 'default', delay: [1000, 300] })
+    }, [])
+
     const button = (
         <button onClick={onClick} onMouseEnter={onHover}>
             {text}
@@ -23,8 +27,7 @@ export const LandingPageButton: FC<ButtonProps> = ({ text, link, tooltip, onClic
     
     return (
         <>
-            {link ? <Link data-tooltip-id={tooltipId} data-tooltip-content={tooltip} data-tooltip-delay-show={1000} data-tooltip-delay-hide={300} className="landing-page-link" to={link}>{button}</Link> : button}
-            <Tooltip id={tooltipId} />
+            {link ? <Link id={tooltipId} className="landing-page-link" to={link}>{button}</Link> : button}
         </>
     )
 }

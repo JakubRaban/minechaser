@@ -33,6 +33,7 @@ export const Scoreboard = memo(forwardRef<HTMLDivElement, ScoreboardProps>(({ mi
                             <ScoreboardElement highlight={color === playerColor} label={colorMapping[color]!} color={color} backdrop={!player.alive} className="player-scoreboard">
                                 <PlayerScoreboard
                                     key={color}
+                                    playerColor={color}
                                     score={player.score}
                                     bonusName={player.bonus?.name}
                                     bonusExpiresAtTimestamp={player.bonus?.expiresAtTimestamp}

@@ -2,18 +2,20 @@ import { memo, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import { CellIcons } from '../../Cell/Cell'
 import { useDateDiff } from '../../../../hooks/useDateDiff'
+import { BonusName, PlayerColor } from '../../../../types/model'
 
 import './PlayerScoreboard.scss'
 
 interface PlayerScoreboardProps {
+    playerColor: PlayerColor
     score: number
-    bonusName?: string;
+    bonusName?: BonusName;
     bonusExpiresAtTimestamp?: string;
     alive: boolean
 }
 
-export const PlayerScoreboard = memo<PlayerScoreboardProps>(({ score, bonusName, bonusExpiresAtTimestamp, alive }) => {
-    const [displayedBonusName, setDisplayedBonusName] = useState<string | null>(null)
+export const PlayerScoreboard = memo<PlayerScoreboardProps>(({ playerColor, score, bonusName, bonusExpiresAtTimestamp, alive }) => {
+    const [displayedBonusName, setDisplayedBonusName] = useState<BonusName | null>(null)
     const elementRef = useRef<HTMLDivElement>(null)
     const interval = useRef<NodeJS.Timeout | null>(null)
     const dateDiff = useDateDiff()
@@ -46,7 +48,7 @@ export const PlayerScoreboard = memo<PlayerScoreboardProps>(({ score, bonusName,
                 <div>{score}</div>
                 {(displayedBonusName || !alive) && (
                     <div className={cn('cell player-cell', { mine: !alive, uncovered: !alive, bonus: displayedBonusName })}>
-                        <CellIcons bonusName={displayedBonusName} showMine={!alive} />
+                        <CellIcons className={playerColor} bonusName={displayedBonusName} showMine={!alive} />
                         <div className="bonus-expiry-overlay" />
                     </div>
                 )}

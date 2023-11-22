@@ -169,13 +169,20 @@ class Board:
 class BonusGenerator:
     def __init__(self, on_bonus_added: Callable[[Bonus], None]):
         self.on_bonus_added = on_bonus_added
+        self.bonuses_generated = {'x2': 0, 'freeze': 0, 'disappear': 0}
         self.job = None
         self.add_next_job(random.uniform(30.0, 45.0))
 
     def generate_bonus(self):
+        max_generated_bonus = max(self.bonuses_generated.values())
+        bonuses = []
+        for bonus, times_generated in self.bonuses_generated.items():
+            bonuses.extend([bonus] * (max_generated_bonus + 1 - times_generated))
+        picked_bonus = random.choice(bonuses)
+        self.bonuses_generated[picked_bonus] += 1
         self.on_bonus_added(
             Bonus(
-                random.choice(['x2', 'freeze', 'disappear']),
+                picked_bonus,
                 random.uniform(15.0, 20.0)
             )
         )

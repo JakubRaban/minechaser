@@ -62,6 +62,10 @@
     }
   }
 
+  .cell-icons {
+    z-index: 10;
+  }
+
   .cell-player-overlay {
     position: absolute;
     top: 0;

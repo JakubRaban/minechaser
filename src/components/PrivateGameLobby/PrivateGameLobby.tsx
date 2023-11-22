@@ -9,10 +9,10 @@ import { Game } from '../lazy-components'
 import { usePreload } from '../../hooks/usePreload'
 import cn from 'classnames'
 import { ScreenOrientationWarning } from '../lib/ScreenOrientationWarning/ScreenOrientationWarning'
-import { Tooltip } from 'react-tooltip'
 import { Link } from 'react-router-dom'
 import { ConfirmCancelContainer } from '../lib/ConfirmCancelContainer/ConfirmCancelContainer'
 import { useAudio } from '../../hooks/context/useAudio'
+import tippy from 'tippy.js'
 
 import './PrivateGameLobby.scss'
 
@@ -36,6 +36,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
     const [size, setSize] = useState<[number, number]>([18, 27])
 
     const gameStarted = useRef(false)
+    const joiningDisabled = players.length < 2
 
     useEffect(() => {
         socket.on('private_game_lobby_update', ({ players }) => {
@@ -62,6 +63,13 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
         }
     }, [])
 
+    useEffect(() => {
+        if (joiningDisabled) {
+            const instances = tippy('.disabled-button-tooltip-wrapper', { content: 'At least one more player needs to join the game', theme: 'default' })
+            return () => instances.forEach(i => i.destroy())
+        }
+    }, [joiningDisabled])
+
     const handleStart = () => {
         gameStarted.current = true
         socket.emit('start_private_game', { gameId, size })
@@ -71,7 +79,6 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
         setLinkCopied(true)
         setTimeout(() => setLinkCopied(false), 5000)
     })
-    const joiningDisabled = players.length < 2
 
     return (
         <div className={cn('private-game-lobby-wrapper', className)}>
@@ -104,20 +111,15 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
                     </label>
 
                     <ConfirmCancelContainer>
-                        <button
-                            className="start-game-button"
-                            disabled={joiningDisabled}
-                            onClick={handleStart}
-                            data-tooltip-id="cannot-join-tooltip"
-                            data-tooltip-content={joiningDisabled ? 'Wait for at least one more player to start' : undefined}
-                        >
-                            Start the Game
-                        </button>
+                        <div className="disabled-button-tooltip-wrapper">
+                            <button className="start-game-button" disabled={joiningDisabled} onClick={handleStart}>
+                                Start the Game
+                            </button>
+                        </div>
                         <button className="leave-game-button outline">
                             <Link to="/">Leave the Game</Link>
                         </button>
                     </ConfirmCancelContainer>
-                    <Tooltip id="cannot-join-tooltip" />
                 </div>
             </div>
         </div>

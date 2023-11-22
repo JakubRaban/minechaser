@@ -1,5 +1,5 @@
 export const DoublePointsBonusIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 5000 5000">
+    <svg xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 5000 5000" className="bonus-icon">
         <path id="Selection #1"
             fill="black" stroke="black" strokeWidth="1"
             d="M 2684.00,1299.00

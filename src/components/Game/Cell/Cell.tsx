@@ -1,5 +1,5 @@
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Cell as CellType, PlayerColor } from '../../../types/model'
+import { BonusName, Cell as CellType, PlayerColor } from '../../../types/model'
 import cn from 'classnames'
 import { FlagIcon } from '../../../icons/Flag/FlagIcon'
 import { MineIcon } from '../../../icons/Mine/MineIcon'
@@ -8,21 +8,44 @@ import { usePlayerColorToClassName } from '../../../hooks/usePlayerColorToClassN
 import { FreezeBonusIcon } from '../../../icons/bonus/FreezeBonusIcon/FreezeBonusIcon'
 import { DoublePointsBonusIcon } from '../../../icons/bonus/DoublePointsBonusIcon/DoublePointsBonusIcon'
 import disappear from '/images/disappear.png'
+import tippy from 'tippy.js'
 
 import './Cell.scss'
 
+const bonusDisplayedNames: Record<BonusName, string> = {
+    x2: 'Double Points',
+    freeze: 'Immobility',
+    disappear: 'Invisibility',
+}
+
+const bonusDescriptions: Record<BonusName, string> = {
+    x2: 'Collecting player receives double the points, whether positive or negative.',
+    freeze: 'Opponents of the Collecting Player are unable to move.',
+    disappear: 'Position of the opponents of the collecting player is hidden. They can still move around and place flags.',
+}
+
 interface CellIconsProps {
-    bonusName?: string | null
+    className: string
+    bonusName?: BonusName | null
     showMine?: boolean
     flaggingPlayer?: PlayerColor
     incorrectFlagColor?: PlayerColor | null
 }
 
-export const CellIcons = memo<CellIconsProps>(({ bonusName, showMine, flaggingPlayer, incorrectFlagColor }) => {
+export const CellIcons = memo<CellIconsProps>(({ className, bonusName, showMine, flaggingPlayer, incorrectFlagColor }) => {
     const toClassName = usePlayerColorToClassName()
+
+    useEffect(() => {
+        if (bonusName) {
+            const instances = tippy(`#icons-${className}`, {
+                allowHTML: true,
+                content: `<strong>${bonusDisplayedNames[bonusName]}</strong><br />${bonusDescriptions[bonusName]}` })
+            return () => instances.forEach(i => i.destroy())
+        }
+    }, [bonusName, className])
     
     return (
-        <>
+        <div className="cell-icons" id={`icons-${className}`}>
             {showMine ? <MineIcon /> : (
                 <>
                     {bonusName === 'freeze' && <FreezeBonusIcon />}
@@ -32,7 +55,7 @@ export const CellIcons = memo<CellIconsProps>(({ bonusName, showMine, flaggingPl
                     {incorrectFlagColor && <FlagIcon fillClassName={toClassName(incorrectFlagColor)} className="incorrect" />}
                 </>
             )}
-        </>
+        </div>
     )
 })
 
@@ -105,7 +128,13 @@ export const Cell = memo<CellProps>(({ cell, steppingPlayersColors, event }) => 
 
     return (
         <div className={className} ref={cellRef}>
-            <CellIcons showMine={isUncovered && hasMine} bonusName={bonus?.name} flaggingPlayer={flaggingPlayer} incorrectFlagColor={incorrectFlagColor} />
+            <CellIcons
+                className={cellClassName}
+                showMine={isUncovered && hasMine}
+                bonusName={bonus?.name}
+                flaggingPlayer={flaggingPlayer}
+                incorrectFlagColor={incorrectFlagColor}
+            />
             <div className="cell-content">
                 {isUncovered && !hasMine && (minesAround && minesAround > 0 ? minesAround : '')}
                 {pointsChange && (

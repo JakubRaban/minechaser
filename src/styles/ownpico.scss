@@ -106,3 +106,29 @@ button > a {
     opacity: 0;
   }
 }
+
+.tippy-box[data-theme~='default'] {
+  --tippy-background: rgba(0, 0, 0, 0.9);
+  background-color: var(--tippy-background);
+  text-align: center;
+
+  &[data-placement^='top'] > .tippy-arrow::before {
+    border-top-color: var(--tippy-background);
+  }
+
+  &[data-placement^='bottom'] > .tippy-arrow::before {
+    border-bottom-color: var(--tippy-background);
+  }
+
+  &[data-placement^='left'] > .tippy-arrow::before{
+    border-left-color: var(--tippy-background);
+  }
+
+  &[data-placement^='right'] > .tippy-arrow::before {
+    border-right-color: var(--tippy-background);
+  }
+
+  .tippy-content {
+    font-size: $text24;
+  }
+}

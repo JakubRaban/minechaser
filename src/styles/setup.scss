@@ -1,4 +1,5 @@
 @import "constants";
-@layer pico, components;
+@layer lib, pico, components;
 
+@import url('tippy.js/dist/tippy.css') layer(lib);
 @import url('ownpico.scss') layer(pico);

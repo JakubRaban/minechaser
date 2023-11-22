@@ -106,14 +106,13 @@ class GameProxy:
     def __init__(self, player_ids: List[str], on_game_finished: callable, on_server_action: Callable[[CellUpdate | ActionResult], None], autostart: bool):
         is_public = autostart and len(player_ids) > 1
         self.is_single_player = autostart and len(player_ids) == 1
-        time_before_start = 9 if is_public else 1
+        time_before_start = 9 if is_public else 4
 
         self.game = Game((18, 27), len(player_ids), on_server_action, not self.is_single_player) if autostart else None
         self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=time_before_start) if autostart else None
         self.players = dict(zip(player_ids, self.game.players.colors() if autostart else [None] * 4))
         self.end_timestamp = None
-        self.end_game_scheduler = EndGameScheduler(self._finish_game, autostart=autostart) \
-            if is_public or not self.is_single_player else None
+        self.end_game_scheduler = EndGameScheduler(self._finish_game, autostart=autostart, single_player=self.is_single_player)
 
         self.lock = RLock()
         self.is_started = autostart
@@ -174,10 +173,7 @@ class GameProxy:
             if result:
                 for event_type in result.outcome.event_types:
                     if event_type == MineCellStepped and self._all_players_dead():
-                        if self.end_game_scheduler:
-                            self.end_game_scheduler.finish_now()
-                        else:
-                            scheduler.add_job(self._finish_game, 'date', run_date=datetime.now(timezone.utc))
+                        self.end_game_scheduler.finish_now()
                 return result
 
     @locked
@@ -190,7 +186,7 @@ class GameProxy:
                     if event_type == NoMinesLeft:
                         self._finish_game()
                         return
-                    if self.end_game_scheduler and event_type == MineCellFlagged and len(self.players) > 1:
+                    if event_type == MineCellFlagged and len(self.players) > 1:
                         result.end_game_scheduled_timestamp = datetime.now(timezone.utc) + timedelta(minutes=2)
                         self.end_game_scheduler.postpone_end(result.end_game_scheduled_timestamp)
                 return result
@@ -210,8 +206,7 @@ class GameProxy:
         if self.game is not None:
             self.game.board.show_pristine_cells()
         self.end_timestamp = datetime.now(timezone.utc)
-        if self.end_game_scheduler:
-            self.end_game_scheduler.stop()
+        self.end_game_scheduler.stop()
         if hasattr(self.game.board, 'bonus_generator'):
             self.game.board.bonus_generator.stop()
         self.on_game_finished(self)
@@ -220,15 +215,16 @@ class GameProxy:
         base_state = {k: v for k, v in self.__dict__.items() if k in ['game', 'start_timestamp', 'end_timestamp']}
         return {
             **base_state,
-            'endGameScheduledTimestamp': self.end_game_scheduler.end_game_scheduled_timestamp if self.end_game_scheduler else None
+            'endGameScheduledTimestamp': self.end_game_scheduler.end_game_scheduled_timestamp
         }
 
 
 class EndGameScheduler:
-    def __init__(self, on_game_finished: callable, autostart=True):
+    def __init__(self, on_game_finished: callable, autostart=True, single_player=False):
         self.on_game_finished = on_game_finished
         self.finish_game_job = None
         self.random_id = None
+        self.single_player = single_player
         self.end_game_scheduled_timestamp = None
         if autostart:
             self.start()
@@ -246,10 +242,11 @@ class EndGameScheduler:
         return bool(self.random_id)
 
     def postpone_end(self, end_game_scheduled_timestamp: datetime):
-        self.end_game_scheduled_timestamp = end_game_scheduled_timestamp
-        self.finish_game_job = scheduler.reschedule_job(
-            self.random_id, trigger='date', run_date=end_game_scheduled_timestamp
-        )
+        if not self.single_player:
+            self.end_game_scheduled_timestamp = end_game_scheduled_timestamp
+            self.finish_game_job = scheduler.reschedule_job(
+                self.random_id, trigger='date', run_date=end_game_scheduled_timestamp
+            )
 
     def finish_now(self):
         self.finish_game_job = scheduler.reschedule_job(

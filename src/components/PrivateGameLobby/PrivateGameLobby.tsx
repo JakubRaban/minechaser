@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom'
 import { ConfirmCancelContainer } from '../lib/ConfirmCancelContainer/ConfirmCancelContainer'
 import { useAudio } from '../../hooks/context/useAudio'
 import tippy from 'tippy.js'
+import { is } from '../../helpers'
 
 import './PrivateGameLobby.scss'
 
@@ -109,6 +110,7 @@ export const PrivateGameLobby: FC<PrivateGameLobbyProps> = ({ players: playersPr
                         Board Size:
                         <BoardSizeForm size={size} onChange={setSize} />
                     </label>
+                    {is(size, [24, 36]) && <div className="board-size-warning">Players on some mobile devices may find displayed board too small with this size.</div>}
 
                     <ConfirmCancelContainer>
                         <div className="disabled-button-tooltip-wrapper">

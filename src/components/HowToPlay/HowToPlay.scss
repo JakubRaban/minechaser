@@ -16,6 +16,13 @@
     text-align: center;
   }
 
+  .bonus-icon {
+    width: 2em;
+    height: 2em;
+    margin-inline-end: 0.5em;
+    background-color: $cell-bonus-color;
+  }
+
   .action-buttons {
     display: flex;
     flex-direction: column;

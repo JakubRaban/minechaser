@@ -34,6 +34,7 @@ const tips = [
     'To win, you must not only gain the most points, but also stay alive (unless nobody stays alive).',
     'You can also play with your friends (up to max. 4 players) or practice by yourself.',
     'If no player flags any cell for 2 minutes, the game will end.',
+    'Hover over the bonus\' icon to find out more about it.',
 ]
 
 const LeaveQueueButton = () => <Link className="leave-queue-link" to="/" replace><button className="outline secondary">Leave the queue</button></Link>

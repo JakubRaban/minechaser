@@ -1,4 +1,4 @@
-import { GameDef, Position } from './types/model'
+import { BonusName, GameDef, Position } from './types/model'
 import { Direction } from './components/Game/Game'
 
 export const toPositionString = ([col, row]: Position) => `(${col}, ${row})`
@@ -107,3 +107,14 @@ export const removeAllCookies = () => document.cookie.split(';').forEach((c) => 
     document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/')
 })
 
+export const bonusDisplayedNames: Record<BonusName, string> = {
+    x2: 'Double Points',
+    freeze: 'Immobility',
+    disappear: 'Invisibility',
+}
+
+export const bonusDescriptions: Record<BonusName, string> = {
+    x2: 'Collecting player receives double the points, whether positive or negative.',
+    freeze: 'Opponents of the collecting player are unable to move.',
+    disappear: 'Position of the opponents of the collecting player is hidden. They can still move around and place flags.',
+}

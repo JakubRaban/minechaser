@@ -1,6 +1,10 @@
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
 import { useKeyMap } from '../../hooks/useKeyMap'
+import { DoublePointsBonusIcon } from '../../icons/bonus/DoublePointsBonusIcon/DoublePointsBonusIcon'
+import { FreezeBonusIcon } from '../../icons/bonus/FreezeBonusIcon/FreezeBonusIcon'
+import { bonusDescriptions, bonusDisplayedNames } from '../../helpers'
+import disappear from '/images/disappear.png'
 
 import './HowToPlay.scss'
 
@@ -42,6 +46,28 @@ const HowToPlay: FC = () => {
             <ul>
                 <li>You get 1 point for correctly flagging a mine</li>
                 <li>You get an increasing penalty from -1 to -3 points for incorrectly placing a flag, although the penalty starts from the second mistake.</li>
+            </ul>
+
+            <h2>Bonuses</h2>
+            <p>
+                From time to time, bonuses will appear in a random place of the board. Players can collect them by both flagging or stepping on the cell 
+                (depending on whether the bonus appeared on a cell with or without a mine). 
+                After collecting the bonus, it will take effect for a short period of time, positively affecting the beneficiary or negatively impacting 
+                other players. Currently, three types of bonuses exist:
+            </p>
+            <ul>
+                <li>
+                    <DoublePointsBonusIcon />
+                    <strong>{bonusDisplayedNames.x2}</strong> &ndash; {bonusDescriptions.x2}
+                </li>
+                <li>
+                    <FreezeBonusIcon />
+                    <strong>{bonusDisplayedNames.freeze}</strong> &ndash; {bonusDescriptions.freeze}
+                </li>
+                <li>
+                    <img src={disappear} className="bonus-icon" alt="disappear bonus" />
+                    <strong>{bonusDisplayedNames.disappear}</strong> &ndash; {bonusDescriptions.disappear}
+                </li>
             </ul>
 
             <h2>End of Game</h2>

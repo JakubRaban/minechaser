@@ -9,20 +9,9 @@ import { FreezeBonusIcon } from '../../../icons/bonus/FreezeBonusIcon/FreezeBonu
 import { DoublePointsBonusIcon } from '../../../icons/bonus/DoublePointsBonusIcon/DoublePointsBonusIcon'
 import disappear from '/images/disappear.png'
 import tippy from 'tippy.js'
+import { bonusDescriptions, bonusDisplayedNames } from '../../../helpers'
 
 import './Cell.scss'
-
-const bonusDisplayedNames: Record<BonusName, string> = {
-    x2: 'Double Points',
-    freeze: 'Immobility',
-    disappear: 'Invisibility',
-}
-
-const bonusDescriptions: Record<BonusName, string> = {
-    x2: 'Collecting player receives double the points, whether positive or negative.',
-    freeze: 'Opponents of the Collecting Player are unable to move.',
-    disappear: 'Position of the opponents of the collecting player is hidden. They can still move around and place flags.',
-}
 
 interface CellIconsProps {
     className: string

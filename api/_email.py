@@ -2,7 +2,6 @@ import smtplib
 from email.message import EmailMessage
 from email.utils import parseaddr
 import os
-import atexit
 
 email = 'minechaser@jakubraban.com'
 smtp_server = 'mail.privateemail.com'
@@ -12,7 +11,6 @@ password = os.environ.get('EMAIL_PASSWORD')
 
 server = smtplib.SMTP_SSL(smtp_server, port)
 server.login(login, password)
-atexit.register(lambda: server.quit())
 
 
 def send_message(from_email, content):

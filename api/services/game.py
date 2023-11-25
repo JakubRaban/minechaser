@@ -113,7 +113,9 @@ class GameService:
 def delete_finished_games():
     games_to_delete = []
     for game_id, game in GameService.games.items():
-        if game.end_timestamp and datetime.now(timezone.utc) - game.end_timestamp > timedelta(minutes=15):
+        game_finished = game.end_timestamp and datetime.now(timezone.utc) - game.end_timestamp > timedelta(minutes=15)
+        private_game_stale = datetime.now(timezone.utc) - game.init_timestamp > timedelta(days=1)
+        if game_finished or private_game_stale:
             games_to_delete.append(game_id)
     for game_id in games_to_delete:
         del GameService.games[game_id]

@@ -110,6 +110,7 @@ class GameProxy:
         time_before_start = 9 if is_public else 4
 
         self.game = Game((18, 27), len(player_ids), on_server_action, not self.is_single_player) if autostart else None
+        self.init_timestamp = datetime.now(timezone.utc)
         self.start_timestamp = datetime.now(timezone.utc) + timedelta(seconds=time_before_start) if autostart else None
         self.players = dict(zip(player_ids, self.game.players.colors() if autostart else [None] * 4))
         self.end_timestamp = None
@@ -173,7 +174,7 @@ class GameProxy:
             result = self.game.step(player_color, direction)
             if result:
                 for event_type in result.outcome.event_types:
-                    if event_type == MineCellStepped and self._all_players_dead():
+                    if (event_type == MineCellStepped and self._all_players_dead()) or event_type == NoMinesLeft:
                         self.end_game_scheduler.finish_now()
                 return result
 

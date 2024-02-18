@@ -127,7 +127,7 @@ def set_name(sid, data: dict):
     def sanitize_name(name: Optional[str]):
         sanitized_name = ''
         for char in name:
-            if len(sanitized_name) < 32 and ord(char) not in range(768, 880):
+            if len(sanitized_name) < 32 and ord(char) not in range(768, 880):  # removes "zalgo"
                 sanitized_name += char
         return sanitized_name
 

@@ -51,6 +51,7 @@ Then visit http://localhost:3000 in your browser.
   - Bottle.py - for minimal HTTP request handling
   - `APScheduler` library for scheduling game events
 - Websocket communication implemented with [socket.io](https://socket.io) library and its Python counterpart on the server, `python-socketio`
+- Deployed on a DigitalOcean Droplet (VPS) with Nginx as an HTTP server
 
 ### Selected implementation details
 
@@ -61,6 +62,7 @@ Then visit http://localhost:3000 in your browser.
 - Physical/touchscreen keyboard detection implemented by checking time elapsed between `keydown` and `keyup` events
 - Player ID and preferences are stored in `localStorage`, conserving the player's profile for the next time they play
 - Optimistic UI updates used for a smoother user experience, minimizing the impact of latency in response time
+- Integration with Rollbar to view errors, and prerender.io to send pre-built version of the website to web crawlers
 
 #### CSS
 - Fully responsive design implemented using media queries

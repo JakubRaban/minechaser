@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "cwd": "${workspaceFolder}/api/",
+            "name": "Python App",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "../venv/bin/gunicorn",
+            "gevent": true,
+            "args": ["app:socketio_app", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "-w", "1", "--bind=0.0.0.0:5000"],
+            "console": "integratedTerminal"
+        },
+        {
+            "cwd": "${workspaceFolder}/api/",
+            "name": "Python Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "../venv/bin/pytest",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Web App",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "npm start",
+        }
+    ]
+}

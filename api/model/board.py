@@ -16,58 +16,56 @@ from scheduler import scheduler
 from types_ import Position, Dimensions
 from model.bonus import Bonus
 
-mine_free_area_size = 3
-mine_density = 0.2
-
 
 class Board:
-    def __init__(self, dims: Dimensions, on_bonus_added: Callable[[Cell], None]):
+    def __init__(self, dims: Dimensions, mines: int, mine_free_area_size: int, on_bonus_added: Callable[[Cell], None]):
         self.dims = dims
         self.cells: Dict[Position, Cell] = {}
-        self.initial_mines = int((self.dims[0] * self.dims[1] - 4 * mine_free_area_size ** 2) * mine_density)
+        self.initial_mines = mines
         self.mines_left = self.initial_mines
+        self.mine_free_area_size = mine_free_area_size
         self.serialize_contentful_cells_only = True
         for cell_position in product(range(self.dims[0]), range(self.dims[1])):
             self.cells[cell_position] = Cell(cell_position)
 
-        def place_mines():
-            cells_with_possible_mine = [cell for pos, cell in self.cells.items() if pos not in self.mine_free_area]
-            for cell in sample(cells_with_possible_mine, self.mines_left):
-                cell.has_mine = True
-
-        def assign_number_of_mines_around():
-            for coords, cell in self.cells.items():
-                cell.mines_around = reduce(operator.add, [c.has_mine for c in self.get_adjacent_cells(coords).values()])
-
-        def check_board_correct():
-            stack = self.corners
-            marked = set(self.corners)
-            target = len(self.cells) - self.initial_mines
-            while stack:
-                position = stack.pop()
-                reachable_cells = [pos for pos, cell in self.get_adjacent_cells(position, walkable=True).items() if not cell.has_mine and pos not in marked]
-                marked.update(reachable_cells)
-                stack.extend(reachable_cells)
-                if len(marked) == target:
-                    break
-            if len(marked) == target:
-                for pos in [p for p, cell in self.cells.items() if cell.has_mine]:
-                    if all(c.has_mine for c in self.get_adjacent_cells(pos, walkable=True).values()):
-                        return False
-                return True
-            return False
-
-        place_mines()
-        if check_board_correct():
+        self._place_mines()
+        if self._check_board_correct():
             def on_bonus_generated(bonus: Bonus):
                 if position := self.place_bonus(bonus):
                     on_bonus_added(self.cells[position])
 
-            assign_number_of_mines_around()
+            self._assign_number_of_mines_around()
             if on_bonus_added:
                 self.bonus_generator = BonusGenerator(on_bonus_generated)
         else:
             self.__init__(dims, on_bonus_added)
+
+    def _place_mines(self):
+        cells_with_possible_mine = [cell for pos, cell in self.cells.items() if pos not in self.mine_free_area]
+        for cell in sample(cells_with_possible_mine, self.mines_left):
+            cell.has_mine = True
+
+    def _assign_number_of_mines_around(self):
+        for coords, cell in self.cells.items():
+            cell.mines_around = reduce(operator.add, [c.has_mine for c in self.get_adjacent_cells(coords).values()])
+
+    def _check_board_correct(self):
+        stack = self.corners
+        marked = set(self.corners)
+        target = len(self.cells) - self.initial_mines
+        while stack:
+            position = stack.pop()
+            reachable_cells = [pos for pos, cell in self.get_adjacent_cells(position, walkable=True).items() if not cell.has_mine and pos not in marked]
+            marked.update(reachable_cells)
+            stack.extend(reachable_cells)
+            if len(marked) == target:
+                break
+        if len(marked) == target:
+            for pos in [p for p, cell in self.cells.items() if cell.has_mine]:
+                if all(c.has_mine for c in self.get_adjacent_cells(pos, walkable=True).values()):
+                    return False
+            return True
+        return False
 
     def step(self, position: Position) -> ActionOutcome:
         outcome = ActionOutcome()
@@ -126,9 +124,9 @@ class Board:
 
     @property
     def mine_free_area(self):
-        start_indices = list(range(mine_free_area_size))
-        row_end_indices = list(range(self.dims[0] - mine_free_area_size, self.dims[0]))
-        col_end_indices = list(range(self.dims[1] - mine_free_area_size, self.dims[1]))
+        start_indices = list(range(self.mine_free_area_size))
+        row_end_indices = list(range(self.dims[0] - self.mine_free_area_size, self.dims[0]))
+        col_end_indices = list(range(self.dims[1] - self.mine_free_area_size, self.dims[1]))
         return set(product(start_indices + row_end_indices, start_indices + col_end_indices))
 
     def get_adjacent_cells(self, position: Position, walkable=False):

@@ -17,6 +17,10 @@ from model.board import Board
 from types_ import Dimensions, Position
 
 
+default_mine_density = 0.2
+default_mine_free_area_size = 3
+
+
 class ActionType(Enum):
     STEP = 'step'
     FLAG = 'flag'
@@ -66,7 +70,8 @@ class Game:
         def on_bonus_added(cell: Cell):
             self.on_server_action(CellUpdate([cell]))
 
-        self.board = Board(dimensions, on_bonus_added if generate_bonuses else None)
+        initial_mine_count = (dimensions[0] * dimensions[1] - 4 * default_mine_free_area_size ** 2) * default_mine_density
+        self.board = Board(dimensions, initial_mine_count, default_mine_free_area_size, on_bonus_added if generate_bonuses else None)
         starting_positions = self.board.corners[:players_count]
         self.players = Players(starting_positions)
         self.on_server_action = on_server_action

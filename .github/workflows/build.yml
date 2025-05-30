@@ -14,4 +14,4 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t service:${SHORT_SHA} ${{ github.workspace }}/service
+          docker build -t service:latest ${{ github.workspace }}/service

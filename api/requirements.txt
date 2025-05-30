@@ -1,6 +1,5 @@
 APScheduler==3.10.4
 bidict==0.22.1
-blis
 bottle==0.12.25
 bottle-cors-plugin==0.1.9
 cached-property==1.5.2

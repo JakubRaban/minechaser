@@ -1,0 +1,17 @@
+name: Backend
+
+on:
+  push:
+  workflow_dispatch:
+  
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t service:${SHORT_SHA} ${{ github.workspace }}/service
